@@ -1,0 +1,35 @@
+version: '3'
+
+volumes:
+  pg-data:
+  redis-data:
+
+services:
+  db:
+    image: postgres:11-alpine
+    volumes:
+      -pg-data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:latest
+    ports:
+      - '6379'
+    sysctls:
+      net.core.somaxconn: '1024'
+    volumes:
+      - redis-data:/data
+
+  api:
+    image: litewarp/pp_prod
+    build:
+      context: .
+      dockerfile: ./api/Dockerfile.dev
+    depends_on:
+      - db
+      - redis
+    environment:
+      - RAILS_LOG_TO_STDOUT=true
+      - RAILS_ENV=development
+      - REDIS_URL = redis://redis:6379/0
+    volumes:
+      - ./api:/dock_api
