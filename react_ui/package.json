@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@tshio/redux-api-params-middleware": "^1.2.2",
     "grommet": "^2.7.1",
     "grommet-icons": "^4.2.0",
     "history": "^4.9.0",
