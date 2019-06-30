@@ -4,16 +4,6 @@ module PdfParser
   require 'docsplit'
   extend ActiveSupport::Concern
 
-  def grab_file
-    examples = [
-      'https://patentimages.storage.googleapis.com/f5/fd/7e/7db7e8e7b6b49c/US6091781.pdf',
-      'https://patentimages.storage.googleapis.com/1e/82/1a/6c072edfcc6ba0/US7629705.pdf'
-    ]
-    file = examples.sample
-    puts file.split('/').last.gsub('.pdf', '')
-    @pdf = URI.open(file)
-  end
-
   def basename
     File.basename(@pdf.path)
   end
@@ -27,6 +17,12 @@ module PdfParser
     # correct_rotation if possible
   end
 
+  def create_columns(pages)
+    pages.flatten.each_with_index do |column, index|
+      @patent.columns.create(number: index + 1, text: column)
+    end
+  end
+
   # drop non-columned pages
   # find index of page where
   # first line only has chars
@@ -35,7 +31,7 @@ module PdfParser
     pdf = PDF::Reader.new(file)
     pdf.pages.find_index do |page|
       lines = page.text.split("\n")
-      lines[0..3].collect { |x| x.match?(/^[1-2\s\.\n]+$/) }.include?(true)
+      lines[0..3].find_index { |x| x.match?(/^[1-2\s\.\n]+$/) }
     end
   end
 
@@ -48,12 +44,14 @@ module PdfParser
       [pdf.path],
       pages: page_range,
       format: [:png],
-      density: '400x400', # high density required
+      density: '200x200',
       output: pdf_path('')
     )
     page_to_image(page_range)
     image_to_columns(page_range)
     columns_to_text(page_range)
+    columns_to_lines(page_range)
+    FileUtils.remove_dir(pdf_path(''))
   end
 
   def page_to_image(range)
@@ -85,32 +83,43 @@ module PdfParser
         Docsplit.extract_text(
           [pdf_path("#{basename}_page_#{page}_column_#{column}.png")],
           ocr: true,
-          output: Rails.root.join('tmp')
+          output: pdf_path('')
         )
         name = "#{basename}_page_#{page}_column_#{column}.txt"
-        path = Rails.root.join('tmp', name)
-        text = File.read(path)
-        File.delete(path)
-        text
+        File.read(pdf_path(name))
       end
     end
-    pages.flatten
+    create_columns(pages)
   end
 
-  def columns_to_lines(range, pdf)
+  def columns_to_lines(range)
     counter = 1
-    name = ->(p, c) { "#{basename}_page_#{p}_column_#{c}.png" }
     range.each do |page|
       (0..1).each do |column|
         MiniMagick::Tool::Convert.new do |convert|
-          convert << Rails.root.join('tmp', 'storage', name.call(page, column))
-          convert.crop '0x70'
+          convert << pdf_path("#{basename}_page_#{page}_column_#{column}.png")
+          convert.crop '0x70@'
           convert << '+repage'
           convert << '+adjoin'
-          new_path = Rails.root.join('tmp', 'storage', File.basename(pdf.path) + '_' + "column_#{counter}_line_%d.png")
-          convert << new_path
+          convert << pdf_path("#{basename}_column_#{counter}_line_%d.png")
         end
         counter += 1
+      end
+    end
+    save_lines(range)
+  end
+
+  def save_lines(range)
+    counter = 1
+    range.each do |_page|
+      (0..1).each do |_column|
+        col = @patent.columns.select { |x| x.number == counter }.first
+        (0..69).each do |line|
+          li = col.lines.create
+          name = "column_#{counter}_line_#{line}.png"
+          name_plus = "#{basename}_#{name}"
+          li.image.attach(io: File.open(pdf_path(name_plus)), filename: name)
+        end
       end
     end
   end
