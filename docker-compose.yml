@@ -8,7 +8,7 @@ services:
   db:
     image: postgres:11-alpine
     volumes:
-      -pg-data:/var/lib/postgresql/data
+      - pg-data:/var/lib/postgresql/data
 
   redis:
     image: redis:latest
@@ -20,16 +20,16 @@ services:
       - redis-data:/data
 
   api:
-    image: litewarp/pp_prod
+    image: litewarp/patent_pro:dev
     build:
       context: .
-      dockerfile: ./api/Dockerfile.dev
+      dockerfile: ./Dockerfile.dev
     depends_on:
       - db
       - redis
     environment:
       - RAILS_LOG_TO_STDOUT=true
       - RAILS_ENV=development
-      - REDIS_URL = redis://redis:6379/0
+      - REDIS_URL=redis://redis:6379/0
     volumes:
-      - ./api:/dock_api
+      - ./:/dock_api

@@ -5,13 +5,13 @@ RUN apt-get update -qq && apt-get install -y postgresql-client nodejs graphicsma
 RUN mkdir /dock_api
 WORKDIR /dock_api
 
-COPY ./api/Gemfile /dock_api/Gemfile
-COPY ./api/Gemfile.lock /dock_api/Gemfile.lock
+COPY ./Gemfile /dock_api/Gemfile
+COPY ./Gemfile.lock /dock_api/Gemfile.lock
 
 RUN gem install bundler
 RUN bundle install
 
-COPY ./api/entrypoint.sh /usr/bin
+COPY ./entrypoint.sh /usr/bin
 RUN chmod +x /usr/bin/entrypoint.sh
 ENTRYPOINT ["entrypoint.sh"]
 
