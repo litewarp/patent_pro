@@ -1,4 +1,10 @@
 Rails.application.routes.draw do
-  resources :patents
+  namespace :api do
+    namespace :v1 do
+      resources :patents
+      resources :columns
+      resources :lines
+    end
+  end
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end

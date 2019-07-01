@@ -1,16 +1,14 @@
-import { createStore, applyMiddleware, compose } from 'redux'
-import rootReducer from './root'
+/** @format */
+// @flow
+
+import { createStore, applyMiddleware, compose } from "redux"
+import rootReducer from "./root"
 import thunk from "redux-thunk"
 import logger from "redux-logger"
 import paramsMiddleware from "@tshio/redux-api-params-middleware"
-import { apiMiddleware } from 'redux-api-middleware'
+import { apiMiddleware } from "redux-api-middleware"
 
-const middleware = [
-  paramsMiddleware,
-  apiMiddleware,
-  thunk,
-  logger,
-]
+const middleware = [paramsMiddleware, apiMiddleware, thunk, logger]
 
 const enhancers = []
 // Dev tools are helpful
@@ -26,9 +24,6 @@ const composedEnhancers = compose(
   ...enhancers,
 )
 
-const store = createStore(
-  rootReducer,
-  composedEnhancers,
-)
+const store = createStore(rootReducer, composedEnhancers)
 
 export default store

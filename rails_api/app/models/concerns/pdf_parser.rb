@@ -17,17 +17,12 @@ module PdfParser
     # correct_rotation if possible
   end
 
-  def create_columns(pages)
-    pages.flatten.each_with_index do |column, index|
-      @patent.columns.create(number: index + 1, text: column)
-    end
-  end
-
   # drop non-columned pages
   # find index of page where
   # first line only has chars
   # ['1', '2', ., '\s', '\n']
   def find_columns_start(file)
+    puts "Locating Start of Columns"
     pdf = PDF::Reader.new(file)
     pdf.pages.find_index do |page|
       lines = page.text.split("\n")
@@ -40,6 +35,7 @@ module PdfParser
     start = find_columns_start(pdf)
     length = Docsplit.extract_length([pdf.path])
     page_range = start..length
+    puts "Extracting Images"
     Docsplit.extract_images(
       [pdf.path],
       pages: page_range,
@@ -47,52 +43,49 @@ module PdfParser
       density: '200x200',
       output: pdf_path('')
     )
-    page_to_image(page_range)
-    image_to_columns(page_range)
+    page_to_columns(page_range)
     columns_to_text(page_range)
     columns_to_lines(page_range)
-    FileUtils.remove_dir(pdf_path(''))
   end
 
-  def page_to_image(range)
+  def page_to_columns(range)
+    puts "Trimming Borders and Splitting Pages in Half"
     range.collect do |page|
       MiniMagick::Tool::Convert.new do |convert|
         convert << pdf_path("#{basename}_#{page}.png")
         convert.trim # remove bordering whitespace
-        convert << pdf_path("#{basename}_page_#{page}.png")
-      end
-      File.delete(pdf_path("#{basename}_#{page}.png"))
-    end
-  end
-
-  def image_to_columns(range)
-    range.collect do |page|
-      MiniMagick::Tool::Convert.new do |convert|
-        convert << pdf_path("#{basename}_page_#{page}.png")
         convert.crop '2x0@' # tile into two columns, no rows, with @ operator
         convert << '+repage' # clean offset
         convert << '+adjoin' # output multiple
         convert << pdf_path("#{basename}_page_#{page}_column_%d.png")
       end
+      File.delete(pdf_path("#{basename}_#{page}.png"))
     end
   end
 
   def columns_to_text(range)
-    pages = range.collect do |page|
-      (0..1).collect do |column|
-        Docsplit.extract_text(
-          [pdf_path("#{basename}_page_#{page}_column_#{column}.png")],
-          ocr: true,
-          output: pdf_path('')
+    puts "Extracting Text From Columns"
+    counter = 1
+    range.each do |page|
+      (0..1).each do |column|
+        filename = "#{basename}_page_#{page}_column_#{column}.png"
+        image_path = pdf_path(filename)
+
+        Docsplit.extract_text([image_path], ocr: true, output: pdf_path('') )
+        text_file = "#{basename}_page_#{page}_column_#{column}.txt"
+
+        col = @patent.columns.create(
+          number: counter,
+          text: File.read(pdf_path(text_file)),
         )
-        name = "#{basename}_page_#{page}_column_#{column}.txt"
-        File.read(pdf_path(name))
+        col.image.attach(io: File.open(image_path), filename: filename )
       end
+      counter +=1
     end
-    create_columns(pages)
   end
 
   def columns_to_lines(range)
+    puts "Chopping Column into Lines"
     counter = 1
     range.each do |page|
       (0..1).each do |column|
@@ -103,9 +96,11 @@ module PdfParser
           convert << '+adjoin'
           convert << pdf_path("#{basename}_column_#{counter}_line_%d.png")
         end
+        sleep 1
         counter += 1
       end
     end
+    sleep(5)
     save_lines(range)
   end
 
@@ -119,8 +114,11 @@ module PdfParser
           name = "column_#{counter}_line_#{line}.png"
           name_plus = "#{basename}_#{name}"
           li.image.attach(io: File.open(pdf_path(name_plus)), filename: name)
+          li.save
         end
       end
     end
+    # add as a sidekiq cron job
+    # FileUtils.remove_dir(pdf_path(''))
   end
 end

@@ -1,0 +1,14 @@
+FROM node:10.14
+ARG dev=false
+
+RUN apt-get update -qq && apt-get install -y yarn
+
+RUN mkdir /dock_app
+WORKDIR /dock_app
+
+RUN yarn install
+
+EXPOSE 3000
+
+CMD ["yarn", "start"]
+

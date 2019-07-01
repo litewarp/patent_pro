@@ -22,7 +22,7 @@ gem 'awesome_rails_console'
 gem 'pg_search'
 
 # API serializer
-gem 'graphiti'
+gem 'graphiti-rails'
 gem 'graphiti_spec_helpers'
 gem 'kaminari'
 gem 'responders'
@@ -30,6 +30,7 @@ gem 'responders'
 gem 'aws-sdk-s3', require: false
 gem 'docsplit'
 gem 'pdf-reader'
+gem 'rack-cors'
 
 gem 'http'
 gem 'nokogiri'

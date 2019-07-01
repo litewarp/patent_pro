@@ -1,12 +1,14 @@
-import React from 'react'
+/** @format */
+
+import React from "react"
 import { combineReducers } from "redux"
 
 import { layoutReducer } from "./layouts"
-import { pdfReducer } from "./pdf"
+import { columnReducer } from "./columnReducer"
 
 const rootReducer = combineReducers({
   layout: layoutReducer,
-  pdf: pdfReducer
+  column: columnReducer,
 })
 
 export default rootReducer

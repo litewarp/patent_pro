@@ -1,2 +1,0 @@
-class PatentsController < ApplicationController
-end
