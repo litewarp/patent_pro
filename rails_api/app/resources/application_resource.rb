@@ -6,6 +6,6 @@ class ApplicationResource < Graphiti::Resource
   # Subclasses can still override this default.
   self.abstract_class = true
   self.adapter = Graphiti::Adapters::ActiveRecord
-  self.base_url = Rails.application.routes.default_url_options[:host]
+  self.base_url = 'localhost'
   self.endpoint_namespace = '/api/v1'
 end

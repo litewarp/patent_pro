@@ -12,7 +12,7 @@ const SIDELOAD_FAILURE = "@patent/SIDELOAD_REQUEST"
 const NEW_ERROR = "@patent/NEW_ERROR"
 
 // API VARIABLES
-const baseURL = "localhost/api/v1"
+const baseURL = "http://localhost/api/v1"
 const patentsURL = baseURL + "/patents"
 const patentURL = id => patentsURL + "/" + id
 const jsonHeader = { "Content-Type": "application/vnd.api+json" }
@@ -22,7 +22,11 @@ export const loadData = ({ activePatent }: { activePatent: number }) => ({
     endpoint: patentURL(activePatent),
     method: "GET",
     headers: jsonHeader,
-    types: [LOAD_REQUEST, LOAD_SUCCESS, LOAD_FAILURE],
+    types: [
+      { type: LOAD_REQUEST, payload: req => req },
+      LOAD_SUCCESS,
+      LOAD_FAILURE,
+    ],
   },
 })
 
@@ -41,9 +45,26 @@ export const fetchColumns = ({
   activePatent: number,
   column: number,
 }) => {
-  console.log("FIRE!")
-  return (dispatch: ({}) => void) => {
+  const formatUrl = url => {
+    const splitUrl = url.split("/")
+    splitUrl.shift()
+    return process.env.NODE_ENV === "production"
+      ? "http://sethipc.com/" + splitUrl.join("/")
+      : "http://localhost/" + splitUrl.join("/")
+  }
+  return (dispatch: ({}) => void, getState: () => void) => {
     dispatch(loadData({ activePatent }))
+      .then(res => {
+        const prefix = "http://"
+        const newState = getState()
+        console.log(newState)
+        const { columns } = newState.column.activePatent.relationships
+        dispatch(sideloadRequest(formatUrl(columns.links.related)))
+      })
+      .catch(err => {
+        console.log(err)
+        return err
+      })
   }
 }
 

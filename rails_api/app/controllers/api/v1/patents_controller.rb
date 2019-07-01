@@ -8,8 +8,9 @@ module Api
       end
 
       def show
-        patent = PatentResource.find(params)
-        render patent
+        match = Patent.find_by_number(params[:number]).id
+        patent = PatentResource.find(id: match)
+        render jsonapi: patent
       end
 
       def create

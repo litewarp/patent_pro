@@ -3,5 +3,5 @@ class ColumnResource < ApplicationResource
   attribute :number, :string
   attribute :text, :string
   has_many :lines
-
+  belongs_to :patent
 end

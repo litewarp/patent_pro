@@ -22,7 +22,7 @@ module PdfParser
   # first line only has chars
   # ['1', '2', ., '\s', '\n']
   def find_columns_start(file)
-    puts "Locating Start of Columns"
+    puts 'Locating Start of Columns'
     pdf = PDF::Reader.new(file)
     pdf.pages.find_index do |page|
       lines = page.text.split("\n")
@@ -35,7 +35,7 @@ module PdfParser
     start = find_columns_start(pdf)
     length = Docsplit.extract_length([pdf.path])
     page_range = start..length
-    puts "Extracting Images"
+    puts 'Extracting Images'
     Docsplit.extract_images(
       [pdf.path],
       pages: page_range,
@@ -49,7 +49,7 @@ module PdfParser
   end
 
   def page_to_columns(range)
-    puts "Trimming Borders and Splitting Pages in Half"
+    puts 'Trimming Borders and Splitting Pages in Half'
     range.collect do |page|
       MiniMagick::Tool::Convert.new do |convert|
         convert << pdf_path("#{basename}_#{page}.png")
@@ -64,28 +64,28 @@ module PdfParser
   end
 
   def columns_to_text(range)
-    puts "Extracting Text From Columns"
+    puts 'Extracting Text From Columns'
     counter = 1
     range.each do |page|
       (0..1).each do |column|
         filename = "#{basename}_page_#{page}_column_#{column}.png"
         image_path = pdf_path(filename)
 
-        Docsplit.extract_text([image_path], ocr: true, output: pdf_path('') )
+        Docsplit.extract_text([image_path], ocr: true, output: pdf_path(''))
         text_file = "#{basename}_page_#{page}_column_#{column}.txt"
 
         col = @patent.columns.create(
           number: counter,
-          text: File.read(pdf_path(text_file)),
+          text: File.read(pdf_path(text_file))
         )
-        col.image.attach(io: File.open(image_path), filename: filename )
+        col.image.attach(io: File.open(image_path), filename: filename)
       end
-      counter +=1
+      counter += 1
     end
   end
 
   def columns_to_lines(range)
-    puts "Chopping Column into Lines"
+    puts 'Chopping Column into Lines'
     counter = 1
     range.each do |page|
       (0..1).each do |column|
@@ -110,7 +110,7 @@ module PdfParser
       (0..1).each do |_column|
         col = @patent.columns.select { |x| x.number == counter }.first
         (0..69).each do |line|
-          li = col.lines.create
+          li = col.lines.create(number: line + 1)
           name = "column_#{counter}_line_#{line}.png"
           name_plus = "#{basename}_#{name}"
           li.image.attach(io: File.open(pdf_path(name_plus)), filename: name)

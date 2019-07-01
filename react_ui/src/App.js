@@ -31,7 +31,7 @@ const App = ({
       console.log(page, activePatent)
       fetchColumns({ activePatent, column })
     }
-  }, [page, activePatent, column])
+  }, [])
 
   return (
     <div className="App">
