@@ -46,7 +46,7 @@ export const columnReducer = createReducer(initialState, {
   [SIDELOAD_REQUEST]: (state, action) => ({ ...state }),
   [SIDELOAD_SUCCESS]: (state, action) => ({
     ...state,
-    document: action.payload.data[0],
+    columns: action.payload.data,
   }),
   [SIDELOAD_FAILURE]: (state, action) => ({ ...state }),
 })

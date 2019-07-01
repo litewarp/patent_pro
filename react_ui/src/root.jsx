@@ -5,10 +5,11 @@ import { Grommet } from "grommet"
 import { Provider } from "react-redux"
 import store from "./_redux/store"
 import App from "./App"
+import theme from "./_theme"
 
 const Root = () => (
   <Provider store={store}>
-    <Grommet plain full>
+    <Grommet theme={theme} full>
       <App />
     </Grommet>
   </Provider>

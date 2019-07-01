@@ -4,7 +4,8 @@
 import React, { useState, useEffect } from "react"
 import { connect } from "react-redux"
 import { bindActionCreators } from "redux"
-import { Box } from "grommet"
+import { LinkNext, LinkPrevious } from "grommet-icons"
+import { Box, Heading, Button, Anchor } from "grommet"
 import { fetchColumns } from "./_redux/columnActions"
 
 const App = ({
@@ -26,6 +27,9 @@ const App = ({
   const [page, setPage] = useState("patent")
   const [column, setColumn] = useState(1)
 
+  const downColumn = col => (col == 1 ? 1 : col - 1)
+  const upColumn = col => (col == columns.length ? columns.length : col + 1)
+
   useEffect(() => {
     if (page === "patent") {
       console.log(page, activePatent)
@@ -34,27 +38,30 @@ const App = ({
   }, [])
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Box fill pad="large" align="center">
+      <Heading level={2}> PTO Patent PDF Parser Pro (Pre-Release) </Heading>
+      <Box direction="row" fill="horizontal" justify="between" align="center">
+        <Anchor
+          label="Previous Column"
+          icon={<LinkPrevious />}
+          onClick={() => setColumn(downColumn(column))}
+        />
+        <Heading level={3} pad="large">{`Column ${column}`}</Heading>
+        <Anchor
+          label="Next Column"
+          icon={<LinkNext />}
+          reverse={true}
+          onClick={() => setColumn(upColumn(column))}
+        />
+      </Box>
+    </Box>
   )
 }
 
 const mapState = ({ layout, column }) => ({
   activeColumn: column.activeColumn,
   activePatent: column.activePatent,
+  columns: column.columns,
   images: column.images,
   loading: column.loading,
 })
