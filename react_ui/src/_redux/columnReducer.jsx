@@ -6,17 +6,22 @@ const {
   LOAD_REQUEST,
   LOAD_SUCCESS,
   LOAD_FAILURE,
+  LOAD_LINES_REQUEST,
+  LOAD_LINES_SUCCESS,
+  LOAD_LINES_FAILURE,
   SIDELOAD_REQUEST,
   SIDELOAD_SUCCESS,
   SIDELOAD_FAILURE,
+  SET_ACTIVECOLUMN,
 } = actionRefs
 
 const initialState = {
-  activePatent: "7629705",
+  activePatent: {},
   activeColumn: 1,
   loading: false,
+  loadingError: false,
   columns: [],
-  columnImages: [],
+  lines: [],
 }
 
 const replaceItemInArray = (payload, patents) => {
@@ -49,4 +54,18 @@ export const columnReducer = createReducer(initialState, {
     columns: action.payload.data,
   }),
   [SIDELOAD_FAILURE]: (state, action) => ({ ...state }),
+  [LOAD_LINES_REQUEST]: (state, action) => ({ ...state, loading: true }),
+  [LOAD_LINES_SUCCESS]: (state, action) => ({
+    ...state,
+    lines: action.payload.data,
+  }),
+  [LOAD_LINES_FAILURE]: (state, action) => ({
+    ...state,
+    loading: false,
+    loadingError: true,
+  }),
+  [SET_ACTIVECOLUMN]: (state, action) => ({
+    ...state,
+    activeColumn: action.payload,
+  }),
 })

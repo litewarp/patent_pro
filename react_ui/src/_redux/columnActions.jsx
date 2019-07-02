@@ -6,10 +6,14 @@ import { RSAA } from "redux-api-middleware"
 const LOAD_REQUEST = "@patent/LOAD_REQUEST"
 const LOAD_SUCCESS = "@patent/LOAD_SUCCESS"
 const LOAD_FAILURE = "@patent/LOAD_FAILURE"
+const LOAD_LINES_REQUEST = "@patent/LOAD_LINES_REQUEST"
+const LOAD_LINES_SUCCESS = "@patent/LOAD_LINES_SUCCESS"
+const LOAD_LINES_FAILURE = "@patent/LOAD_LINES_FAILURE"
 const SIDELOAD_REQUEST = "@patent/SIDELOAD_REQUEST"
 const SIDELOAD_SUCCESS = "@patent/SIDELOAD_SUCCESS"
 const SIDELOAD_FAILURE = "@patent/SIDELOAD_REQUEST"
 const NEW_ERROR = "@patent/NEW_ERROR"
+const SET_ACTIVECOLUMN = "@patent/SET_ACTIVECOLUMN"
 
 // API VARIABLES
 const baseURL = "http://localhost/api/v1"
@@ -26,6 +30,27 @@ export const loadData = ({ activePatent }: { activePatent: number }) => ({
       { type: LOAD_REQUEST, payload: req => req },
       LOAD_SUCCESS,
       LOAD_FAILURE,
+    ],
+  },
+})
+
+export const setActiveColumn = (column: number) => ({
+  type: SET_ACTIVECOLUMN,
+  payload: column,
+})
+
+export const fetchLines = (columnId: number) => ({
+  [RSAA]: {
+    endpoint: `http://localhost/api/v1/lines?filter[column_id]=${columnId}`,
+    method: "GET",
+    headers: jsonHeader,
+    types: [
+      {
+        type: LOAD_LINES_REQUEST,
+        payload: req => req,
+      },
+      LOAD_LINES_SUCCESS,
+      LOAD_LINES_FAILURE,
     ],
   },
 })
@@ -80,4 +105,8 @@ export const actionRefs = {
   SIDELOAD_REQUEST,
   SIDELOAD_SUCCESS,
   SIDELOAD_FAILURE,
+  LOAD_LINES_REQUEST,
+  LOAD_LINES_SUCCESS,
+  LOAD_LINES_FAILURE,
+  SET_ACTIVECOLUMN,
 }

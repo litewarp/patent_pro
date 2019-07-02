@@ -6,34 +6,47 @@ import { connect } from "react-redux"
 import { bindActionCreators } from "redux"
 import { LinkNext, LinkPrevious } from "grommet-icons"
 import { Box, Heading, Button, Anchor } from "grommet"
-import { fetchColumns } from "./_redux/columnActions"
+import {
+  fetchColumns,
+  fetchLines,
+  setActiveColumn,
+} from "./_redux/columnActions"
+import ColumnTable from "./Table"
 
 const App = ({
   activePatent,
   activeColumn,
   columns,
   loading,
-  columnImages,
+  lines,
   fetchColumns,
+  fetchLines,
+  setActiveColumn,
 }: {
   activePatent: number,
   activeColumn: number,
   columns: Array<Object>,
+  lines: Array<Object>,
   loading: boolean,
-  columnImages: Array<Object>,
   fetchColumns: ({}) => void,
+  fetchLines: number => void,
+  setActiveColumn: number => void,
 }) => {
   // page options are form, list, patent
   const [page, setPage] = useState("patent")
-  const [column, setColumn] = useState(1)
 
   const downColumn = col => (col == 1 ? 1 : col - 1)
   const upColumn = col => (col == columns.length ? columns.length : col + 1)
 
+  const columnIdFor = number => {
+    const results = columns.filter(col => col.attributes.number == number)
+    return results && results[0] && results[0].id
+  }
+
   useEffect(() => {
     if (page === "patent") {
       console.log(page, activePatent)
-      fetchColumns({ activePatent, column })
+      fetchColumns({ activePatent: "6091781" })
     }
   }, [])
 
@@ -44,30 +57,38 @@ const App = ({
         <Anchor
           label="Previous Column"
           icon={<LinkPrevious />}
-          onClick={() => setColumn(downColumn(column))}
+          onClick={() => setActiveColumn(downColumn(activeColumn))}
         />
-        <Heading level={3} pad="large">{`Column ${column}`}</Heading>
+        <Heading level={3} pad="large">{`Column ${activeColumn}`}</Heading>
         <Anchor
           label="Next Column"
           icon={<LinkNext />}
           reverse={true}
-          onClick={() => setColumn(upColumn(column))}
+          onClick={() => setActiveColumn(upColumn(activeColumn))}
         />
       </Box>
+      <ColumnTable
+        columnId={columnIdFor(activeColumn)}
+        activeColumn={activeColumn}
+        lines={lines}
+        fetchLines={fetchLines}
+      />
     </Box>
   )
 }
 
 const mapState = ({ layout, column }) => ({
-  activeColumn: column.activeColumn,
   activePatent: column.activePatent,
+  activeColumn: column.activeColumn,
   columns: column.columns,
-  images: column.images,
+  lines: column.lines,
   loading: column.loading,
 })
 
 const mapDispatch = dispatch => ({
   fetchColumns: bindActionCreators(fetchColumns, dispatch),
+  fetchLines: bindActionCreators(fetchLines, dispatch),
+  setActiveColumn: bindActionCreators(setActiveColumn, dispatch),
 })
 
 export default connect(
