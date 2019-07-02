@@ -31,7 +31,7 @@ class Patent < ApplicationRecord
     Docsplit.extract_images(
       [@pdf.path],
       format: [:png],
-      depth: '400x400',
+      depth: '300',
       output: pdf_path('')
     )
     length = Docsplit.extract_length([@pdf.path])
@@ -78,7 +78,9 @@ class Patent < ApplicationRecord
       MiniMagick::Tool::Convert.new do |convert|
         convert << pdf_path("#{basename}_#{page}.png")
         convert.trim # remove bordering whitespace
+        convert << "+repage"
         convert.chop '0x2%'
+        convert << "+repage"
         convert.crop '2x0@' # tile into two columns, no rows, with @ operator
         convert << '+repage' # clean offset
         convert << '+adjoin' # output multiple
@@ -119,7 +121,10 @@ class Patent < ApplicationRecord
       (0..1).each do |column|
         MiniMagick::Tool::Convert.new do |convert|
           convert << pdf_path("#{basename}_page_#{page}_column_#{column}.png")
-          convert.chop '0x26'
+          convert.chop '0x20'
+          convert << "+repage"
+          convert.trim
+          convert << "+repage"
           convert.crop '0x70@'
           convert << '+repage'
           convert << '+adjoin'
