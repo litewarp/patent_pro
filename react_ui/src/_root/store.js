@@ -2,7 +2,7 @@
 // @flow
 
 import { createStore, applyMiddleware, compose } from "redux"
-import rootReducer from "./root"
+import rootReducer from "./rootReducer"
 import thunk from "redux-thunk"
 import logger from "redux-logger"
 import paramsMiddleware from "@tshio/redux-api-params-middleware"

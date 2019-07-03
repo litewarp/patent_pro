@@ -3,17 +3,17 @@
 
 import { RSAA } from "redux-api-middleware"
 
-const LOAD_REQUEST = "@patent/LOAD_REQUEST"
-const LOAD_SUCCESS = "@patent/LOAD_SUCCESS"
-const LOAD_FAILURE = "@patent/LOAD_FAILURE"
-const LOAD_LINES_REQUEST = "@patent/LOAD_LINES_REQUEST"
-const LOAD_LINES_SUCCESS = "@patent/LOAD_LINES_SUCCESS"
-const LOAD_LINES_FAILURE = "@patent/LOAD_LINES_FAILURE"
-const SIDELOAD_REQUEST = "@patent/SIDELOAD_REQUEST"
-const SIDELOAD_SUCCESS = "@patent/SIDELOAD_SUCCESS"
-const SIDELOAD_FAILURE = "@patent/SIDELOAD_REQUEST"
-const NEW_ERROR = "@patent/NEW_ERROR"
-const SET_ACTIVECOLUMN = "@patent/SET_ACTIVECOLUMN"
+const LOAD_REQUEST = "@column/LOAD_REQUEST"
+const LOAD_SUCCESS = "@column/LOAD_SUCCESS"
+const LOAD_FAILURE = "@column/LOAD_FAILURE"
+const LOAD_LINES_REQUEST = "@column/LOAD_LINES_REQUEST"
+const LOAD_LINES_SUCCESS = "@column/LOAD_LINES_SUCCESS"
+const LOAD_LINES_FAILURE = "@column/LOAD_LINES_FAILURE"
+const SIDELOAD_REQUEST = "@column/SIDELOAD_REQUEST"
+const SIDELOAD_SUCCESS = "@column/SIDELOAD_SUCCESS"
+const SIDELOAD_FAILURE = "@column/SIDELOAD_REQUEST"
+const NEW_ERROR = "@column/NEW_ERROR"
+const SET_ACTIVECOLUMN = "@column/SET_ACTIVECOLUMN"
 
 // API VARIABLES
 const baseURL = "http://localhost/api/v1"

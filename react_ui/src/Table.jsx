@@ -14,6 +14,7 @@ import {
   Text,
 } from "grommet"
 import { fetchLines } from "./_redux/columnActions"
+import styled from "styled-components"
 
 const lineArray = () => {
   const lineText = []
@@ -24,6 +25,10 @@ const lineArray = () => {
     lineImage: lineImage(index + 1),
   }))
 }
+
+const FixedImage = styled(Image)`
+  height: 15px;
+`
 
 const ColumnTable = ({
   lines,
@@ -46,10 +51,13 @@ const ColumnTable = ({
           {lines.map((line, index) => (
             <TableRow key={line.id}>
               <TableCell>
-                <Text>{index + 1}</Text>
+                <Text size="small">{index + 1}</Text>
               </TableCell>
               <TableCell>
-                <Image src={line.attributes.image} />
+                <FixedImage src={line.attributes.image} />
+              </TableCell>
+              <TableCell>
+                <Text size="small">{line.attributes.text}</Text>
               </TableCell>
             </TableRow>
           ))}

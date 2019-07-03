@@ -3,6 +3,8 @@ class Line < ApplicationRecord
   belongs_to :column
   has_one_attached :image
 
+  after_update :extract_text
+
   def blob_path
     ActiveStorage::Blob.service.send(:path_for, self.image.key)
   end
@@ -24,7 +26,8 @@ class Line < ApplicationRecord
         output: Rails.root.join('tmp', 'storage')
       )
       text = File.read(text_path("#{basename}.txt"))
-      puts text
+      self.update!(text: text)
+      File.delete(text_path("#{basename}.txt"))
     end
   end
 end

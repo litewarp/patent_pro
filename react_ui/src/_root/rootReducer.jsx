@@ -3,12 +3,11 @@
 import React from "react"
 import { combineReducers } from "redux"
 
-import { layoutReducer } from "./layouts"
-import { columnReducer } from "./columnReducer"
-
+import { columnReducer } from "../_redux/columnReducer"
+import { patentReducer } from "../_redux/patentReducer"
 const rootReducer = combineReducers({
-  layout: layoutReducer,
   column: columnReducer,
+  patent: patentReducer,
 })
 
 export default rootReducer
