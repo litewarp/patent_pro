@@ -5,6 +5,7 @@ class Patent < ApplicationRecord
   validates :number, presence: true
   validates_uniqueness_of :number
 
+
   def pdf_url
     pat_number = number
     pat2pdf_url = "http://pat2pdf.org/pat2pdf/foo.pl?number=#{pat_number}"
@@ -30,107 +31,105 @@ class Patent < ApplicationRecord
     puts 'Extracting Images'
     Docsplit.extract_images(
       [@pdf.path],
-      format: [:png],
-      depth: '300',
+      density: '300',
+      format: 'tiff',
       output: pdf_path('')
     )
     length = Docsplit.extract_length([@pdf.path])
     start = find_columns_start(length)
     page_to_columns(start..length)
-    save_columns(start..length)
     columns_to_lines(start..length)
+  end
+
+  def image_to_column(page, file_name)
+    MiniMagick::Tool::Convert.new do |convert|
+      convert << pdf_path(file_name)
+      convert.trim
+      convert.chop("0x100")
+      convert.trim
+      convert.repage.+
+      convert.crop("2x0+35@")
+      convert << pdf_path("page_#{page}_col_%d.tiff")
+    end
+  end
+
+  def extract_lines(col, file_name)
+    MiniMagick::Tool::Convert.new do |convert|
+      convert << pdf_path(file_name)
+      convert.crop("0x67@")
+      convert.repage.+
+      convert.adjoin.+
+      convert << pdf_path("col_#{col}_line_%d.tiff")
+    end
   end
 
   def find_columns_start(length)
     puts 'Locating Start of Columns'
     (1..length).each do |page|
       MiniMagick::Tool::Convert.new do |convert|
-        convert << pdf_path("#{basename}_#{page}.png")
+        convert << pdf_path("#{basename}_#{page}.tiff")
         convert.trim
-        convert << '+repage'
+        convert.repage.+
         convert.crop '100%x10%+0+0'
-        convert << '+repage'
-        convert << pdf_path("chopped_#{basename}_#{page}.png")
+        convert.repage.+
+        convert.adjoin.+
+        convert << pdf_path("top_of_#{page}.tiff")
       end
     end
-    pages = (1..length).collect do |page|
-      filename = "chopped_#{basename}_#{page}"
-      image_path = pdf_path(filename)
+    pages = (1..length).find_index do |page|
+      image_path = pdf_path("top_of_#{page}")
       Docsplit.extract_text(
-        ["#{image_path}.png"],
+        ["#{image_path}.tiff"],
         ocr: true,
         output: pdf_path('')
       )
-      File.read(pdf_path("#{image_path}.txt"))
-    end
-    results = pages.find_index do |page|
-      lines = page.split("\n")
+      lines = File.read(pdf_path("#{image_path}.txt")).split("\n")
       only_numbers = lines.find_index { |x| x.match?(/^[^3-4a-zA-Z]+$/) }
       lines[only_numbers + 1]&.match?(/^\s*[A-Z]+/) if only_numbers
     end
-    puts results + 1 if results
-    results + 1
+    puts pages + 1 if pages
+    pages + 1
   end
 
   def page_to_columns(range)
     puts 'Trimming Borders and Splitting Pages in Half'
-    range.collect do |page|
-      MiniMagick::Tool::Convert.new do |convert|
-        convert << pdf_path("#{basename}_#{page}.png")
-        convert.trim # remove bordering whitespace
-        convert << "+repage"
-        convert.chop '0x2%'
-        convert << "+repage"
-        convert.crop '2x0@' # tile into two columns, no rows, with @ operator
-        convert << '+repage' # clean offset
-        convert << '+adjoin' # output multiple
-        convert << pdf_path("#{basename}_page_#{page}_column_%d.png")
-      end
+    range.each do |page|
+      image_to_column(page, "#{basename}_#{page}.tiff")
     end
+    save_columns(range)
   end
 
   def save_columns(range)
-    puts 'Extracting Text From Columns'
-    counter = 1
+    counter = 0
     range.each do |page|
       (0..1).each do |column|
-        filename = "#{basename}_page_#{page}_column_#{column}.png"
+        counter += 1
+        filename = "page_#{page}_col_#{column}.tiff"
         image_path = pdf_path(filename)
         col = columns.create(number: counter)
         col.image.attach(io: File.open(image_path), filename: filename)
       end
-      counter += 1
     end
   end
 
   def columns_to_text(range)
     range.each do |page|
       (0..1).each do |column|
-        filename = "#{basename}_page_#{page}_column_#{column}.png"
+        filename = "page_#{page}_col_#{column}.tiff"
         image_path = pdf_path(filename)
         Docsplit.extract_text([image_path], ocr: true, output: pdf_path(''))
       end
     end
-    text_file = "#{basename}_page_#{page}_column_#{column}.txt"
+    text_file = "page_#{page}_col_#{column}.txt"
   end
 
   def columns_to_lines(range)
     puts 'Chopping Column into Lines'
-    counter = 1
+    new_column = 0
     range.each do |page|
       (0..1).each do |column|
-        MiniMagick::Tool::Convert.new do |convert|
-          convert << pdf_path("#{basename}_page_#{page}_column_#{column}.png")
-          convert.chop '0x20'
-          convert << "+repage"
-          convert.trim
-          convert << "+repage"
-          convert.crop '0x70@'
-          convert << '+repage'
-          convert << '+adjoin'
-          convert << pdf_path("#{basename}_column_#{counter}_line_%d.png")
-        end
-        counter += 1
+        new_column += 1
+        extract_lines(new_column, "page_#{page}_col_#{column}.tiff")
       end
     end
     save_lines
@@ -138,12 +137,13 @@ class Patent < ApplicationRecord
 
   def save_lines
     columns.each do |column|
-      (0..69).each do |line|
-        li = column.lines.create(number: line + 1)
-        name = "column_#{column.number}_line_#{line}.png"
-        name_plus = "#{basename}_#{name}"
-        li.image.attach(io: File.open(pdf_path(name_plus)), filename: name)
-        li.save
+      line_range = column.number.to_i.even? ? (1..67) : (0..66)
+      save_number =->(line) {column.number.to_i.even? ? line : line+1}
+      puts [column.number, line_range]
+      line_range.each do |line|
+        li = column.lines.create(number: save_number.call(line))
+        name = "col_#{column.number}_line_#{line}.tiff"
+        li.image.attach(io: File.open(pdf_path(name)), filename: name)
       end
     end
     cleanup
