@@ -29,7 +29,6 @@ gem 'responders'
 
 gem 'aws-sdk-s3', require: false
 gem 'docsplit'
-gem 'pdf-reader'
 gem 'rack-cors'
 
 gem 'http'

@@ -2,12 +2,63 @@
 
 // @flow
 import * as React from "react"
-import { Box, Heading } from "grommet"
+import { connect } from "react-redux"
+import { bindActionCreators } from "redux"
+import { Box, Heading, FormField, TextInput } from "grommet"
+import { Search } from "grommet-icons"
+import { fetchPatentNumbers } from "./_redux/patentActions"
 
-const Home = () => (
-  <Box>
-    <Heading level={2}> PTO Patent PDF Parser Pro (Pre-Release) </Heading>
-  </Box>
-)
+const Home = ({
+  fetchPatentNumbers,
+  patentNumbers,
+}: {
+  fetchPatentNumbers: (?string) => void,
+  patentNumbers: Array<Object>,
+}) => {
+  const [value, setValue] = React.useState("")
 
-export default Home
+  const handleChange = val => {
+    setValue(val)
+    fetchPatentNumbers(val)
+  }
+
+  const suggestions = patentNumbers.map((pN, index) => pN.attributes.number)
+
+  const handleSelect = ({ currentTarget }: { currentTarget: {} }) => {
+    setValue(currentTarget.value)
+  }
+
+  return (
+    <Box>
+      <Heading level={2}> PTO Patent PDF Parser Pro (Pre-Release) </Heading>
+      <Heading level={4}>Enter a US Patent Number</Heading>
+
+      <Box direction="row" align="center" gap="small">
+        <Search color="brand" />
+        <TextInput
+          name="patent"
+          type="search"
+          placeholder="e.g., 7629705"
+          value={value}
+          dropProps={{ height: "small" }}
+          onChange={e => handleChange(e.target.value)}
+          onSelect={e => handleSelect(e.target.value)}
+          suggestions={suggestions}
+        />
+      </Box>
+    </Box>
+  )
+}
+
+const mapState = ({ patent }) => ({
+  patentNumbers: patent.patentNumbers,
+})
+
+const mapDispatch = dispatch => ({
+  fetchPatentNumbers: bindActionCreators(fetchPatentNumbers, dispatch),
+})
+
+export default connect(
+  mapState,
+  mapDispatch,
+)(Home)

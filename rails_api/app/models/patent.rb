@@ -1,10 +1,20 @@
 class Patent < ApplicationRecord
+  # modules
+  include ExtractText
+  include PdfSplit
+  include MagickPdf
+
+  # relationships
   has_one_attached :pdf
   has_many :columns
 
+  # validations
   validates :number, presence: true
   validates_uniqueness_of :number
 
+  def get_pdf
+    @pdf = URI.open(pdf_url)
+  end
 
   def pdf_url
     pat_number = number
@@ -12,10 +22,6 @@ class Patent < ApplicationRecord
     doc = Nokogiri::HTML(URI.open(pat2pdf_url))
     path = doc.css('div#content').at('li>a').attributes['href'].value
     "http://pat2pdf.org#{path}"
-  end
-
-  def get_pdf
-    @pdf = URI.open(pdf_url)
   end
 
   def basename
@@ -35,63 +41,6 @@ class Patent < ApplicationRecord
     columns_to_lines(start..pdf_length)
   end
 
-  def pdf_length
-    Docsplit.extract_length([@pdf.path])
-  end
-
-  # outputs each page of PDF as tiff
-  def pdf_to_images
-    Docsplit.extract_images(
-      [@pdf.path],
-      density: '300',
-      format: 'tiff',
-      output: pdf_path('')
-    )
-  end
-
-  def image_to_column(page, file_name)
-    MiniMagick::Tool::Convert.new do |convert|
-      convert << pdf_path(file_name)
-      convert.trim
-      convert.repage.+
-      convert.chop("0x100")
-      convert.trim
-      convert.repage.+
-      convert.crop("2x0+35@")
-      convert << pdf_path("page_#{page}_col_%d.tiff")
-    end
-  end
-
-  def extract_lines(col, file_name)
-    MiniMagick::Tool::Convert.new do |convert|
-      convert << pdf_path(file_name)
-      convert.crop("0x67@")
-      convert.repage.+
-      convert.adjoin.+
-      convert << pdf_path("col_#{col}_line_%d.jpg")
-    end
-  end
-
-  def extract_page_tops(page)
-    MiniMagick::Tool::Convert.new do |convert|
-      convert << pdf_path("#{basename}_#{page}.tiff")
-      convert.trim
-      convert.repage.+
-      convert.crop '100%x10%+0+0'
-      convert.repage.+
-      convert.adjoin.+
-      convert << pdf_path("top_of_#{page}.tiff")
-    end
-  end
-
-  def docsplit_text(path)
-    Docsplit.extract_text(
-      [path],
-      ocr: true,
-      output: pdf_path('')
-    )
-  end
-
   def find_columns_start(length)
     puts 'Locating Start of Columns'
     (1..length).each { |page| extract_page_tops(page) }
@@ -100,11 +49,10 @@ class Patent < ApplicationRecord
       docsplit_text("#{image_path}.tiff")
       lines = File.read(pdf_path("#{image_path}.txt")).split("\n")
       lines.reject! {|x| x.blank? }
-      only_numbers = lines.find_index { |x| x.match?(/^[^3-9a-zA-Z]+$/) }
-      lines[only_numbers + 1]&.match?(/^\s*[A-Z]+/) if only_numbers
+      lines[1].match?(/^[^3-9a-zA-Z]+$/) if lines[1]
     end
     puts pages + 1 if pages
-    pages + 1
+    pages ? pages + 1 : 1 #extract all if no start found
   end
 
   def page_to_columns(range)
@@ -131,7 +79,7 @@ class Patent < ApplicationRecord
       (0..1).each do |column|
         filename = "page_#{page}_col_#{column}.tiff"
         image_path = pdf_path(filename)
-        Docsplit.extract_text([image_path], ocr: true, output: pdf_path(''))
+        docsplit_text(image_path)
       end
     end
     text_file = "page_#{page}_col_#{column}.txt"
@@ -163,7 +111,4 @@ class Patent < ApplicationRecord
     cleanup
   end
 
-  def cleanup
-    FileUtils.remove_dir(pdf_path(''))
-  end
 end

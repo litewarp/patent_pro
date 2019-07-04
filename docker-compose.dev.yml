@@ -19,7 +19,7 @@ services:
     volumes:
       - redis-data:/data
 
-  api:
+  api: &app_base
     image: litewarp/patent_pro:api
     build:
       context: .
@@ -35,6 +35,11 @@ services:
       - 4002
     volumes:
       - ./rails_api:/dock_api
+
+  sidekiq:
+    <<: *app_base
+    command: ['bundle', 'exec', 'sidekiq', '-c', '25']
+    ports: []
 
   app:
     image: litewarp/patent_pro:app
