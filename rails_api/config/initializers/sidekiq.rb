@@ -1,4 +1,4 @@
-
+require 'sidekiq/web'
 schedule_file = 'config/sidekiq.yml'
 
 sidekiq_config = { url: ENV['REDIS_URL'] }

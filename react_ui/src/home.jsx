@@ -6,26 +6,33 @@ import { connect } from "react-redux"
 import { bindActionCreators } from "redux"
 import { Box, Heading, FormField, TextInput } from "grommet"
 import { Search } from "grommet-icons"
-import { fetchPatentNumbers } from "./_redux/patentActions"
+import { createPatent, fetchPatentNumbers } from "./_redux/patentActions"
 
 const Home = ({
   fetchPatentNumbers,
+  createPatent,
   patentNumbers,
 }: {
+  createPatent: string => void,
   fetchPatentNumbers: (?string) => void,
   patentNumbers: Array<Object>,
 }) => {
   const [value, setValue] = React.useState("")
+  const suggestions = patentNumbers.map((pN, index) => pN.attributes.number)
 
   const handleChange = val => {
     setValue(val)
     fetchPatentNumbers(val)
   }
 
-  const suggestions = patentNumbers.map((pN, index) => pN.attributes.number)
+  const handleSelect = val => {
+    setValue(val)
+  }
 
-  const handleSelect = ({ currentTarget }: { currentTarget: {} }) => {
-    setValue(currentTarget.value)
+  const handleKeyPress = val => {
+    if (val === "Enter") {
+      createPatent(value)
+    }
   }
 
   return (
@@ -41,6 +48,7 @@ const Home = ({
           placeholder="e.g., 7629705"
           value={value}
           dropProps={{ height: "small" }}
+          onKeyPress={e => handleKeyPress(e.key)}
           onChange={e => handleChange(e.target.value)}
           onSelect={e => handleSelect(e.target.value)}
           suggestions={suggestions}
@@ -55,6 +63,7 @@ const mapState = ({ patent }) => ({
 })
 
 const mapDispatch = dispatch => ({
+  createPatent: bindActionCreators(createPatent, dispatch),
   fetchPatentNumbers: bindActionCreators(fetchPatentNumbers, dispatch),
 })
 

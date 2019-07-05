@@ -6,13 +6,13 @@ class Patent < ApplicationRecord
 
   # relationships
   has_one_attached :pdf
-  has_many :columns
+  has_many :columns, dependent: :destroy
 
   # validations
   validates :number, presence: true
   validates_uniqueness_of :number
 
-  def get_pdf
+  def fetch_pdf
     @pdf = URI.open(pdf_url)
   end
 
@@ -33,30 +33,25 @@ class Patent < ApplicationRecord
   end
 
   def ingest
-    get_pdf
-    puts 'Extracting Images'
+    fetch_pdf
     pdf_to_images
     start = find_columns_start(pdf_length)
     page_to_columns(start..pdf_length)
-    columns_to_lines(start..pdf_length)
   end
 
   def find_columns_start(length)
-    puts 'Locating Start of Columns'
     (1..length).each { |page| extract_page_tops(page) }
     pages = (1..length).find_index do |page|
       image_path = pdf_path("top_of_#{page}")
       docsplit_text("#{image_path}.tiff")
       lines = File.read(pdf_path("#{image_path}.txt")).split("\n")
-      lines.reject! {|x| x.blank? }
-      lines[1].match?(/^[^3-9a-zA-Z]+$/) if lines[1]
+      lines.reject!(&:blank?)
+      lines[1]&.match?(/^[^3-9a-zA-Z]+$/)
     end
-    puts pages + 1 if pages
-    pages ? pages + 1 : 1 #extract all if no start found
+    pages ? pages + 1 : 1 # extract all if no start found
   end
 
   def page_to_columns(range)
-    puts 'Trimming Borders and Splitting Pages in Half'
     range.each { |page| image_to_column(page, "#{basename}_#{page}.tiff") }
     save_columns(range)
   end
@@ -70,45 +65,12 @@ class Patent < ApplicationRecord
         image_path = pdf_path(filename)
         col = columns.create(number: counter)
         col.image.attach(io: File.open(image_path), filename: filename)
+        ColumnWorker.perform_async(col.id)
       end
     end
   end
 
-  def columns_to_text(range)
-    range.each do |page|
-      (0..1).each do |column|
-        filename = "page_#{page}_col_#{column}.tiff"
-        image_path = pdf_path(filename)
-        docsplit_text(image_path)
-      end
-    end
-    text_file = "page_#{page}_col_#{column}.txt"
+  def cleanup
+    CleanupWorker.perform_async
   end
-
-  def columns_to_lines(range)
-    puts 'Chopping Column into Lines'
-    new_column = 0
-    range.each do |page|
-      (0..1).each do |column|
-        new_column += 1
-        extract_lines(new_column, "page_#{page}_col_#{column}.tiff")
-      end
-    end
-    save_lines
-  end
-
-  def save_lines
-    columns.each do |column|
-      line_range = column.number.to_i.even? ? (1..67) : (0..66)
-      save_number =->(line) {column.number.to_i.even? ? line : line+1}
-      puts [column.number, line_range]
-      line_range.each do |line|
-        li = column.lines.create(number: save_number.call(line))
-        name = "col_#{column.number}_line_#{line}.jpg"
-        li.image.attach(io: File.open(pdf_path(name)), filename: name)
-      end
-    end
-    cleanup
-  end
-
 end

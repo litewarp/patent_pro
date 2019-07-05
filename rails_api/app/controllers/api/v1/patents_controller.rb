@@ -14,9 +14,11 @@ module Api
       end
 
       def create
+        puts params
         patent = PatentResource.build(params)
 
         if patent.save
+          PatentWorker.perform_async(patent.data.id)
           render jsonapi: patent, status: 201
         else
           render jsonapi_errors: patent

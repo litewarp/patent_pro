@@ -10,13 +10,17 @@ const {
   LOAD_REQUEST,
   LOAD_SUCCESS,
   LOAD_FAILURE,
+  CREATE_REQUEST,
+  CREATE_SUCCESS,
+  CREATE_FAILURE,
 } = actionRefs
 
 const initialState = {
+  error: [],
   patents: [],
   patentNumbers: [],
   loading: false,
-  loadingError: false,
+  apiError: false,
 }
 
 export const patentReducer = createReducer(initialState, {
@@ -30,7 +34,20 @@ export const patentReducer = createReducer(initialState, {
   [LOAD_FAILURE]: (state, action) => ({
     ...state,
     loading: false,
-    loadingError: true,
+    apiError: true,
+    error: action.payload.data,
+  }),
+  [CREATE_REQUEST]: (state, action) => ({ ...state, loading: true }),
+  [CREATE_SUCCESS]: (state, action) => ({
+    ...state,
+    loading: false,
+    patents: [...state.patents, action.payload.data],
+  }),
+  [CREATE_FAILURE]: (state, action) => ({
+    ...state,
+    loading: false,
+    apiError: true,
+    error: action.payload.data,
   }),
   [LOAD_NUMBERS_REQUEST]: (state, action) => ({
     ...state,
@@ -44,6 +61,7 @@ export const patentReducer = createReducer(initialState, {
   [LOAD_NUMBERS_FAILURE]: (state, action) => ({
     ...state,
     loading: false,
-    loadingError: true,
+    apiError: true,
+    error: action.payload.data,
   }),
 })

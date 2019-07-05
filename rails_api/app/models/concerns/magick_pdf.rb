@@ -15,9 +15,9 @@ module MagickPdf
       convert << pdf_path("page_#{page}_col_%d.tiff")
     end
   end
-  def extract_lines(col, file_name)
+  def extract_lines(col, file_path)
     MiniMagick::Tool::Convert.new do |convert|
-      convert << pdf_path(file_name)
+      convert << file_path
       convert.crop("0x67@")
       convert.repage.+
       convert.adjoin.+

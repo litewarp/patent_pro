@@ -5,6 +5,9 @@ import { RSAA } from "redux-api-middleware"
 const LOAD_REQUEST = "@patent/LOAD_REQUEST"
 const LOAD_SUCCESS = "@patent/LOAD_SUCCESS"
 const LOAD_FAILURE = "@patent/LOAD_FAILURE"
+const CREATE_REQUEST = "@patent/CREATE_REQUEST"
+const CREATE_SUCCESS = "@patent/CREATE_SUCCESS"
+const CREATE_FAILURE = "@patent/CREATE_FAILURE"
 const LOAD_NUMBERS_REQUEST = "@patent/LOAD_NUMBERS_REQUEST"
 const LOAD_NUMBERS_SUCCESS = "@patent/LOAD_NUMBERS_SUCCESS"
 const LOAD_NUMBERS_FAILURE = "@patent/LOAD_NUMBERS_FAILURE"
@@ -14,6 +17,23 @@ const baseURL = "http://localhost/api/v1"
 const patentsURL = baseURL + "/patents"
 const patentURL = id => patentsURL + "/" + id
 const jsonHeader = { "Content-Type": "application/vnd.api+json" }
+
+export const createPatent = (number: number) => ({
+  [RSAA]: {
+    endpoint: patentsURL,
+    method: "POST",
+    headers: jsonHeader,
+    types: [CREATE_REQUEST, CREATE_SUCCESS, CREATE_FAILURE],
+    body: JSON.stringify({
+      data: {
+        type: "patents",
+        attributes: {
+          number: number,
+        },
+      },
+    }),
+  },
+})
 
 export const fetchPatents = () => ({
   [RSAA]: {
@@ -49,4 +69,7 @@ export const actionRefs = {
   LOAD_REQUEST,
   LOAD_SUCCESS,
   LOAD_FAILURE,
+  CREATE_REQUEST,
+  CREATE_SUCCESS,
+  CREATE_FAILURE,
 }
