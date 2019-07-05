@@ -8,15 +8,16 @@ import { BrowserRouter as Router, Route, Link } from "react-router-dom"
 import Home from "../home"
 import List from "../patent"
 import Patent from "../column"
-import withLayout from "./withLayout"
+import Layout from "./withLayout"
+
 const Root = () => (
-  <Box fill pad="large" align="center">
-    <Router>
+  <Router>
+    <Layout>
       <Route exact path="/" component={Home} />
       <Route exact path="/patents" component={List} />
       <Route path="/patents/:id" component={Patent} />
-    </Router>
-  </Box>
+    </Layout>
+  </Router>
 )
 
-export default withLayout(Root)
+export default Root
