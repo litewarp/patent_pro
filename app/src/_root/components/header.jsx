@@ -3,15 +3,11 @@
 // @flow
 
 import * as React from "react"
-import { connect } from "react-redux"
-import { bindActionCreators } from "redux"
-import styled from "styled-components"
-import { Link } from "react-router-dom"
-import { Box, Heading, ResponsiveContext } from "grommet"
+import { Box } from "grommet"
 
 import { Brand, NavLinks } from "./_header"
 
-const Header = ({ size, path }: { size: string, path: string }) => {
+const Header = ({ size }: { size: string }) => {
   //helpers
   const DISPLAY_SMALL = size === "small"
   const DISPLAY_LARGE = size === "large"

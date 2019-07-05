@@ -5,6 +5,7 @@ import { Box, Grommet } from "grommet"
 import { Provider } from "react-redux"
 import { BrowserRouter as Router, Route, Link } from "react-router-dom"
 
+
 import Home from "../home"
 import List from "../patent"
 import Patent from "../column"
