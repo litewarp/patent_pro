@@ -2,7 +2,9 @@
 
 module MagickPdf
   extend ActiveSupport::Concern
-
+  def pdf_path(name)
+    Rails.root.join("tmp", "storage", name)
+  end
   def image_to_column(page, file_name)
     MiniMagick::Tool::Convert.new do |convert|
       convert << pdf_path(file_name)
@@ -15,6 +17,7 @@ module MagickPdf
       convert << pdf_path("page_#{page}_col_%d.tiff")
     end
   end
+
   def extract_lines(col, file_path)
     MiniMagick::Tool::Convert.new do |convert|
       convert << file_path

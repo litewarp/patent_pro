@@ -6,6 +6,8 @@ class ColumnWorker
   sidekiq_options lock: :until_executed
 
   def perform(column_id)
-    Column.find(column_id).extract_text
+    @column = Column.find(column_id)
+    @column.extract_text
+    @column.to_lines
   end
 end

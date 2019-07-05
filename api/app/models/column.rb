@@ -15,7 +15,7 @@ class Column < ApplicationRecord
   end
 
   def save_number(line)
-    number.to_i.even ? line : line + 1
+    number.to_i.even? ? line : line + 1
   end
 
   def create_line(number)
@@ -26,9 +26,9 @@ class Column < ApplicationRecord
     split_image
     line_range.each do |digit|
       line = create_line(number: save_number(digit))
-      line.attach_image
+      line.attach_image(digit)
+      LineWorker.perform_async(line.id)
     end
-    CleanupWorker.perform_async
   end
 
   def split_image

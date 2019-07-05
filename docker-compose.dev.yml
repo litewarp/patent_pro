@@ -23,7 +23,7 @@ services:
     image: litewarp/patent_pro:api
     build:
       context: .
-      dockerfile: ./rails_api/Dockerfile.dev
+      dockerfile: ./api/Dockerfile.dev
     depends_on:
       - db
       - redis
@@ -34,7 +34,7 @@ services:
     ports:
       - 4002
     volumes:
-      - ./rails_api:/dock_api
+      - ./api:/dock_api
 
   sidekiq:
     <<: *app_base
@@ -45,18 +45,18 @@ services:
     image: litewarp/patent_pro:app
     build:
       context: .
-      dockerfile: ./react_ui/Dockerfile.dev
+      dockerfile: ./app/Dockerfile.dev
     environment:
       - NODE_ENV=development
     ports:
       - 3000
     volumes:
-      - ./react_ui:/dock_app
+      - ./app:/dock_app
 
   web:
     image: litewarp/patent_pro:web
     build:
       context: .
-      dockerfile: ./nginx/Dockerfile
+      dockerfile: ./web/Dockerfile
     ports:
       - 80:8001
