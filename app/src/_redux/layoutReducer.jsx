@@ -14,8 +14,10 @@ export const layoutReducer = createReducer(initialState, {
   [CREATE_TOAST]: (state, action) => ({
     toasts: [...state.toasts, action.payload],
   }),
-  [DELETE_TOAST]: (state, action) => ({
-    ...state,
-    toasts: state.toasts.filter(toast => toast.id !== action.payload),
-  }),
+  [DELETE_TOAST]: (state, action) => {
+    return {
+      ...state,
+      toasts: state.toasts.filter(toast => toast.id !== action.payload),
+    }
+  },
 })

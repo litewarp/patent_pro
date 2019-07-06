@@ -6,11 +6,16 @@ import { bindActionCreators } from "redux"
 import { Grommet, Box, ResponsiveContext, Button } from "grommet"
 import { ToastContainer } from "react-toastify"
 import theme from "./theme"
+import "react-toastify/dist/ReactToastify.min.css"
 // Components
 import Header from "./components/header"
 import Footer from "./components/footer"
 import styled from "styled-components"
 import { newToast } from "../_redux/layoutActions"
+
+const StylishToast = styled(ToastContainer)`
+  margin-top: 100px;
+`
 
 const Layout = ({
   children,
@@ -18,35 +23,21 @@ const Layout = ({
 }: {
   children: React.AbstractComponent<{}>,
   newToast: string => void,
-}) => {
-  return (
-    <Grommet theme={theme} full>
-      <ResponsiveContext.Consumer>
-        {size => (
-          <Box fill alignContent="center">
-            <Header size={size} />
-            <ToastContainer autoClose={2000} />
-            <Box pad="small" fill align="center">
-              <Button label="click me!" onClick={() => newToast("toasty!")} />
-              {children}
-            </Box>
-            <Footer size={size} />
+}) => (
+  <Grommet theme={theme} full>
+    <ResponsiveContext.Consumer>
+      {size => (
+        <Box fill alignContent="center">
+          <Header size={size} />
+          <StylishToast />
+          <Box pad="small" fill align="center">
+            {children}
           </Box>
-        )}
-      </ResponsiveContext.Consumer>
-    </Grommet>
-  )
-}
+          <Footer size={size} />
+        </Box>
+      )}
+    </ResponsiveContext.Consumer>
+  </Grommet>
+)
 
-const mapState = ({ layout }) => ({
-  toasts: layout.toasts,
-})
-
-const mapDispatch = dispatch => ({
-  newToast: bindActionCreators(newToast, dispatch),
-})
-
-export default connect(
-  mapState,
-  mapDispatch,
-)(Layout)
+export default Layout

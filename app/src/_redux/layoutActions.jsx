@@ -6,25 +6,25 @@ import { toast } from "react-toastify"
 const CREATE_TOAST = "@layout/CREATE_TOAST"
 const DELETE_TOAST = "@layout/DELETE_TOAST"
 
-export const newToast = msg => {
-  const makeToasty = text => ({
+export const newToast = (msg: string) => {
+  const makeToast = ({ msg, id }) => ({
     type: CREATE_TOAST,
-    payload: text,
+    payload: { msg: msg, id: id },
   })
   return dispatch => {
-    dispatch(makeToasty(msg))
-    toast.success(msg)
+    const id = toast.success(msg)
+    dispatch(makeToast({ msg, id }))
   }
 }
 
-export const deleteToast = msg => {
-  const makeToasty = text => ({
-    type: CREATE_TOAST,
-    payload: text,
+export const deleteToast = id => {
+  const noToast = id => ({
+    type: DELETE_TOAST,
+    payload: id,
   })
   return dispatch => {
-    dispatch(makeToasty(msg))
-    toast.success(msg)
+    dispatch(noToast(id))
+    toast.dismiss(id)
   }
 }
 

@@ -1,6 +1,7 @@
 /** @format */
 
 import { RSAA } from "redux-api-middleware"
+import { toast } from "react-toastify"
 
 const LOAD_REQUEST = "@patent/LOAD_REQUEST"
 const LOAD_SUCCESS = "@patent/LOAD_SUCCESS"
@@ -23,7 +24,28 @@ export const createPatent = (number: number) => ({
     endpoint: patentsURL,
     method: "POST",
     headers: jsonHeader,
-    types: [CREATE_REQUEST, CREATE_SUCCESS, CREATE_FAILURE],
+    types: [
+      {
+        type: CREATE_REQUEST,
+        payload: (action, state) => {
+          toast.info("Creating Patent")
+        },
+      },
+      {
+        type: CREATE_SUCCESS,
+        payload: (action, state, res) => {
+          toast.success("Patent Created!")
+          return res
+        },
+      },
+      {
+        type: CREATE_FAILURE,
+        payload: (action, state, res) => {
+          toast.error("Creation Failed")
+          return res
+        },
+      },
+    ],
     body: JSON.stringify({
       data: {
         type: "patents",
