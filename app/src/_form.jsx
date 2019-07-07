@@ -3,7 +3,7 @@
 
 import React from "react"
 import { Formik, ErrorMessage } from "formik"
-import { Box, Form, FormField, TextInput, Button } from "grommet"
+import { Box, Form, FormField, Heading, TextInput, Button } from "grommet"
 import * as Yup from "yup"
 import { Search, Send } from "grommet-icons"
 
@@ -28,7 +28,7 @@ const numberSchema = Yup.object().shape({
     .required("A Valid Patent Number is Required"),
 })
 
-const PatentNumberForm = ({
+const PatentForm = ({
   // redux
   options,
   createPatent,
@@ -61,25 +61,24 @@ const PatentNumberForm = ({
     }: FormikBag) => {
       return (
         <Form>
-          <Box align="center" fill={{ horizontal: true }} gap="large">
-            <Box direction="row" align="center" gap="medium">
-              <TextInput
-                type="search"
-                placeholder="e.g., 7629705"
-                onChange={ev => {
-                  fetchPatentNumbers(ev.target.value)
-                  setFieldValue("patentNumber", ev.target.value)
-                }}
-                onSelect={ev => {
-                  setFieldValue("patentNumber", ev.currentTarget.innerText)
-                }}
-                onBlur={() => setFieldTouched("patentNumber", true)}
-                onKeyPress={ev => (ev.key === "Enter" ? handleSubmit() : null)}
-                value={values.patentNumber}
-                name="patentNumber"
-                suggestions={options}
-              />
-            </Box>
+          <Box align="center" fill={{ horizontal: true }} gap="small">
+            <Heading level={4}>Enter a US Patent Number</Heading>
+            <TextInput
+              type="search"
+              placeholder="e.g., 7629705"
+              onChange={ev => {
+                fetchPatentNumbers(ev.target.value)
+                setFieldValue("patentNumber", ev.target.value)
+              }}
+              onSelect={ev => {
+                setFieldValue("patentNumber", ev.currentTarget.innerText)
+              }}
+              onBlur={() => setFieldTouched("patentNumber", true)}
+              onKeyPress={ev => (ev.key === "Enter" ? handleSubmit() : null)}
+              value={values.patentNumber}
+              name="patentNumber"
+              suggestions={options}
+            />
             <ErrorMessage name="patentNumber" component="div" />
             <Button icon={<Send />} type="submit" gap="medium" label="Submit" />
           </Box>
@@ -88,4 +87,4 @@ const PatentNumberForm = ({
     }}
   />
 )
-export default PatentNumberForm
+export default PatentForm

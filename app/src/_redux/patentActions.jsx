@@ -6,6 +6,9 @@ import { toast } from "react-toastify"
 const LOAD_REQUEST = "@patent/LOAD_REQUEST"
 const LOAD_SUCCESS = "@patent/LOAD_SUCCESS"
 const LOAD_FAILURE = "@patent/LOAD_FAILURE"
+const LOAD_ALL_REQUEST = "@patent/LOAD_ALL_REQUEST"
+const LOAD_ALL_SUCCESS = "@patent/LOAD_ALL_SUCCESS"
+const LOAD_ALL_FAILURE = "@patent/LOAD_ALL_FAILURE"
 const CREATE_REQUEST = "@patent/CREATE_REQUEST"
 const CREATE_SUCCESS = "@patent/CREATE_SUCCESS"
 const CREATE_FAILURE = "@patent/CREATE_FAILURE"
@@ -18,6 +21,19 @@ const baseURL = "http://localhost/api/v1"
 const patentsURL = baseURL + "/patents"
 const patentURL = id => patentsURL + "/" + id
 const jsonHeader = { "Content-Type": "application/vnd.api+json" }
+
+export const loadPatent = (number: number) => ({
+  [RSAA]: {
+    endpoint: patentURL(number),
+    method: "GET",
+    headers: jsonHeader,
+    types: [
+      { type: LOAD_REQUEST, payload: req => req },
+      LOAD_SUCCESS,
+      LOAD_FAILURE,
+    ],
+  },
+})
 
 export const createPatent = (number: number) => ({
   [RSAA]: {
@@ -63,9 +79,9 @@ export const fetchPatents = () => ({
     method: "GET",
     headers: jsonHeader,
     types: [
-      { type: LOAD_REQUEST, payload: req => req },
-      LOAD_SUCCESS,
-      LOAD_FAILURE,
+      { type: LOAD_ALL_REQUEST, payload: req => req },
+      LOAD_ALL_SUCCESS,
+      LOAD_ALL_FAILURE,
     ],
   },
 })
@@ -91,6 +107,9 @@ export const actionRefs = {
   LOAD_REQUEST,
   LOAD_SUCCESS,
   LOAD_FAILURE,
+  LOAD_ALL_REQUEST,
+  LOAD_ALL_SUCCESS,
+  LOAD_ALL_FAILURE,
   CREATE_REQUEST,
   CREATE_SUCCESS,
   CREATE_FAILURE,

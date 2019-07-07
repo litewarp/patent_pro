@@ -2,10 +2,7 @@
 // @flow
 
 import { RSAA } from "redux-api-middleware"
-
-const LOAD_REQUEST = "@column/LOAD_REQUEST"
-const LOAD_SUCCESS = "@column/LOAD_SUCCESS"
-const LOAD_FAILURE = "@column/LOAD_FAILURE"
+import { loadPatent } from "./patentActions.jsx"
 const LOAD_LINES_REQUEST = "@column/LOAD_LINES_REQUEST"
 const LOAD_LINES_SUCCESS = "@column/LOAD_LINES_SUCCESS"
 const LOAD_LINES_FAILURE = "@column/LOAD_LINES_FAILURE"
@@ -13,7 +10,7 @@ const SIDELOAD_REQUEST = "@column/SIDELOAD_REQUEST"
 const SIDELOAD_SUCCESS = "@column/SIDELOAD_SUCCESS"
 const SIDELOAD_FAILURE = "@column/SIDELOAD_REQUEST"
 const NEW_ERROR = "@column/NEW_ERROR"
-const SET_ACTIVECOLUMN = "@column/SET_ACTIVECOLUMN"
+const SET_ACTIVE_COLUMN = "@column/SET_ACTIVE_COLUMN"
 
 // API VARIABLES
 const baseURL = "http://localhost/api/v1"
@@ -21,21 +18,8 @@ const patentsURL = baseURL + "/patents"
 const patentURL = id => patentsURL + "/" + id
 const jsonHeader = { "Content-Type": "application/vnd.api+json" }
 
-export const loadData = ({ activePatent }: { activePatent: number }) => ({
-  [RSAA]: {
-    endpoint: patentURL(activePatent),
-    method: "GET",
-    headers: jsonHeader,
-    types: [
-      { type: LOAD_REQUEST, payload: req => req },
-      LOAD_SUCCESS,
-      LOAD_FAILURE,
-    ],
-  },
-})
-
 export const setActiveColumn = (column: number) => ({
-  type: SET_ACTIVECOLUMN,
+  type: SET_ACTIVE_COLUMN,
   payload: column,
 })
 
@@ -78,7 +62,7 @@ export const fetchColumns = ({
       : "http://localhost/" + splitUrl.join("/")
   }
   return (dispatch: ({}) => void, getState: () => void) => {
-    dispatch(loadData({ activePatent }))
+    dispatch(loadPatent({ activePatent }))
       .then(res => {
         const prefix = "http://"
         const newState = getState()
@@ -94,19 +78,15 @@ export const fetchColumns = ({
 }
 
 export const actions = {
-  loadData,
   sideloadRequest,
 }
 
 export const actionRefs = {
-  LOAD_REQUEST,
-  LOAD_SUCCESS,
-  LOAD_FAILURE,
   SIDELOAD_REQUEST,
   SIDELOAD_SUCCESS,
   SIDELOAD_FAILURE,
   LOAD_LINES_REQUEST,
   LOAD_LINES_SUCCESS,
   LOAD_LINES_FAILURE,
-  SET_ACTIVECOLUMN,
+  SET_ACTIVE_COLUMN,
 }

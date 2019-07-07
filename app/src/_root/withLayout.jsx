@@ -17,22 +17,14 @@ const StylishToast = styled(ToastContainer)`
   margin-top: 100px;
 `
 
-const Layout = ({
-  children,
-  newToast,
-}: {
-  children: React.AbstractComponent<{}>,
-  newToast: string => void,
-}) => (
+const Layout = ({ children }: { children: React.AbstractComponent<{}> }) => (
   <Grommet theme={theme} full>
     <ResponsiveContext.Consumer>
       {size => (
         <Box fill alignContent="center">
           <Header size={size} />
           <StylishToast />
-          <Box pad="small" fill align="center">
-            {children}
-          </Box>
+          {children}
           <Footer size={size} />
         </Box>
       )}

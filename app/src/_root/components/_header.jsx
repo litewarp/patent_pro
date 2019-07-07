@@ -41,7 +41,7 @@ export const HeaderNav = ({
   children?: {},
 }) => (
   <LinkNoStyle to={path}>
-    <HeaderLink color="dark-2" level={3}>
+    <HeaderLink color="light-2" level={3}>
       {label}
       {children}
     </HeaderLink>
@@ -60,9 +60,9 @@ export const Brand = ({ DISPLAY_SMALL }: { DISPLAY_SMALL: boolean }) => (
       margin={{ horizontal: "small" }}
       size={DISPLAY_SMALL ? "medium" : "large"}
       level={2}
-      color={DISPLAY_SMALL ? "neutral-2" : "neutral-3"}
+      color={DISPLAY_SMALL ? "neutral-2" : "light-3"}
     >
-      SETHI P.C.
+      PATENT PRO
     </BrandHeading>
   </BrandLink>
 )

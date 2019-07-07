@@ -9,12 +9,11 @@ import { Box, Heading, Button, Anchor } from "grommet"
 import {
   fetchColumns,
   fetchLines,
-  fetchPatents,
   setActiveColumn,
 } from "./_redux/columnActions"
-import ColumnTable from "./Table"
+import ColumnTable from "./table"
 
-const Patent = ({
+const ActiveColumn = ({
   activePatent,
   activeColumn,
   columns,
@@ -24,9 +23,10 @@ const Patent = ({
   fetchColumns,
   fetchPatents,
   fetchLines,
+  patents,
   setActiveColumn,
 }: {
-  activePatent: number,
+  activePatent: { id: number },
   activeColumn: number,
   columns: Array<Object>,
   lines: Array<Object>,
@@ -36,6 +36,7 @@ const Patent = ({
     },
   },
   loading: boolean,
+  patents: Array<{}>,
   fetchColumns: ({}) => void,
   fetchLines: number => void,
   fetchPatents: () => void,
@@ -50,8 +51,8 @@ const Patent = ({
   }
 
   useEffect(() => {
-    fetchColumns({ activePatent: match.params.id })
-  }, [])
+    fetchColumns(activePatent.id)
+  }, [activePatent])
 
   return (
     <>
@@ -83,10 +84,11 @@ const Patent = ({
   )
 }
 
-const mapState = ({ column }) => ({
+const mapState = ({ column, patent }) => ({
   activePatent: column.activePatent,
   activeColumn: column.activeColumn,
   columns: column.columns,
+  patents: patent.patents,
   lines: column.lines,
   loading: column.loading,
 })
@@ -101,4 +103,4 @@ const mapDispatch = dispatch => ({
 export default connect(
   mapState,
   mapDispatch,
-)(Patent)
+)(ActiveColumn)

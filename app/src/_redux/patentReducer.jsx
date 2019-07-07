@@ -7,6 +7,9 @@ const {
   LOAD_NUMBERS_REQUEST,
   LOAD_NUMBERS_SUCCESS,
   LOAD_NUMBERS_FAILURE,
+  LOAD_ALL_REQUEST,
+  LOAD_ALL_SUCCESS,
+  LOAD_ALL_FAILURE,
   LOAD_REQUEST,
   LOAD_SUCCESS,
   LOAD_FAILURE,
@@ -24,12 +27,23 @@ const initialState = {
 }
 
 export const patentReducer = createReducer(initialState, {
-  //getAllPatent
+  [LOAD_ALL_REQUEST]: (state, action) => ({ ...state, loading: true }),
+  [LOAD_ALL_SUCCESS]: (state, action) => ({
+    ...state,
+    loading: false,
+    patents: action.payload.data,
+  }),
+  [LOAD_ALL_FAILURE]: (state, action) => ({
+    ...state,
+    loading: false,
+    apiError: true,
+    error: action.payload.data,
+  }),
   [LOAD_REQUEST]: (state, action) => ({ ...state, loading: true }),
   [LOAD_SUCCESS]: (state, action) => ({
     ...state,
     loading: false,
-    patents: action.payload.data,
+    activePatent: action.payload.data,
   }),
   [LOAD_FAILURE]: (state, action) => ({
     ...state,

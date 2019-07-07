@@ -12,7 +12,7 @@ const {
   SIDELOAD_REQUEST,
   SIDELOAD_SUCCESS,
   SIDELOAD_FAILURE,
-  SET_ACTIVECOLUMN,
+  SET_ACTIVE_COLUMN,
 } = actionRefs
 
 const initialState = {
@@ -64,7 +64,7 @@ export const columnReducer = createReducer(initialState, {
     loading: false,
     loadingError: true,
   }),
-  [SET_ACTIVECOLUMN]: (state, action) => ({
+  [SET_ACTIVE_COLUMN]: (state, action) => ({
     ...state,
     activeColumn: action.payload,
   }),
