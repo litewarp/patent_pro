@@ -8,5 +8,4 @@ class PatentResource < ApplicationResource
       Patent.where('number ~* ?', value[0].to_s)
     end
   end
-
 end

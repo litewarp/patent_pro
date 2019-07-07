@@ -1,9 +1,6 @@
 class Patent < ApplicationRecord
   # modules
-  include ExtractText
   include PdfSplit
-  include MagickPdf
-  include PtoText
 
   # relationships
   has_one_attached :pdf
@@ -13,52 +10,49 @@ class Patent < ApplicationRecord
   validates :number, presence: true
   validates_uniqueness_of :number
 
-  def fetch_pdf
+  def init_parser
+    @number = number
     @pdf = URI.open(pdf_url)
-  end
-
-
-  def pdf_url
-    pat_number = number
-    pat2pdf_url = "http://pat2pdf.org/pat2pdf/foo.pl?number=#{pat_number}"
-    doc = Nokogiri::HTML(URI.open(pat2pdf_url))
-    path = doc.css('div#content').at('li>a').attributes['href'].value
-    "http://pat2pdf.org#{path}"
-  end
-
-  def basename
-    File.basename(@pdf.path)
+    @basename = File.basename(@pdf.path)
+    @pdf_length = Docsplit.extract_length([@pdf.path])
   end
 
   def pdf_path(name)
     Rails.root.join('tmp', 'storage', name)
   end
 
-  def ingest
-    fetch_pdf
-    pdf_to_images
-    start = find_columns_start(pdf_length)
-    page_to_columns(start..pdf_length)
+  def pdf_url
+    pat_url = "http://pat2pdf.org/pat2pdf/foo.pl?number=#{@number}"
+    doc = Nokogiri::HTML(URI.open(pat_url))
+    path = doc.css('div#content').at('li>a').attributes['href'].value
+    "http://pat2pdf.org#{path}"
   end
 
-  def find_columns_start(length)
-    (1..length).each { |page| extract_page_tops(page) }
-    pages = (1..length).find_index do |page|
+  def ingest
+    init_parser
+    pdf_to_images
+    start = find_columns_start
+    page_to_columns(start..@pdf_length)
+  end
+
+  def find_columns_start
+    (1..@pdf_length).each do |page|
+      extract_page_tops(page, pdf_path("#{@basename}_#{page}.tiff"))
+    end
+    pages = (1..@pdf_length).find_index do |page|
       image_path = pdf_path("top_of_#{page}")
       docsplit_text("#{image_path}.tiff")
       lines = File.read(pdf_path("#{image_path}.txt")).split("\n")
       lines.reject!(&:blank?)
-      lines[1]&.match?(/^[^3-9a-zA-Z]+$/)
+      lines[1]&.match?(/^[^3-9a-zA-Z]{1,6}$/)
     end
     pages ? pages + 1 : 1 # extract all if no start found
   end
 
   def page_to_columns(range)
-    range.each { |page| image_to_column(page, "#{basename}_#{page}.tiff") }
-    save_columns(range)
-  end
-
-  def save_columns(range)
+    range.each do |page|
+      image_to_column(page, pdf_path("#{@basename}_#{page}.tiff"))
+    end
     counter = 0
     range.each do |page|
       (0..1).each do |column|
@@ -74,5 +68,28 @@ class Patent < ApplicationRecord
 
   def cleanup
     CleanupWorker.perform_async
+  end
+
+  def pto_search_url
+    "http://patft.uspto.gov/netahtml/PTO/srchnum.htm"
+  end
+
+  def submit_pto_form
+    agent = Mechanize.new
+    page = agent.get(pto_search_url)
+    form = page.form('search_pat')
+    field = form.field_with(:name => "TERM1")
+    field.value = @number
+    refresh_path = agent.submit(form).meta_refresh.first.uri.to_s
+    agent.get("http://patft.uspto.gov"+refresh_path)
+  end
+
+  def get_pto_text
+    patent_page = submit_pto_form
+    html = patent_page.css("coma > coma").to_html
+    sections = html.split("<center>")
+    search = sections.select { |x| x.start_with? "<b><i>Description" }
+    text = search.first.gsub("<br>", "") if !sections.empty?
+    text ? self.update(text: text) : nil
   end
 end

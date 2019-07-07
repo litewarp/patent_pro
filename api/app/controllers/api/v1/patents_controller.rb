@@ -14,10 +14,10 @@ module Api
       end
 
       def create
-        patent = PatentResource.build(params)
-        if patent.save
-          render jsonapi: patent, status: 201
-          PatentWorker.perform_async(patent.data.id)
+        resource = PatentResource.build(params)
+        if resource.save
+          render jsonapi: resource, status: 201
+          PatentWorker.perform_async(resource.data.id)
         else
           render jsonapi_errors: patent
         end
