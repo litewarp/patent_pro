@@ -25,7 +25,4 @@ module ExtractText
     Rails.root.join("tmp", "storage", name)
   end
 
-  def basename
-    File.basename(@file.path)
-  end
 end

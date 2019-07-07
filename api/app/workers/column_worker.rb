@@ -7,7 +7,6 @@ class ColumnWorker
 
   def perform(column_id)
     @column = Column.find(column_id)
-    @column.extract_text
     @column.to_lines
   end
 end

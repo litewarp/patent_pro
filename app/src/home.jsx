@@ -25,7 +25,7 @@ const Home = ({
 }) => (
   <Grid
     fill
-    rows={["small", "auto"]}
+    rows={[["small", "medium"], "auto"]}
     columns={["1/4", "3/4"]}
     areas={[
       { name: "form", start: [0, 0], end: [0, 0] },

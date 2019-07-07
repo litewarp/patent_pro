@@ -14,9 +14,6 @@ class Line < ApplicationRecord
     name = "col_#{self.column.number}_line_#{digit}.jpg"
     file_path = Rails.root.join("tmp", "storage", name)
     attached = self.image.attach(io: File.open(file_path), filename: name)
-    if attached
-      LineWorker.perform_async(self.id)
-    end
   end
 
 end

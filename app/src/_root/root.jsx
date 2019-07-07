@@ -23,7 +23,7 @@ const Root = () => (
     <Router>
       <ResponsiveContext.Consumer>
         {size => (
-          <Box alignContent="center">
+          <Box fill alignContent="center">
             <Header size={size} />
             <StylishToast />
             <Route exact path="/" component={Home} />

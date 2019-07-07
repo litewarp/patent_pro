@@ -22,9 +22,8 @@ type FormikBag = {
 }
 
 const numberSchema = Yup.object().shape({
-  patentNumber: Yup.number()
-    .lessThan(8, "Number must be 7 digits (for now)")
-    .moreThan(6, "Number must be 7 digits (for now)")
+  patentNumber: Yup.string()
+    .length(7, "Number must be 7 digits (for now)")
     .required("A Valid Patent Number is Required"),
 })
 

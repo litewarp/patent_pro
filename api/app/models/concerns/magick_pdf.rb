@@ -8,6 +8,7 @@ module MagickPdf
   def image_to_column(page, file_name)
     MiniMagick::Tool::Convert.new do |convert|
       convert << pdf_path(file_name)
+      convert.resize("50%")
       convert.trim
       convert.repage.+
       convert.chop("0x100")
