@@ -59,7 +59,6 @@ export const loadPatentAndColumns = (number: number) => {
   return dispatch => {
     dispatch(loadPatent(number))
       .then(res => {
-        console.log(res)
         const { columns } = res.payload.data.relationships
         dispatch(sideload(formatSideloadUrl(columns.links.related)))
       })
@@ -85,14 +84,14 @@ export const createPatent = (number: number) => ({
         type: CREATE_SUCCESS,
         payload: (action, state, res) => {
           toast.success("Patent Created!")
-          return res
+          return res.json()
         },
       },
       {
         type: CREATE_FAILURE,
         payload: (action, state, res) => {
           toast.error("Creation Failed")
-          return res
+          return res.json()
         },
       },
     ],

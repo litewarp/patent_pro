@@ -3,6 +3,7 @@ class Patent < ApplicationRecord
   include ExtractText
   include PdfSplit
   include MagickPdf
+  include PtoText
 
   # relationships
   has_one_attached :pdf

@@ -14,17 +14,10 @@ module Api
       end
 
       def create
-        check_for_pdf = lambda do |pat_number|
-          pat2pdf_url = "http://pat2pdf.org/pat2pdf/foo.pl?number=#{pat_number}"
-          doc = Nokogiri::HTML(URI.open(pat2pdf_url))
-          doc.css('div#content').at('li>a').attributes['href'].value
-        end
-        puts check_for_pdf(params[:number])
         patent = PatentResource.build(params)
-
         if patent.save
-          PatentWorker.perform_async(patent.data.id)
           render jsonapi: patent, status: 201
+          PatentWorker.perform_async(patent.data.id)
         else
           render jsonapi_errors: patent
         end
