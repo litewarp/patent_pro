@@ -4,6 +4,7 @@ module ExtractText
 
   def extract_text
     @file = File.open(blob_path)
+    basename = File.basename(@file.path)
     if image.attached?
       Docsplit.extract_text(
         [@file.path],

@@ -10,7 +10,7 @@ default: &default
   host: db
   username: postgres
   password:
-  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 20 } %>
+  pool: 25
   timeout: 5000
 
 development:

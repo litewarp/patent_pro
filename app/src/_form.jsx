@@ -59,7 +59,7 @@ const PatentForm = ({
       isSubmitting,
     }: FormikBag) => {
       return (
-        <Form>
+        <Form onSubmit={handleSubmit}>
           <Box
             align="center"
             gap="small"

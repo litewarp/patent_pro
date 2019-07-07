@@ -17,6 +17,7 @@ class Patent < ApplicationRecord
     @pdf = URI.open(pdf_url)
   end
 
+
   def pdf_url
     pat_number = number
     pat2pdf_url = "http://pat2pdf.org/pat2pdf/foo.pl?number=#{pat_number}"
