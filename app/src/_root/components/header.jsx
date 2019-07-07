@@ -26,7 +26,7 @@ const Header = ({ size }: { size: string }) => {
         justify={DISPLAY_SMALL ? "start" : "between"}
       >
         <Brand DISPLAY_SMALL={DISPLAY_SMALL} />
-        {!DISPLAY_SMALL && <NavLinks />}
+        <NavLinks />
       </Box>
     </Box>
   )

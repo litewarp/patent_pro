@@ -5,7 +5,7 @@ import * as React from "react"
 import { connect } from "react-redux"
 import { bindActionCreators } from "redux"
 import { Box, Heading, Anchor } from "grommet"
-import { fetchPatents, loadPatent } from "./_redux/patentActions"
+import { fetchPatents, loadPatentAndColumns } from "./_redux/patentActions"
 import { BrowserRouter as Link } from "react-router-dom"
 import { toCommas } from "./_root/_helpers"
 
@@ -13,14 +13,14 @@ const PatentList = ({
   activePatent,
   patents,
   fetchPatents,
-  loadPatent,
+  loadPatentAndColumns,
 }: {
   activePatent: {
     id: number,
   },
   patents: Array<Object>,
   fetchPatents: () => void,
-  loadPatent: number => void,
+  loadPatentAndColumns: number => void,
 }) => {
   React.useEffect(() => {
     fetchPatents()
@@ -29,7 +29,7 @@ const PatentList = ({
   React.useEffect(() => {
     if (!activePatent || !activePatent.id) {
       if (patents[0] && patents[0].id) {
-        loadPatent(patents[0].attributes.number)
+        loadPatentAndColumns(patents[0].attributes.number)
       }
     }
   }, [patents[0]])
@@ -42,7 +42,7 @@ const PatentList = ({
           <Anchor
             key={`${i}_patent_${i}`}
             size="large"
-            href={`/patents/${p.attributes.number}`}
+            onClick={() => loadPatentAndColumns(p.attributes.number)}
             label={toCommas(p.attributes.number)}
           />
         ))}
@@ -56,7 +56,7 @@ const mapState = ({ patent }) => ({
 })
 
 const mapDispatch = dispatch => ({
-  loadPatent: bindActionCreators(loadPatent, dispatch),
+  loadPatentAndColumns: bindActionCreators(loadPatentAndColumns, dispatch),
   fetchPatents: bindActionCreators(fetchPatents, dispatch),
 })
 

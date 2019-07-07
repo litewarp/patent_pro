@@ -58,9 +58,9 @@ export const Brand = ({ DISPLAY_SMALL }: { DISPLAY_SMALL: boolean }) => (
   <BrandLink to="/">
     <BrandHeading
       margin={{ horizontal: "small" }}
-      size={DISPLAY_SMALL ? "medium" : "large"}
+      size="medium"
       level={2}
-      color={DISPLAY_SMALL ? "neutral-2" : "light-3"}
+      color="light-3"
     >
       PATENT PRO
     </BrandHeading>
