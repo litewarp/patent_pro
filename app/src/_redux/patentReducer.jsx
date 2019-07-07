@@ -4,6 +4,9 @@
 import { createReducer } from "redux-starter-kit"
 import { actionRefs } from "./patentActions"
 const {
+  SIDELOAD_REQUEST,
+  SIDELOAD_SUCCESS,
+  SIDELOAD_FAILURE,
   LOAD_NUMBERS_REQUEST,
   LOAD_NUMBERS_SUCCESS,
   LOAD_NUMBERS_FAILURE,
@@ -21,6 +24,7 @@ const {
 const initialState = {
   error: [],
   patents: [],
+  columns: [],
   patentNumbers: [],
   loading: false,
   apiError: false,
@@ -73,6 +77,21 @@ export const patentReducer = createReducer(initialState, {
     patentNumbers: action.payload.data,
   }),
   [LOAD_NUMBERS_FAILURE]: (state, action) => ({
+    ...state,
+    loading: false,
+    apiError: true,
+    error: action.payload.data,
+  }),
+  [SIDELOAD_REQUEST]: (state, action) => ({
+    ...state,
+    loading: true,
+  }),
+  [SIDELOAD_SUCCESS]: (state, action) => ({
+    ...state,
+    loading: false,
+    columns: action.payload.data,
+  }),
+  [SIDELOAD_FAILURE]: (state, action) => ({
     ...state,
     loading: false,
     apiError: true,

@@ -6,12 +6,10 @@ import { connect } from "react-redux"
 import { bindActionCreators } from "redux"
 import { LinkNext, LinkPrevious } from "grommet-icons"
 import { Box, Heading, Button, Anchor } from "grommet"
-import {
-  fetchColumns,
-  fetchLines,
-  setActiveColumn,
-} from "./_redux/columnActions"
+import { fetchLines, setActiveColumn } from "./_redux/columnActions"
+import { loadPatentAndColumns } from "./_redux/patentActions"
 import ColumnTable from "./table"
+import { toCommas } from "./_root/_helpers"
 
 const ActivePatent = ({
   activePatent,
@@ -20,8 +18,7 @@ const ActivePatent = ({
   loading,
   lines,
   match,
-  fetchColumns,
-  fetchPatents,
+  loadPatentAndColumns,
   fetchLines,
   patents,
   setActiveColumn,
@@ -37,7 +34,6 @@ const ActivePatent = ({
   },
   loading: boolean,
   patents: Array<{}>,
-  fetchColumns: ({}) => void,
   fetchLines: number => void,
   fetchPatents: () => void,
   setActiveColumn: number => void,
@@ -49,52 +45,68 @@ const ActivePatent = ({
     const results = columns.filter(col => col.attributes.number == number)
     return results && results[0] && results[0].id
   }
-  useEffect(() => {
-    fetchLines
-  }, [activePatent])
+
+  const patentNumberToLoad = match
+    ? match.params.id
+    : !activePatent
+    ? patents[0] && patents[0].attributes && patents[0].attributes.number
+    : null
+
+  React.useEffect(() => {
+    loadPatentAndColumns(patentNumberToLoad)
+  }, [patents[0]])
 
   return (
     <Box align="center">
-      <Heading level={2} pad="large">{`U.S. Patent No. ${activePatent &&
-        activePatent.attributes.number}`}</Heading>
+      <Heading level={2} margin="small">{`U.S. Patent No. ${activePatent &&
+        toCommas(activePatent.attributes.number)}`}</Heading>
       <Box
         direction="row"
         fill="horizontal"
         justify="between"
-        align="center"
+        margin="none"
         pad={{ horizontal: "large" }}
       >
         <Anchor
-          color="white"
+          color="dark-6"
           label="Previous Column"
           icon={<LinkPrevious />}
           onClick={() => setActiveColumn(downColumn(activeColumn))}
         />
-        <Heading level={3} pad="large">{`Column ${activeColumn}`}</Heading>
+        <Heading
+          margin="none"
+          level={4}
+          pad="large"
+        >{`Column ${activeColumn}`}</Heading>
         <Anchor
-          color="white"
+          color="dark-6"
           label="Next Column"
           icon={<LinkNext />}
           reverse={true}
           onClick={() => setActiveColumn(upColumn(activeColumn))}
         />
       </Box>
+      <ColumnTable
+        columnId={columnIdFor(activeColumn)}
+        activeColumn={activeColumn}
+        lines={lines}
+        fetchLines={fetchLines}
+      />
     </Box>
   )
 }
 
 const mapState = ({ column, patent }) => ({
   activePatent: patent.activePatent,
-  activeColumn: column.activeColumn,
-  columns: column.columns,
+  columns: patent.columns,
   patents: patent.patents,
   lines: column.lines,
+  activeColumn: column.activeColumn,
   loading: column.loading,
 })
 
 const mapDispatch = dispatch => ({
-  fetchPatents: bindActionCreators(fetchColumns, dispatch),
-  fetchColumns: bindActionCreators(fetchColumns, dispatch),
+  loadPatentAndColumns: bindActionCreators(loadPatentAndColumns, dispatch),
   fetchLines: bindActionCreators(fetchLines, dispatch),
   setActiveColumn: bindActionCreators(setActiveColumn, dispatch),
 })

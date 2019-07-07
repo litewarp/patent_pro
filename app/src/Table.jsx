@@ -30,6 +30,10 @@ const FixedImage = styled(Image)`
   height: 15px;
 `
 
+const NoLineHeightRow = styled(TableRow)`
+  line-height: 0em;
+`
+
 const ColumnTable = ({
   lines,
   columnId,
@@ -41,7 +45,7 @@ const ColumnTable = ({
   fetchLines: number => void,
 }) => {
   React.useEffect(() => {
-    fetchLines(columnId)
+    columnId && fetchLines(columnId)
   }, [columnId])
 
   return (
@@ -49,7 +53,7 @@ const ColumnTable = ({
       <Table caption="Column Table">
         <TableBody>
           {lines.map((line, index) => (
-            <TableRow key={line.id}>
+            <NoLineHeightRow key={line.id}>
               <TableCell>
                 <Text size="small">{index + 1}</Text>
               </TableCell>
@@ -59,7 +63,7 @@ const ColumnTable = ({
               <TableCell>
                 <Text size="small">{line.attributes.text}</Text>
               </TableCell>
-            </TableRow>
+            </NoLineHeightRow>
           ))}
         </TableBody>
       </Table>

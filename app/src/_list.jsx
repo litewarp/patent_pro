@@ -7,6 +7,7 @@ import { bindActionCreators } from "redux"
 import { Box, Heading, Anchor } from "grommet"
 import { fetchPatents, loadPatent } from "./_redux/patentActions"
 import { BrowserRouter as Link } from "react-router-dom"
+import { toCommas } from "./_root/_helpers"
 
 const PatentList = ({
   activePatent,
@@ -34,17 +35,18 @@ const PatentList = ({
   }, [patents[0]])
 
   return (
-    <Box align="center">
+    <>
       <Heading level={2}>Parsed Patents</Heading>
       {patents &&
         patents.map((p, i) => (
           <Anchor
+            key={`${i}_patent_${i}`}
             size="large"
             href={`/patents/${p.attributes.number}`}
-            label={p.attributes.number}
+            label={toCommas(p.attributes.number)}
           />
         ))}
-    </Box>
+    </>
   )
 }
 

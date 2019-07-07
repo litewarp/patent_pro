@@ -20,10 +20,6 @@ const Header = ({ size }: { size: string }) => {
       background="brand"
     >
       <Box
-        basis="1280px"
-        margin={{
-          left: DISPLAY_SMALL ? "0" : "50px",
-        }}
         direction="row"
         fill="horizontal"
         align="center"

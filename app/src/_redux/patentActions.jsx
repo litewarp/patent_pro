@@ -15,12 +15,21 @@ const CREATE_FAILURE = "@patent/CREATE_FAILURE"
 const LOAD_NUMBERS_REQUEST = "@patent/LOAD_NUMBERS_REQUEST"
 const LOAD_NUMBERS_SUCCESS = "@patent/LOAD_NUMBERS_SUCCESS"
 const LOAD_NUMBERS_FAILURE = "@patent/LOAD_NUMBERS_FAILURE"
-
-// API VARIABLES
+const SIDELOAD_REQUEST = "@patent/SIDELOAD_REQUEST"
+const SIDELOAD_SUCCESS = "@patent/SIDELOAD_SUCCESS"
+const SIDELOAD_FAILURE = "@patent/SIDELOAD_REQUEST"
+// API VARIABLES AND HELPERS
 const baseURL = "http://localhost/api/v1"
 const patentsURL = baseURL + "/patents"
 const patentURL = id => patentsURL + "/" + id
 const jsonHeader = { "Content-Type": "application/vnd.api+json" }
+const formatSideloadUrl = url => {
+  const splitUrl = url.split("/")
+  splitUrl.shift()
+  return process.env.NODE_ENV === "production"
+    ? "http://sethipc.com/" + splitUrl.join("/")
+    : "http://localhost/" + splitUrl.join("/")
+}
 
 export const loadPatent = (number: number) => ({
   [RSAA]: {
@@ -34,6 +43,31 @@ export const loadPatent = (number: number) => ({
     ],
   },
 })
+
+export const loadPatentAndColumns = (number: number) => {
+  const sideload = (link: string) => ({
+    [RSAA]: {
+      endpoint: link,
+      method: "GET",
+      types: [
+        { type: SIDELOAD_REQUEST, payload: req => req },
+        SIDELOAD_SUCCESS,
+        SIDELOAD_FAILURE,
+      ],
+    },
+  })
+  return dispatch => {
+    dispatch(loadPatent(number))
+      .then(res => {
+        console.log(res)
+        const { columns } = res.payload.data.relationships
+        dispatch(sideload(formatSideloadUrl(columns.links.related)))
+      })
+      .catch(res => {
+        toast.error(res.data)
+      })
+  }
+}
 
 export const createPatent = (number: number) => ({
   [RSAA]: {
@@ -110,6 +144,9 @@ export const actionRefs = {
   LOAD_ALL_REQUEST,
   LOAD_ALL_SUCCESS,
   LOAD_ALL_FAILURE,
+  SIDELOAD_REQUEST,
+  SIDELOAD_SUCCESS,
+  SIDELOAD_FAILURE,
   CREATE_REQUEST,
   CREATE_SUCCESS,
   CREATE_FAILURE,

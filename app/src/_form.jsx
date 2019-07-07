@@ -61,7 +61,11 @@ const PatentForm = ({
     }: FormikBag) => {
       return (
         <Form>
-          <Box align="center" fill={{ horizontal: true }} gap="small">
+          <Box
+            align="center"
+            gap="small"
+            pad={{ left: "small", right: "small" }}
+          >
             <Heading level={4}>Enter a US Patent Number</Heading>
             <TextInput
               type="search"
