@@ -1,8 +1,21 @@
 module MagickPixels
 
-  ### pixels[row_index][col_index] = [r,g,b] ###
+  def init
+    MiniMagick.configure do |config|
+      config.cli = :graphicsmagick
+      config.validate_on_create = false
+      config.validate_on_write = false
+    end
+  end
 
-  ### returns row_index of all white_rows ###
+  def open_file(uri)
+    @file = MiniMagick::Image.open(uri)
+  end
+
+  def handle_pdf(uri)
+    pdf = open_file(uri)
+    pdf.pages
+  end
 
   def prepare_image(file_path)
     @image = MiniMagick::Image.open(file_path)
@@ -10,9 +23,17 @@ module MagickPixels
   end
 
   def find_non_white_rows
+    you_is_white = lambda do |_row|
+      results = _row.collect { |_col| _col[0] != 255 }
+      not_white = results.select { |x| !x}.count
+      blackness = not_white / _row.count
+      blackness < 0.10
+    end
+
+
     rows = @pixels.collect.with_index do |row, row_index|
       # in grayscale, all 3 values are same, so comp to on [0]
-      row_index if row.find_index { |col| col[0] != 255 }
+      row_index if you_is_white.call(row)
     end
     rows.compact!
     rows
@@ -28,6 +49,7 @@ module MagickPixels
   def parse_this
     find_white_rows
     @non_white_rows.collect.with_index { |row, index| row+1 == @non_white_rows[index+1] }
+    ## also try white_rows
   end
 end
 
