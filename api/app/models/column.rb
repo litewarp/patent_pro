@@ -30,7 +30,7 @@ class Column < ApplicationRecord
   def to_lines
     extract_lines(self.number, blob_path)
     line_range.each do |digit|
-      line = create_line(number: save_number(digit))
+      line = create_line(save_number(digit))
       line.attach_image(digit)
       LineWorker.perform_async(line.id)
     end
