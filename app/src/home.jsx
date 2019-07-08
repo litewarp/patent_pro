@@ -8,7 +8,7 @@ import { Box, Heading, Form, FormField, TextInput, Text, Grid } from "grommet"
 import { createPatent, fetchPatentNumbers } from "./_redux/patentActions"
 import PatentForm from "./_form"
 import PatentList from "./_list"
-import ActivePatent from "./_patent"
+import ActivePatent from "./patent"
 
 const Home = ({
   match,
@@ -25,27 +25,23 @@ const Home = ({
 }) => (
   <Grid
     fill
-    rows={[["small", "medium"], "auto"]}
-    columns={["1/4", "3/4"]}
+    rows={["xxsmall", "xxsmall", "flex"]}
+    columns={[["small", "medium"], "flex"]}
     areas={[
-      { name: "form", start: [0, 0], end: [0, 0] },
-      { name: "list", start: [0, 1], end: [0, 1] },
-      { name: "main", start: [1, 0], end: [1, 1] },
+      { name: "side", start: [0, 0], end: [0, 2] },
+      { name: "head", start: [1, 0], end: [1, 0] },
+      { name: "main", start: [1, 1], end: [1, 2] },
     ]}
   >
-    <Box gridArea="form" background="light-6">
+    <Box gridArea="side" background="light-6" align="center">
       <PatentForm
         createPatent={createPatent}
         fetchPatentNumbers={fetchPatentNumbers}
         options={patentNumbers.map((pN, index) => pN.attributes.number)}
       />
-    </Box>
-    <Box pad="medium" align="center" gridArea="list" background="light-6">
       <PatentList />
     </Box>
-    <Box gridArea="main" background="light-1">
-      <ActivePatent />
-    </Box>
+    <ActivePatent />
   </Grid>
 )
 

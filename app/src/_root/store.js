@@ -18,6 +18,13 @@ if (process.env.NODE_ENV === "development") {
     enhancers.push(devToolsExtension())
   }
 }
+if (module.hot) {
+  module.hot.accept("./rootReducer", () => {
+    const nextRootReducer = require("./rootReducer")
+    const finalReducer = { ...nextRootReducer }
+    store.replaceReducer(finalReducer)
+  })
+}
 
 const composedEnhancers = compose(
   applyMiddleware(...middleware),

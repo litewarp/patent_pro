@@ -40,9 +40,9 @@ const PatentForm = ({
   <Formik
     validateOnChange={false}
     initialValues={{ patentNumber: "" }}
-    onSubmit={(values, { setSubmitting }) => {
+    onSubmit={(values, { resetForm }) => {
       createPatent(values.patentNumber)
-      setSubmitting(false)
+      resetForm()
     }}
     validationSchema={numberSchema}
     render={({
@@ -77,7 +77,6 @@ const PatentForm = ({
                 setFieldValue("patentNumber", ev.currentTarget.innerText)
               }}
               onBlur={() => setFieldTouched("patentNumber", true)}
-              onKeyPress={ev => (ev.key === "Enter" ? handleSubmit() : null)}
               value={values.patentNumber}
               name="patentNumber"
               suggestions={options}

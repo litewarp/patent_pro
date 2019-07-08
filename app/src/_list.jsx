@@ -36,7 +36,7 @@ const PatentList = ({
 
   return (
     <>
-      <Heading level={2}>Parsed Patents</Heading>
+      <Heading level={3}>Parsed Patents</Heading>
       {patents &&
         patents.map((p, i) => (
           <Anchor

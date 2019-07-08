@@ -11,7 +11,7 @@ const FooterNav = styled(Box)`
   opacity: 0.6;
 `
 
-const Footer = ({ size }: { size: string }) => (
+const Footer = () => (
   <FooterNav direction="row-reverse" background="dark-1" fluid>
     <Heading
       margin={{ top: ".25rem", bottom: "0", left: "0", right: "1.5rem" }}

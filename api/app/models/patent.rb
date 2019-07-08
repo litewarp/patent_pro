@@ -1,6 +1,5 @@
 class Patent < ApplicationRecord
   # modules
-  include PdfSplit
 
   # relationships
   has_one_attached :pdf
@@ -91,5 +90,46 @@ class Patent < ApplicationRecord
     search = sections.select { |x| x.start_with? "<b><i>Description" }
     text = search.first.gsub("<br>", "") if !sections.empty?
     text ? self.update(text: text) : nil
+  end
+
+  def image_to_column(page, file_path)
+    MiniMagick::Tool::Convert.new do |convert|
+      convert << file_path
+      convert.contrast.negate.trim.repage.+
+      convert.chop("0x100").trim.repage.+
+      convert.crop("2x0+35@").repage.+
+      convert << pdf_path("page_#{page}_col_%d.tiff")
+    end
+  end
+
+  def extract_page_tops(page, pdf_path)
+    MiniMagick::Tool::Convert.new do |convert|
+      convert << pdf_path
+      convert.trim.repage.+
+      convert.crop('100%x10%+0+0').repage.+.adjoin.+
+      convert << pdf_path("top_of_#{page}.tiff")
+    end
+  end
+
+  # outputs each page of PDF as tiff
+  def pdf_to_images
+    Docsplit.extract_images(
+      [@pdf.path],
+      density: '300',
+      format: 'tiff',
+      output: pdf_path('')
+    )
+  end
+
+  def cleanup
+    FileUtils.remove_dir(pdf_path(''))
+  end
+
+  def docsplit_text(path)
+    Docsplit.extract_text(
+      [path],
+      ocr: true,
+      output: pdf_path('')
+    )
   end
 end

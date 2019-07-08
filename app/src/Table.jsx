@@ -49,7 +49,12 @@ const ColumnTable = ({
   }, [columnId])
 
   return (
-    <Box align="center" pad="large">
+    <Box
+      fill
+      align="center"
+      margin="medium"
+      overflow={{ vertical: "scroll", horizontal: "hidden" }}
+    >
       <Table caption="Column Table">
         <TableBody>
           {lines.map((line, index) => (

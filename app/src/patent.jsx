@@ -10,7 +10,7 @@ import { fetchLines, setActiveColumn } from "./_redux/columnActions"
 import { loadPatentAndColumns } from "./_redux/patentActions"
 import ColumnTable from "./table"
 import { toCommas } from "./_root/_helpers"
-
+import styled from "styled-components"
 const ActivePatent = ({
   activePatent,
   activeColumn,
@@ -32,6 +32,7 @@ const ActivePatent = ({
       id: string,
     },
   },
+  loadPatentAndColumns: number => void,
   loading: boolean,
   patents: Array<{}>,
   fetchLines: number => void,
@@ -53,32 +54,35 @@ const ActivePatent = ({
     : null
 
   React.useEffect(() => {
-    loadPatentAndColumns(patentNumberToLoad)
+    patentNumberToLoad && loadPatentAndColumns(patentNumberToLoad)
   }, [patents[0]])
 
+  const commaNumber = activePatent && toCommas(activePatent.attributes.number)
+
+  const StyledAnchor = styled(Anchor)`
+    height: 24px;
+  `
+
   return (
-    <Box align="center">
-      <Heading level={2} margin="small">{`U.S. Patent No. ${activePatent &&
-        toCommas(activePatent.attributes.number)}`}</Heading>
+    <>
       <Box
+        pad="medium"
+        gridArea="head"
+        background="dark-3"
         direction="row"
-        fill="horizontal"
+        align="center"
         justify="between"
-        margin="none"
-        pad={{ horizontal: "large" }}
       >
-        <Anchor
+        <StyledAnchor
           color="dark-6"
           label="Previous Column"
           icon={<LinkPrevious />}
           onClick={() => setActiveColumn(downColumn(activeColumn))}
         />
-        <Heading
-          margin="none"
-          level={4}
-          pad="large"
-        >{`Column ${activeColumn}`}</Heading>
-        <Anchor
+        <Heading level={3} size="small" margin="none" pad="none">
+          {`Column ${activeColumn}`}
+        </Heading>
+        <StyledAnchor
           color="dark-6"
           label="Next Column"
           icon={<LinkNext />}
@@ -86,13 +90,14 @@ const ActivePatent = ({
           onClick={() => setActiveColumn(upColumn(activeColumn))}
         />
       </Box>
-      <ColumnTable
-        columnId={columnIdFor(activeColumn)}
-        activeColumn={activeColumn}
-        lines={lines}
-        fetchLines={fetchLines}
-      />
-    </Box>
+      <Box direction="row" gridArea="main">
+        <ColumnTable
+          lines={lines}
+          columnId={activeColumn}
+          fetchLines={fetchLines}
+        />
+      </Box>
+    </>
   )
 }
 

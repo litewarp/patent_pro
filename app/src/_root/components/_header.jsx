@@ -23,10 +23,13 @@ export const LinkNoStyle = styled(Link)`
     }
   }
 `
-const HeaderLink = styled(Heading)`
-  font-family: Gibbs, sans-serif;
+const PatentLink = styled(Heading)`
   font-weight: 600;
+`
+
+const HeaderLink = styled(PatentLink)`
   font-variant: all-small-caps;
+  font-family: Gibbs, sans-serif;
 `
 
 const BrandLink = styled(LinkNoStyle)``
@@ -45,6 +48,23 @@ export const HeaderNav = ({
       {label}
       {children}
     </HeaderLink>
+  </LinkNoStyle>
+)
+
+export const PatentNav = ({
+  path,
+  label,
+  children,
+}: {
+  path: string,
+  label: string,
+  children?: {},
+}) => (
+  <LinkNoStyle to={path}>
+    <PatentLink color="light-2" level={3}>
+      {label}
+      {children}
+    </PatentLink>
   </LinkNoStyle>
 )
 

@@ -5,6 +5,6 @@ class CleanupWorker
   sidekiq_options lock: :until_executed
 
   def perform
-    FileUtils.remove_dir(Rails.root.join("tmp", "storage))
+    FileUtils.remove_dir(Rails.root.join("tmp", "storage"))
   end
 end
