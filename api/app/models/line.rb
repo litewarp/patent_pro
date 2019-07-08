@@ -24,7 +24,7 @@ class Line < ApplicationRecord
     file_path = text_path("col_#{self.column.number}_line_#{self.number}_bordered")
     MiniMagick::Tool::Convert.new do |convert|
       convert << @file.path
-      convert.bordercolor("black").border("2x2")
+      convert.bordercolor("white").border("2x2")
       convert << "#{file_path}.jpg"
     end
     file_path
