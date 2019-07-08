@@ -95,7 +95,7 @@ class Patent < ApplicationRecord
   def image_to_column(page, file_path)
     MiniMagick::Tool::Convert.new do |convert|
       convert << file_path
-      convert.contrast.negate.trim.repage.+
+      convert.contrast.trim.repage.+
       convert.chop("0x100").trim.repage.+
       convert.crop("2x0+35@").repage.+
       convert << pdf_path("page_#{page}_col_%d.tiff")
