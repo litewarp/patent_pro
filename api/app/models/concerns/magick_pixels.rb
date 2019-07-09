@@ -1,30 +1,23 @@
 module MagickPixels
-
-
-
   # ImageMagick Wrapper
   class ImageHandler
     attr_reader :pixels
 
-    def initialize(uri)
-      MiniMagick.configure do |config|
-        config.cli = :graphicsmagick
-        config.validate_on_create = false
-        config.validate_on_write = false
-      end
-      @uri = uri
+    def initialize(col_id)
+      init_mini_magick
+      @active_column = Column.find(col_id)
+      @uri = @active_column.blob_path('master')
       extract_pixelmap
     end
 
     def extract_pixelmap
       @path = SecureRandom.uuid
       file_path = "tmp/mm/#{@path}.txt"
-      convert = MiniMagick::Tool::Convert.new
-      convert << @uri
-      convert.colorspace('Gray')
-      convert.depth(8)
-      convert << file_path
-      convert.call
+      MiniMagick::Tool::Convert.new do |convert|
+        convert << @uri
+        convert.colorspace('Gray').depth(8)
+        convert << file_path
+      end
       file = File.read(file_path)
       File.open("tmp/mm/#{@path}_min.txt", 'a') do |new_file|
         file.each_line do |line|
@@ -98,11 +91,29 @@ module MagickPixels
       convert = MiniMagick::Tool::Convert.new
       convert << @uri
       lines.each do |num|
-        convert << '-stroke' << 'black' << '-strokewidth' << '2'
+        convert << '-stroke' << 'red' << '-strokewidth' << '2'
         convert << '-draw' << "line 0,#{num} #{@col_count}, #{num}"
       end
       convert << "tmp/mm/#{@path}_lined.tiff"
       convert.call
+      save_lined_image
+    end
+
+    def save_lined_image
+      @active_column.lined_image.attach(
+        io: File.open("tmp/mm/#{@path}_lined.tiff"),
+        filename: "col-#{@active_column.number}-lined.tiff"
+      )
+    end
+
+    private
+
+    def init_mini_magick
+      MiniMagick.configure do |config|
+        config.cli = :graphicsmagick
+        config.validate_on_create = false
+        config.validate_on_write = false
+      end
     end
   end
 end

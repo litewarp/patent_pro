@@ -1,7 +1,9 @@
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the rails db:seed command (or created alongside the database with db:setup).
-#
-# Examples:
-#
-#   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
-#   Character.create(name: 'Luke', movie: movies.first)
+patent_numbers = %w[
+  7629705
+  9532330
+]
+
+patent_numbers.each do |num|
+  patent = Patent.create(number: num)
+  patent.save_columns
+end

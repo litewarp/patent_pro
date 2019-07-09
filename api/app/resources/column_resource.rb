@@ -1,4 +1,5 @@
 class ColumnResource < ApplicationResource
+  include Rails.application.routes.url_helpers
   # config
   self.default_page_size = 100
 
@@ -7,6 +8,13 @@ class ColumnResource < ApplicationResource
   attribute :number, :string
   attribute :text, :string
 
+  attribute :master_img_url, :string do
+    rails_blob_url(@object.master_image.attachment) if @object.master_image.attached?
+  end
+
+  attribute :lined_img_url, :string do
+    rails_blob_url(@object.lined_image.attachment) if @object.lined_image.attached?
+  end
   # relationships
   has_many :lines
   belongs_to :patent

@@ -4,24 +4,23 @@ module MagickPdfs
     def initialize(patent_num)
       init_magick
       @active_patent = Patent.find_by_number(patent_num)
-      @uuid = SecureRandom.uuid
       @file = URI.open(@active_patent.pdf_url)
       @basename = File.basename(@file.path)
       @pdf_length = Docsplit.extract_length([@file.path])
       @range = find_range
+      puts @range
     end
 
     def extract_columns
-      pdf_pages_to_tiff
       counter = 0
       @range.each do |num|
         split_pages(num)
         (0..1).each do |col|
           counter += 1
           column = @active_patent.columns.create(number: counter)
-          column.images.attach(
+          column.master_image.attach(
             io: File.open("tmp/mm/page_#{num}_col_#{col}.tiff"),
-            filename: "col-#{counter}.tiff"
+            filename: "col-#{counter}-master.tiff"
           )
         end
       end
@@ -39,7 +38,7 @@ module MagickPdfs
     end
 
     def find_range
-      pdf_pages_to_png
+      pdf_pages_to_tiff
       page_tops = extract_page_tops
       le_start = page_tops.find_index do |page|
         page.find_index do |line|
@@ -72,13 +71,12 @@ module MagickPdfs
     def extract_page_tops
       (1..@pdf_length).collect do |num|
         MiniMagick::Tool::Convert.new do |convert|
-          convert << "#{@png_path}_#{num}.png"
-          convert.trim.crop('100%x5%+0+0')
-          convert << '+repage'
-          convert << "tmp/mm/#{num}_top.jpg"
+          convert << "#{@tiff_path}_#{num}.tiff"
+          convert.merge! ['-trim', '+repage', '-crop', '100%x8%+0+0', '+repage']
+          convert << "tmp/mm/#{num}_top.tiff"
         end
         Docsplit.extract_text(
-          ["tmp/mm/#{num}_top.jpg"],
+          ["tmp/mm/#{num}_top.tiff"],
           ocr: true,
           output: 'tmp/mm/'
         )
@@ -88,10 +86,8 @@ module MagickPdfs
 
     def pdf_pages_to_tiff
       puts 'Extracting Tiffs'
-      puts @range
       Docsplit.extract_images(
         [@file.path],
-        pages: @range,
         density: '300',
         format: 'tiff',
         output: 'tmp/mm/'
@@ -102,7 +98,6 @@ module MagickPdfs
     def pdf_pages_to_png
       Docsplit.extract_images(
         [@file.path],
-        size: '50%',
         format: 'png',
         output: 'tmp/mm/'
       )

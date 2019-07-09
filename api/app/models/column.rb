@@ -1,14 +1,22 @@
 class Column < ApplicationRecord
   # modules
+  include MagickPixels
   include Rails.application.routes.url_helpers
 
   # relationships
   belongs_to :patent
   has_many :lines, dependent: :destroy
-  has_many_attached :images
+  has_one_attached :master_image
+  has_one_attached :lined_image
 
-  def blob_path
-    ActiveStorage::Blob.service.send(:path_for, image.key)
+  def blob_path(img_name)
+    blob_key = case img_name
+               when 'master'
+                 master_image.key
+               when 'lined'
+                 lined_image.key
+               end
+    ActiveStorage::Blob.service.send(:path_for, blob_key)
   end
 
   def line_range
@@ -46,10 +54,15 @@ class Column < ApplicationRecord
     end
   end
 
+  def save_lined_image
+    img = ImageHandler.new(id)
+    img.draw_lines
+  end
+
   def extract_text
     @file = File.open(blob_path)
     basename = File.basename(@file.path)
-    if image.attached?
+    if master.attached?
       Docsplit.extract_text(
         [@file.path],
         ocr: true,
