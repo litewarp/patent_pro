@@ -31,8 +31,8 @@ class Column < ApplicationRecord
     lines.create(number: number.to_s)
   end
 
-  def text_path(name)
-    Rails.root.join('tmp', 'storage', name)
+  def text_path(num, name)
+    Rails.root.join('tmp', 'storage', num.to_s, name)
   end
 
   def png_line(num)
@@ -45,7 +45,7 @@ class Column < ApplicationRecord
       lines.create(
         number: save_number(num),
         image: {
-          io: File.open(text_path(png_line(num))),
+          io: File.open(text_path(num, png_line(num))),
           filename: png_line(num)
         }
       )

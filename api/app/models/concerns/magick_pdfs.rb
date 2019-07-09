@@ -11,6 +11,10 @@ module MagickPdfs
       puts @range
     end
 
+    def working_path(num, name)
+      Rails.root.join("tmp", "mm", num.to_s, name)
+    end
+
     def extract_columns
       counter = 0
       @range.each do |num|
@@ -19,13 +23,12 @@ module MagickPdfs
           counter += 1
           column = @active_patent.columns.create(number: counter)
           column.master_image.attach(
-            io: File.open("tmp/mm/page_#{num}_col_#{col}.tiff"),
+            io: File.open(working_path(num, "page_#{num}_col_#{col}.tiff")),
             filename: "col-#{counter}-master.tiff"
           )
           ColumnWorker.perform_async(column.id)
         end
       end
-      FileUtils.rm_rf(Dir.glob('tmp/mm/*.*'), secure: true)
     end
 
     private
@@ -64,7 +67,7 @@ module MagickPdfs
         MiniMagick::Tool::Convert.new do |convert|
           convert << "#{@tiff_path}_#{num}.tiff"
           convert.merge! options
-          convert << "tmp/mm/page_#{num}_col_%d.tiff"
+          convert << working_path(num, "page_#{num}_col_%d.tiff")
         end
       end
     end
