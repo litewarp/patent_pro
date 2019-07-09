@@ -86,31 +86,4 @@ class Patent < ApplicationRecord
       convert << pdf_path("page_#{page}_col_%d.tiff")
     end
   end
-
-  def extract_page_tops(page, pdf_path)
-    MiniMagick::Tool::Convert.new do |convert|
-      convert << pdf_path
-      convert.trim.repage.+
-      convert.crop('100%x10%+0+0').repage.+.adjoin.+
-      convert << pdf_path("top_of_#{page}.tiff")
-    end
-  end
-
-  # outputs each page of PDF as tiff
-  def pdf_to_images
-    Docsplit.extract_images(
-      [@pdf.path],
-      density: '300',
-      format: 'tiff',
-      output: pdf_path('')
-    )
-  end
-
-  def docsplit_text(path)
-    Docsplit.extract_text(
-      [path],
-      ocr: true,
-      output: pdf_path('')
-    )
-  end
 end
