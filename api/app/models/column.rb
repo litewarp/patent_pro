@@ -35,22 +35,30 @@ class Column < ApplicationRecord
     Rails.root.join('tmp', 'storage', name)
   end
 
+  def png_line(num)
+    "col_#{number}_line_#{num}.png"
+  end
+
   def to_lines
-    extract_lines(number, blob_path)
-    line_range.each do |digit|
-      line = create_line(save_number(digit))
-      line.attach_image(digit)
-      LineWorker.perform_async(line.id)
+    extract_lines
+    line_range.each do |num|
+      lines.create(
+        number: save_number(num),
+        image: {
+          io: File.open(text_path(png_line(num))),
+          filename: png_line(num)
+        }
+      )
     end
   end
 
-  def extract_lines(col, file_path)
-    MiniMagick::Tool::Convert.new do |convert|
-      convert << file_path
-      convert.crop('0x67@')
-      convert.repage.+
-      convert.adjoin.+
-      convert << text_path("col_#{col}_line_%d.jpg")
+  def extract_lines
+    MiniMagick.with_cli(:imagemagick) do
+      MiniMagick::Tool::Convert.new do |convert|
+        convert << blob_path('master')
+        convert.merge! ['-crop', '0x67@', '+repage', '+adjoin']
+        convert << text_path("col_#{number}_line_%d.png")
+      end
     end
   end
 

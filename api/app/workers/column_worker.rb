@@ -7,6 +7,7 @@ class ColumnWorker
 
   def perform(column_id)
     @column = Column.find(column_id)
+    @column.save_lined_image
     @column.to_lines
   end
 end

@@ -10,7 +10,7 @@ default: &default
   host: db
   username: postgres
   password:
-  pool: 25
+  pool: 10
   timeout: 5000
 
 development:

@@ -22,6 +22,7 @@ module MagickPdfs
             io: File.open("tmp/mm/page_#{num}_col_#{col}.tiff"),
             filename: "col-#{counter}-master.tiff"
           )
+          ColumnWorker.perform_async(column.id)
         end
       end
       FileUtils.rm_rf(Dir.glob('tmp/mm/*.*'), secure: true)

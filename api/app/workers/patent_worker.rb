@@ -6,8 +6,8 @@ class PatentWorker
   sidekiq_options lock: :until_executed
 
   def perform(patent_id)
-    patent = Patent.find(patent_id)
-    patent.ingest
-    patent.get_pto_text
+    @patent = Patent.find(patent_id)
+    @patent.save_columns
+    @patent.extract_pto_text
   end
 end
