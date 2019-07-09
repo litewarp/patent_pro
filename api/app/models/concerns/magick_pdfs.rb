@@ -1,65 +1,34 @@
 module MagickPdfs
   # ImageMagick Wrapper
   class DocumentHandler
-    def initialize(uri)
+    def initialize(patent_num)
       init_magick
-      @uri = uri
+      @active_patent = Patent.find_by_number(patent_num)
       @uuid = SecureRandom.uuid
-      @file = URI.open(uri)
+      @file = URI.open(@active_patent.pdf_url)
       @basename = File.basename(@file.path)
       @pdf_length = Docsplit.extract_length([@file.path])
       @range = find_range
     end
 
-    def pdf_pages_to_tiff
-      puts 'Extracting Tiffs'
-      puts @range
-      Docsplit.extract_images(
-        [@file.path],
-        pages: @range,
-        density: '300',
-        format: 'tiff',
-        output: 'tmp/mm/'
-      )
-      @tiff_path = "tmp/mm/#{@basename}"
-    end
-
-    def pdf_pages_to_png
-      Docsplit.extract_images(
-        [@file.path],
-        size: '50%',
-        format: 'png',
-        output: 'tmp/mm/'
-      )
-      @png_path = "tmp/mm/#{@basename}"
-    end
-
-    def extract_columns(patent_id)
+    def extract_columns
       pdf_pages_to_tiff
-      patent = Patent.find(patent_id)
       counter = 0
       @range.each do |num|
-        MiniMagick.with_cli(:imagemagick) do
-          MiniMagick::Tool::Convert.new do |convert|
-            convert << "#{@tiff_path}_#{num}.tiff"
-            convert.trim.repage.+
-            convert.chop('0x100').trim.repage.+
-            convert.crop('2x0+35@').repage.+
-            convert.adjoin.+
-            convert << Rails.root.join('tmp', 'mm', "page_#{num}_col_%d.tiff")
-          end
-        end
+        split_pages(num)
         (0..1).each do |col|
           counter += 1
-          column = patent.columns.create(number: counter)
-          column.image.attach(
+          column = @active_patent.columns.create(number: counter)
+          column.images.attach(
             io: File.open("tmp/mm/page_#{num}_col_#{col}.tiff"),
             filename: "col-#{counter}.tiff"
           )
         end
       end
-      FileUtils.rm Dir.glob('/tmp/mm/*')
+      FileUtils.rm_rf(Dir.glob('tmp/mm/*.*'), secure: true)
     end
+
+    private
 
     def init_magick
       MiniMagick.configure do |config|
@@ -85,11 +54,26 @@ module MagickPdfs
       (start..finish)
     end
 
+    def split_pages(num)
+      options = [
+        '-trim', '+repage',
+        '-chop', '0x95', '-trim', '+repage',
+        '-crop', '2x0+35@', '+repage', '+adjoin'
+      ]
+      MiniMagick.with_cli(:imagemagick) do
+        MiniMagick::Tool::Convert.new do |convert|
+          convert << "#{@tiff_path}_#{num}.tiff"
+          convert.merge! options
+          convert << "tmp/mm/page_#{num}_col_%d.tiff"
+        end
+      end
+    end
+
     def extract_page_tops
       (1..@pdf_length).collect do |num|
         MiniMagick::Tool::Convert.new do |convert|
           convert << "#{@png_path}_#{num}.png"
-          convert.trim.crop('100%x10%+0+0')
+          convert.trim.crop('100%x5%+0+0')
           convert << '+repage'
           convert << "tmp/mm/#{num}_top.jpg"
         end
@@ -100,6 +84,29 @@ module MagickPdfs
         )
         File.read("tmp/mm/#{num}_top.txt").split("\n").slice(1, 2)
       end
+    end
+
+    def pdf_pages_to_tiff
+      puts 'Extracting Tiffs'
+      puts @range
+      Docsplit.extract_images(
+        [@file.path],
+        pages: @range,
+        density: '300',
+        format: 'tiff',
+        output: 'tmp/mm/'
+      )
+      @tiff_path = "tmp/mm/#{@basename}"
+    end
+
+    def pdf_pages_to_png
+      Docsplit.extract_images(
+        [@file.path],
+        size: '50%',
+        format: 'png',
+        output: 'tmp/mm/'
+      )
+      @png_path = "tmp/mm/#{@basename}"
     end
   end
 end

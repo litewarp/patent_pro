@@ -5,10 +5,10 @@ class Column < ApplicationRecord
   # relationships
   belongs_to :patent
   has_many :lines, dependent: :destroy
-  has_one_attached :image
+  has_many_attached :images
 
   def blob_path
-    ActiveStorage::Blob.service.send(:path_for, self.image.key)
+    ActiveStorage::Blob.service.send(:path_for, image.key)
   end
 
   def line_range
@@ -24,11 +24,11 @@ class Column < ApplicationRecord
   end
 
   def text_path(name)
-    Rails.root.join("tmp", "storage", name)
+    Rails.root.join('tmp', 'storage', name)
   end
 
   def to_lines
-    extract_lines(self.number, blob_path)
+    extract_lines(number, blob_path)
     line_range.each do |digit|
       line = create_line(save_number(digit))
       line.attach_image(digit)
@@ -39,7 +39,7 @@ class Column < ApplicationRecord
   def extract_lines(col, file_path)
     MiniMagick::Tool::Convert.new do |convert|
       convert << file_path
-      convert.crop("0x67@")
+      convert.crop('0x67@')
       convert.repage.+
       convert.adjoin.+
       convert << text_path("col_#{col}_line_%d.jpg")
@@ -56,7 +56,7 @@ class Column < ApplicationRecord
         output: Rails.root.join('tmp', 'storage')
       )
       text = File.read(text_path("#{basename}.txt"))
-      self.update!(text: text)
+      update!(text: text)
       File.delete(text_path("#{basename}.txt"))
     end
   end
