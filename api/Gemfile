@@ -3,72 +3,51 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby '2.6.3'
 
-# Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
+gem 'bootsnap', '>= 1.1.0', require: false
 gem 'rails', '~> 5.2.3'
-# Use sqlite3 as the database for Active Record
-gem 'pg'
-# Use Puma as the app server
+# web server
 gem 'puma', '~> 3.11'
-# Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
-# gem 'jbuilder', '~> 2.5'
-# Use Redis adapter to run Action Cable in production
-# gem 'redis', '~> 4.0'
-# Use ActiveModel has_secure_password
-# gem 'bcrypt', '~> 3.1.7'
-
-# Use ActiveStorage variant
-gem 'awesome_rails_console'
-gem 'mini_magick', '~> 4.8'
+# database
+gem 'pg'
 gem 'pg_search'
 
-# API serializer
+# files and images
+gem 'docsplit'
+gem 'mini_magick', '~> 4.8'
+
+# JSON API
 gem 'graphiti-rails'
 gem 'graphiti_spec_helpers'
 gem 'kaminari'
 gem 'responders'
 
-gem 'aws-sdk-s3', require: false
-gem 'docsplit'
-
-gem 'http'
-gem 'nokogiri'
+# external API
 gem 'mechanize'
+gem 'nokogiri'
 
-# Use ActiveStorage variant
-# gem 'mini_magick', '~> 4.8'
-
+# workers
 gem 'sidekiq'
 gem 'sidekiq-cron'
 gem 'sidekiq-unique-jobs'
 
-# Use Capistrano for deployment
-# gem 'capistrano-rails', group: :development
-
-# Reduces boot times through caching; required in config/boot.rb
-gem 'bootsnap', '>= 1.1.0', require: false
-
-# Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
+# middelware
+gem 'awesome_rails_console'
 gem 'rack'
 gem 'rack-cors'
 
 group :development, :test do
-  # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
   gem 'foreman'
-  gem 'hirb'
-  gem 'hirb-unicode-steakknife', require: 'hirb-unicode'
-  gem 'pry-byebug'
-  gem 'pry-rescue'
-  gem 'pry-stack_explorer'
-  gem 'rubocop', require: false
 end
 
 group :development do
+  gem 'hirb'
+  gem 'hirb-unicode-steakknife', require: 'hirb-unicode'
   gem 'listen', '>= 3.0.5', '< 3.2'
-  # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
+  gem 'pry-byebug'
+  gem 'rubocop', require: false
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
 end
 
-# Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
