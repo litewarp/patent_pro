@@ -1,4 +1,7 @@
 module MagickPixels
+
+
+
   # ImageMagick Wrapper
   class ImageHandler
     attr_reader :pixels
