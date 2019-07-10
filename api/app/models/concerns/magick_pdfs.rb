@@ -2,7 +2,6 @@ module MagickPdfs
   # ImageMagick Wrapper
   class DocumentHandler
     def initialize(patent_num)
-      init_magick
       @active_patent = Patent.find_by_number(patent_num)
       @file = URI.open(@active_patent.pdf_url)
       @basename = File.basename(@file.path)
@@ -35,14 +34,6 @@ module MagickPdfs
     end
 
     private
-
-    def init_magick
-      MiniMagick.configure do |config|
-        config.cli = :graphicsmagick
-        config.validate_on_create = false
-        config.validate_on_write = false
-      end
-    end
 
     def find_range
       pdf_pages_to_tiff

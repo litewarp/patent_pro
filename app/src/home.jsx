@@ -9,7 +9,7 @@ import { createPatent, fetchPatentNumbers } from "./_redux/patentActions"
 import PatentForm from "./_form"
 import PatentList from "./_list"
 import ActivePatent from "./patent"
-
+import AddButton from "./header"
 const Home = ({
   match,
   size,
@@ -34,7 +34,7 @@ const Home = ({
     ]}
   >
     <Box gridArea="side" background="light-6" align="center">
-      <PatentForm
+      <AddButton
         createPatent={createPatent}
         fetchPatentNumbers={fetchPatentNumbers}
         options={patentNumbers.map((pN, index) => pN.attributes.number)}
