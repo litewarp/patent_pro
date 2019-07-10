@@ -126,7 +126,6 @@ module MagickPixels
         io: File.open("tmp/mm/#{@path}_lined.png"),
         filename: "col_#{@active_column.number}_lined.png"
       )
-      File.delete("/tmp/mm/#{@path}_lined.png")
     end
 
     private
