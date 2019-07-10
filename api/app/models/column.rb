@@ -42,10 +42,10 @@ class Column < ApplicationRecord
   end
 
   def split_lines
-    @line_range.call.each do |num|
+    @line_range.each do |num|
       save_number = number.to_i.even? ? num : num + 1
       lines.create(
-        number: save_number.call(num),
+        number: save_number,
         image: {
           io: File.open(text_path("col_#{number}_line_#{num}.png")),
           filename: "col_#{number}_line_#{num}.png"

@@ -82,11 +82,11 @@ module MagickPdfs
           convert << working_path("#{num}_top.tiff")
         end
         Docsplit.extract_text(
-          ["tmp/mm/#{num}_top.tiff"],
+          [working_path("#{num}_top.tiff")],
           ocr: true,
           output: working_path('')
         )
-        File.read("tmp/mm/#{num}_top.txt").split("\n").slice(1, 2)
+        File.read(working_path("#{num}_top.txt")).split("\n").slice(1, 2)
       end
     end
 

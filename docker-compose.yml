@@ -36,7 +36,7 @@ services:
 
   sidekiq:
     <<: *app_base
-    command: ['bundle', 'exec', 'sidekiq', '-c', '25']
+    command: ['bundle', 'exec', 'sidekiq', '-c', '15']
     ports: []
 
   web:
