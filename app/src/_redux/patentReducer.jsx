@@ -105,11 +105,13 @@ export const patentReducer = createReducer(initialState, {
   }),
   [DELETE_REQUEST]: (state, action) => ({ ...state, loading: true }),
   [DELETE_SUCCESS]: (state, action) => {
-    console.log(action)
+    const { id } = action.payload.data
+
     return {
       ...state,
       loading: false,
-      patents: [...state.patents.filter(p => p.id !== action.payload.data.id)],
+      activePatent: state.activePatent.id === id ? {} : state.activePatent,
+      patents: state.patents.filter(p => p.id === id),
     }
   },
   [DELETE_FAILURE]: (state, action) => ({

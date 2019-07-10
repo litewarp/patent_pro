@@ -1,6 +1,6 @@
 /** @format */
 
-import { RSAA } from "redux-api-middleware"
+import { getJSON, RSAA } from "redux-api-middleware"
 import { toast } from "react-toastify"
 
 const LOAD_REQUEST = "@patent/LOAD_REQUEST"
@@ -65,14 +65,14 @@ export const deletePatent = (patentId: number) => ({
         type: DELETE_SUCCESS,
         payload: (action, state, res) => {
           toast.success("Patent Deleted")
-          return res
+          return getJSON(res)
         },
       },
       {
         type: DELETE_FAILURE,
         payload: (action, state, res) => {
           toast.error("Cannot Delete Patent")
-          return res
+          return getJSON(res)
         },
       },
     ],

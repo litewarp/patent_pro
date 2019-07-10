@@ -40,7 +40,7 @@ module Api
         deleted_id = Patent.find_by_number(params[:number]).id
         patent = PatentResource.find(id: deleted_id)
         if patent.destroy
-          render jsonapi: { meta: {}, data: { id: deleted_id } }, status: 200
+          render jsonapi: { meta: {}, data: {id: deleted_id, number: params[:number] }}, status: 200
         else
           render jsonapi_errors: patent
         end
