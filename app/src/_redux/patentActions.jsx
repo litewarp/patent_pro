@@ -21,10 +21,10 @@ const SIDELOAD_FAILURE = "@patent/SIDELOAD_REQUEST"
 const DELETE_REQUEST = "@patent/DELETE_REQUEST"
 const DELETE_SUCCESS = "@patent/DELETE_SUCCESS"
 const DELETE_FAILURE = "@patent/DELETE_FAILURE"
+
 // API VARIABLES AND HELPERS
 const baseURL = "http://localhost/api/v1"
 const patentsURL = baseURL + "/patents"
-
 const patentURL = id => patentsURL + "/" + id
 const jsonHeader = { "Content-Type": "application/vnd.api+json" }
 const formatSideloadUrl = url => {
@@ -50,23 +50,30 @@ export const loadPatent = (number: number) => ({
 
 export const deletePatent = (patentId: number) => ({
   [RSAA]: {
-    endpoint: patentUrl(patentId),
+    endpoint: "http://localhost/api/v1/patents/" + patentId,
     method: "DELETE",
     headers: jsonHeader,
     types: [
       {
         type: DELETE_REQUEST,
-        payload: req => toast.info("Deleting Patent"),
+        payload: (action, state) => {
+          toast.info("Deleting Patent")
+          return action
+        },
       },
       {
         type: DELETE_SUCCESS,
-        payload: res => {
+        payload: (action, state, res) => {
           toast.success("Patent Deleted")
+          return res
         },
       },
       {
         type: DELETE_FAILURE,
-        payload: res => toast.error("Cannot Delete Patent"),
+        payload: (action, state, res) => {
+          toast.error("Cannot Delete Patent")
+          return res
+        },
       },
     ],
   },

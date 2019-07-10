@@ -47,7 +47,7 @@ const PatentList = ({
       {patents &&
         patents.map((p, i) => (
           <Box gap="small" direction="row">
-            <FormTrash onClick={() => deletePatent(p.id)} />
+            <FormTrash onClick={() => deletePatent(p.attributes.number)} />
             <Anchor
               key={`${i}_patent_${i}`}
               size="large"

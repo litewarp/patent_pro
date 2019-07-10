@@ -15,18 +15,14 @@ module Api
       end
 
       def create
-        if !Patent.new(number: params[:number]).pdf_url
-          render jsonapi_errors: 'Patent Number Not Found'
-        elsif Patent.find_by_number(params[:number])
-          render jsonapi_errors: 'Patent Exists in Database'
+        match = Patent.find_by_number(params[:number])
+        resource = PatentResource.build(params)
+        byebug
+        if resource.save
+          render jsonapi: resource, status: 201
+          PatentWorker.perform_async(resource.data.id)
         else
-          resource = PatentResource.build(params)
-          if resource.save
-            render jsonapi: resource, status: 201
-            PatentWorker.perform_async(resource.data.id)
-          else
-            render jsonapi_errors: patent
-          end
+          render jsonapi_errors: resource
         end
       end
 
@@ -41,14 +37,23 @@ module Api
       end
 
       def destroy
-        patent = PatentResource.find(params)
-
+        deleted_id = Patent.find_by_number(params[:number]).id
+        patent = PatentResource.find(id: deleted_id)
         if patent.destroy
-          render jsonapi: { meta: {} }, status: 200
+          render jsonapi: { meta: {}, data: { id: deleted_id } }, status: 200
         else
           render jsonapi_errors: patent
         end
       end
+
+      private
+
+      def has_pdf_url?(number)
+        pat_url = "http://pat2pdf.org/pat2pdf/foo.pl?number=#{number}"
+        doc = Nokogiri::HTML(URI.open(pat_url))
+        doc.css('div#content').at('li>a').attributes['href'].value ? true : false
+      end
+
     end
   end
 end
