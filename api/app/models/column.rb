@@ -36,7 +36,7 @@ class Column < ApplicationRecord
       MiniMagick::Tool::Convert.new do |convert|
         convert << @image.path
         convert.merge! ['-crop', '0x67@', '+repage', '+adjoin']
-        convert << text_path("col_#{number}_line_%d.png")
+        convert << text_path("col_#{number}_line_%d.tiff")
       end
     end
   end
@@ -47,8 +47,8 @@ class Column < ApplicationRecord
       lines.create(
         number: save_number,
         image: {
-          io: File.open(text_path("col_#{number}_line_#{num}.png")),
-          filename: "col_#{number}_line_#{num}.png"
+          io: File.open(text_path("col_#{number}_line_#{num}.tiff")),
+          filename: "col_#{number}_line_#{num}.tiff"
         }
       )
     end
