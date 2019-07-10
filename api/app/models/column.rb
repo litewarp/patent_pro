@@ -8,54 +8,56 @@ class Column < ApplicationRecord
   has_many :lines, dependent: :destroy
   has_one_attached :master_image
   has_one_attached :lined_image
+  has_one_attached :split_image
 
-  def local_file_for_image(img_name)
-    uri = if img_name == 'master'
-            master_image.attachment.service_url
-          elsif img_name == 'lined'
-            lined_image.attachment.service_url
-          end
-    URI.open(uri)
+  # validations
+  validates :number, uniqueness: { scope: :patent_id }
+
+  def save_split_line_images
+    img = ImageHandler.new(id)
+    img.draw_lines
+    img.draw_split
   end
 
-  def text_path(name)
-    dir = ['tmp', 'storage', patent.number.to_s].join('/')
-    FileUtils.mkdir_p dir
-    [dir, name].join('/')
+  def save_lined_image
+    img = ImageHandler.new(id)
+    img.draw_lines
   end
 
-  def to_lines
-    @image = local_file_for_image('master')
-    magick_lines
-    @line_range = number.to_i.even? ? (1..67) : (0..66)
-    split_lines
+  def save_split_image
+    img = ImageHandler.new(id)
+    img.draw_split
   end
+
+  def image_path(img_name)
+    uri = lambda do
+      case img_name
+      when 'master'
+        master_image.attachment.service_url
+      when 'lined'
+        lined_image.attachment.service_url
+      when 'split'
+        split_image.attachment.service_url
+      end
+    end
+    URI.open(uri.call)
+  end
+
+  private
 
   def magick_lines
     MiniMagick.with_cli(:imagemagick) do
       MiniMagick::Tool::Convert.new do |convert|
         convert << @image.path
         convert.merge! ['-crop', '0x67@', '+repage', '+adjoin']
-        convert << text_path("col_#{number}_line_%d.tiff")
+        convert << working_path("col_#{number}_line_%d.png")
       end
     end
   end
 
-  def split_lines
-    @line_range.each do |num|
-      save_number = number.to_i.even? ? num : num + 1
-      lines.create(
-        number: save_number,
-        image: {
-          io: File.open(text_path("col_#{number}_line_#{num}.tiff")),
-          filename: "col_#{number}_line_#{num}.tiff"
-        }
-      )
-    end
-  end
-
-  def save_lined_image
-    img = ImageHandler.new(id)
-    img.draw_lines
+  def working_path(name)
+    dir = ['tmp', 'storage', patent.number.to_s].join('/')
+    FileUtils.mkdir_p dir
+    [dir, name].join('/')
   end
 end

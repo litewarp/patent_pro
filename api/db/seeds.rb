@@ -8,5 +8,5 @@ patent_numbers = %w[
 
 patent_numbers.each do |num|
   patent = Patent.create(number: num)
-  patent.save_columns
+  patent.dispatch_importer
 end

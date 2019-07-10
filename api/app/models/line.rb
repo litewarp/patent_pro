@@ -6,6 +6,9 @@ class Line < ApplicationRecord
   belongs_to :column
   has_one_attached :image
 
+  # validations
+  validates :number, uniqueness: { scope: :column_id }
+
   def blob_path
     ActiveStorage::Blob.service.send(:path_for, image.key)
   end

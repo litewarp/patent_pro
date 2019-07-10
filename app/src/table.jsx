@@ -27,7 +27,7 @@ const lineArray = () => {
 }
 
 const FixedImage = styled(Image)`
-  height: 15px;
+  max-height: 20px;
 `
 
 const NoLineHeightRow = styled(TableRow)`
@@ -50,7 +50,7 @@ const ColumnTable = ({
 
   return (
     <Box
-      fill
+      basis="3/4"
       align="center"
       margin="medium"
       overflow={{ vertical: "scroll", horizontal: "hidden" }}

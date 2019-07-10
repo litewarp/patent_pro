@@ -9,6 +9,10 @@ class Patent < ApplicationRecord
   validates :number, presence: true
   validates_uniqueness_of :number
 
+  def dispatch_importer
+    PatentWorker.perform_async(id)
+  end
+
   def pdf_url
     pat_url = "http://pat2pdf.org/pat2pdf/foo.pl?number=#{number}"
     doc = Nokogiri::HTML(URI.open(pat_url))

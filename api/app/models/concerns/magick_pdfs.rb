@@ -12,7 +12,7 @@ module MagickPdfs
     end
 
     def working_path(name)
-      dir = "tmp/mm/#{@active_patent.number.to_s}"
+      dir = "tmp/mm/#{@active_patent.number}"
       FileUtils.mkdir_p dir
       [dir, name].join('/')
     end
@@ -25,10 +25,11 @@ module MagickPdfs
           counter += 1
           column = @active_patent.columns.create(number: counter)
           column.master_image.attach(
-            io: File.open(working_path("page_#{num}_col_#{col}.tiff")),
-            filename: "col-#{counter}-master.tiff"
+            io: File.open(working_path("page_#{num}_col_#{col}.png")),
+            filename: "col-#{counter}-master.png"
           )
           ColumnWorker.perform_async(column.id)
+          File.delete(working_path("page_#{num}_col_#{col}.png"))
         end
       end
     end
@@ -62,16 +63,17 @@ module MagickPdfs
     def split_pages(num)
       options = [
         '-trim', '+repage',
-        '-chop', '0x95', '-trim', '+repage',
+        '-chop', '0x98', '-trim', '+repage',
         '-crop', '2x0+35@', '+repage', '+adjoin'
       ]
       MiniMagick.with_cli(:imagemagick) do
         MiniMagick::Tool::Convert.new do |convert|
           convert << "#{@tiff_path}_#{num}.tiff"
           convert.merge! options
-          convert << working_path("page_#{num}_col_%d.tiff")
+          convert << working_path("page_#{num}_col_%d.png")
         end
       end
+      File.delete("#{@tiff_path}_#{num}.tiff")
     end
 
     def extract_page_tops
@@ -86,7 +88,9 @@ module MagickPdfs
           ocr: true,
           output: working_path('')
         )
-        File.read(working_path("#{num}_top.txt")).split("\n").slice(1, 2)
+        txt = File.read(working_path("#{num}_top.txt")).split("\n").slice(1, 2)
+        File.delete(working_path("#{num}_top.txt"))
+        txt
       end
     end
 

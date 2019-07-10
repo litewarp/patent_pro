@@ -9,11 +9,11 @@ class ColumnResource < ApplicationResource
   attribute :text, :string
 
   attribute :master_img_url, :string do
-    rails_blob_url(@object.master_image.attachment) if @object.master_image.attached?
+    rails_blob_path(@object.master_image.attachment) if @object.master_image.attached?
   end
 
   attribute :lined_img_url, :string do
-    rails_blob_url(@object.lined_image.attachment) if @object.lined_image.attached?
+    rails_blob_path(@object.master_image.attachment) if @object.lined_image.attached?
   end
   # relationships
   has_many :lines

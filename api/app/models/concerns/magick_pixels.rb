@@ -5,13 +5,34 @@ module MagickPixels
 
     def initialize(col_id)
       init_mini_magick
+      @path = SecureRandom.uuid
       @active_column = Column.find(col_id)
-      @master_file = @active_column.local_file_for_image('master')
-      extract_pixelmap
+      @master_file = @active_column.image_path('master')
+    end
+
+    def draw_split
+      image = MiniMagick::Image.open(@master_file.path)
+      lh = (image.height / 67).ceil
+      width = image.width
+      MiniMagick::Tool::Convert.new do |convert|
+        convert << @master_file.path
+        (1..67).each do |i|
+          convert << '-stroke' << 'red' << '-strokewidth' << '2'
+          convert << '-draw' << "line 0,#{i * lh} #{width}, #{i * lh}"
+        end
+        convert << "tmp/mm/#{@path}_split.png"
+      end
+    end
+
+    def save_split_image
+      @active_column.split_image.attach(
+        io: File.open("tmp/mm/#{@path}_split.png"),
+        filename: "col_#{@active_column.number}_split.png"
+      )
+      File.delete("/tmp/mm/#{@path}_split.png")
     end
 
     def extract_pixelmap
-      @path = SecureRandom.uuid
       file_path = "tmp/mm/#{@path}.txt"
       MiniMagick::Tool::Convert.new do |convert|
         convert << @master_file.path
@@ -87,6 +108,7 @@ module MagickPixels
     end
 
     def draw_lines
+      extract_pixelmap
       lines = segmentize
       convert = MiniMagick::Tool::Convert.new
       convert << @master_file.path
@@ -94,16 +116,17 @@ module MagickPixels
         convert << '-stroke' << 'red' << '-strokewidth' << '2'
         convert << '-draw' << "line 0,#{num} #{@col_count}, #{num}"
       end
-      convert << "tmp/mm/#{@path}_lined.tiff"
+      convert << "tmp/mm/#{@path}_lined.png"
       convert.call
       save_lined_image
     end
 
     def save_lined_image
       @active_column.lined_image.attach(
-        io: File.open("tmp/mm/#{@path}_lined.tiff"),
-        filename: "col-#{@active_column.number}-lined.tiff"
+        io: File.open("tmp/mm/#{@path}_lined.png"),
+        filename: "col_#{@active_column.number}_lined.png"
       )
+      File.delete("/tmp/mm/#{@path}_lined.png")
     end
 
     private
