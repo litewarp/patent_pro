@@ -12,7 +12,9 @@ module MagickPdfs
     end
 
     def working_path(num, name)
-      Rails.root.join("tmp", "mm", num.to_s, name)
+      dir = "tmp/mm/#{num.to_s}"
+      FileUtils.mkdir_p dir
+      [dir, name].join('/')
     end
 
     def extract_columns

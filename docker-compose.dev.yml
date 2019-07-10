@@ -20,7 +20,7 @@ services:
       - redis-data:/data
 
   api: &app_base
-    image: litewarp/patent_pro:api
+    image: litewarp/patent_pro:api_dev
     build:
       context: .
       dockerfile: ./api/Dockerfile.dev
@@ -44,7 +44,7 @@ services:
     ports: []
 
   app:
-    image: litewarp/patent_pro:app
+    image: litewarp/patent_pro:app_dev
     build:
       context: .
       dockerfile: ./app/Dockerfile.dev
@@ -56,9 +56,9 @@ services:
       - ./app:/dock_app
 
   web:
-    image: litewarp/patent_pro:web
+    image: litewarp/patent_pro:web_dev
     build:
       context: .
-      dockerfile: ./web/Dockerfile
+      dockerfile: ./web/Dockerfile.dev
     ports:
       - 80:8001
