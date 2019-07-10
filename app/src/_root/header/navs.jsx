@@ -32,7 +32,9 @@ const HeaderLink = styled(PatentLink)`
   font-family: Gibbs, sans-serif;
 `
 
-const BrandLink = styled(LinkNoStyle)``
+const BrandLink = styled(LinkNoStyle)`
+  margin-right: auto;
+`
 
 export const HeaderNav = ({
   path,

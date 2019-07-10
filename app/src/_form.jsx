@@ -4,6 +4,7 @@
 import React from "react"
 import { Formik, ErrorMessage } from "formik"
 import { Box, Form, FormField, Heading, TextInput, Button } from "grommet"
+import AsyncCreatableSelect from "react-select/async-creatable"
 import * as Yup from "yup"
 import { Search, Send } from "grommet-icons"
 
@@ -32,10 +33,13 @@ const PatentForm = ({
   options,
   createPatent,
   fetchPatentNumbers,
+  loadPatentAndColumns,
+  patentNumbers,
 }: {
-  options: Array<{}>,
+  patentNumbers: Array<{}>,
   createPatent: number => void,
-  fetchPatentNumbers: string => void,
+  fetchPatentNumbers: (?string) => void,
+  loadPatentAndColumns: number => void,
 }) => (
   <Formik
     validateOnChange={false}
@@ -66,20 +70,26 @@ const PatentForm = ({
             pad={{ left: "small", right: "small" }}
           >
             <Heading level={4}>Enter a US Patent Number</Heading>
-            <TextInput
-              type="search"
-              placeholder="e.g., 7629705"
-              onChange={ev => {
-                fetchPatentNumbers(ev.target.value)
-                setFieldValue("patentNumber", ev.target.value)
+            <AsyncCreatableSelect
+              isClearable
+              onInputChange={val => {
+                fetchPatentNumbers(val)
+                setFieldValue("patentNumber", val)
               }}
-              onSelect={ev => {
-                setFieldValue("patentNumber", ev.currentTarget.innerText)
+              placeholder="e.g., 7629705"
+              loadOptions={() => fetchPatentNumbers()}
+              onCreateOption={val => {
+                setFieldValue("patentNumber", val)
+                handleSubmit()
               }}
               onBlur={() => setFieldTouched("patentNumber", true)}
-              value={values.patentNumber}
+              onChange={val => loadPatentAndColumns(val)}
+              inputValue={values.patentNumber}
               name="patentNumber"
-              suggestions={options}
+              options={patentNumbers.map(p => ({
+                label: p.attributes.number,
+                value: p.attributes.number,
+              }))}
             />
             <ErrorMessage name="patentNumber" component="div" />
             <Button icon={<Send />} type="submit" gap="medium" label="Submit" />

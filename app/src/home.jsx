@@ -5,24 +5,11 @@ import * as React from "react"
 import { connect } from "react-redux"
 import { bindActionCreators } from "redux"
 import { Box, Heading, Form, FormField, TextInput, Text, Grid } from "grommet"
-import { createPatent, fetchPatentNumbers } from "./_redux/patentActions"
 import PatentForm from "./_form"
 import PatentList from "./_list"
 import ActivePatent from "./patent"
-import AddButton from "./header"
-const Home = ({
-  match,
-  size,
-  fetchPatentNumbers,
-  createPatent,
-  patentNumbers,
-}: {
-  match: {},
-  size: string,
-  createPatent: number => void,
-  fetchPatentNumbers: (?string) => void,
-  patentNumbers: Array<Object>,
-}) => (
+
+const Home = ({ match, size }: { match: {}, size: string }) => (
   <Grid
     fill
     rows={["xxsmall", "xxsmall", "flex"]}
@@ -34,27 +21,10 @@ const Home = ({
     ]}
   >
     <Box gridArea="side" background="light-6" align="center">
-      <AddButton
-        createPatent={createPatent}
-        fetchPatentNumbers={fetchPatentNumbers}
-        options={patentNumbers.map((pN, index) => pN.attributes.number)}
-      />
       <PatentList />
     </Box>
     <ActivePatent />
   </Grid>
 )
 
-const mapState = ({ patent }) => ({
-  patentNumbers: patent.patentNumbers,
-})
-
-const mapDispatch = dispatch => ({
-  createPatent: bindActionCreators(createPatent, dispatch),
-  fetchPatentNumbers: bindActionCreators(fetchPatentNumbers, dispatch),
-})
-
-export default connect(
-  mapState,
-  mapDispatch,
-)(Home)
+export default Home

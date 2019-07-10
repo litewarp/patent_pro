@@ -10,7 +10,7 @@ import { ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.min.css"
 
 // Components
-import Header from "./components/header"
+import Header from "./header/header"
 import Footer from "./components/footer"
 import Home from "../home"
 import ActivePatent from "../patent"
