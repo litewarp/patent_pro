@@ -9,14 +9,13 @@ class Column < ApplicationRecord
   has_one_attached :master_image
   has_one_attached :lined_image
 
-  def blob_path(img_name)
-    blob_key = case img_name
-               when 'master'
-                 master_image.key
-               when 'lined'
-                 lined_image.key
-               end
-    ActiveStorage::Blob.service.send(:path_for, blob_key)
+  def local_file_for_image(img_name)
+    uri = if img_name == 'master'
+            master_image.attachment.service_url
+          elsif img_name == 'lined'
+            lined_image.attachment.service_url
+          end
+    URI.open(uri)
   end
 
   def line_range
@@ -49,15 +48,16 @@ class Column < ApplicationRecord
           filename: png_line(num)
         }
       )
+      FileUtils.remove_dir text_path(num, '')
     end
   end
 
   def extract_lines
     MiniMagick.with_cli(:imagemagick) do
       MiniMagick::Tool::Convert.new do |convert|
-        convert << blob_path('master')
+        convert << local_file_for_image('master').path
         convert.merge! ['-crop', '0x67@', '+repage', '+adjoin']
-        convert << text_path("col_#{number}_line_%d.png")
+        convert << text_path(number, "col_#{number}_line_%d.png")
       end
     end
   end
@@ -65,20 +65,5 @@ class Column < ApplicationRecord
   def save_lined_image
     img = ImageHandler.new(id)
     img.draw_lines
-  end
-
-  def extract_text
-    @file = File.open(blob_path)
-    basename = File.basename(@file.path)
-    if master.attached?
-      Docsplit.extract_text(
-        [@file.path],
-        ocr: true,
-        output: Rails.root.join('tmp', 'storage')
-      )
-      text = File.read(text_path("#{basename}.txt"))
-      update!(text: text)
-      File.delete(text_path("#{basename}.txt"))
-    end
   end
 end

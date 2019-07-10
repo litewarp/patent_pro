@@ -6,7 +6,7 @@ module MagickPixels
     def initialize(col_id)
       init_mini_magick
       @active_column = Column.find(col_id)
-      @uri = @active_column.blob_path('master')
+      @master_file = @active_column.local_file_for_image('master')
       extract_pixelmap
     end
 
@@ -14,7 +14,7 @@ module MagickPixels
       @path = SecureRandom.uuid
       file_path = "tmp/mm/#{@path}.txt"
       MiniMagick::Tool::Convert.new do |convert|
-        convert << @uri
+        convert << @master_file.path
         convert.colorspace('Gray').depth(8)
         convert << file_path
       end
@@ -89,7 +89,7 @@ module MagickPixels
     def draw_lines
       lines = segmentize
       convert = MiniMagick::Tool::Convert.new
-      convert << @uri
+      convert << @master_file.path
       lines.each do |num|
         convert << '-stroke' << 'red' << '-strokewidth' << '2'
         convert << '-draw' << "line 0,#{num} #{@col_count}, #{num}"
