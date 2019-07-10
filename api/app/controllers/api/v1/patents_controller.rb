@@ -1,5 +1,6 @@
 module Api
   module V1
+    # controller for patents
     class PatentsController < ApplicationController
       respond_to :json
       def index
@@ -14,12 +15,18 @@ module Api
       end
 
       def create
-        resource = PatentResource.build(params)
-        if resource.save
-          render jsonapi: resource, status: 201
-          PatentWorker.perform_async(resource.data.id)
+        if !Patent.new(number: params[:number]).pdf_url
+          render jsonapi_errors: 'Patent Number Not Found'
+        elsif Patent.find_by_number(params[:number])
+          render jsonapi_errors: 'Patent Exists in Database'
         else
-          render jsonapi_errors: patent
+          resource = PatentResource.build(params)
+          if resource.save
+            render jsonapi: resource, status: 201
+            PatentWorker.perform_async(resource.data.id)
+          else
+            render jsonapi_errors: patent
+          end
         end
       end
 

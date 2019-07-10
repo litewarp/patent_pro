@@ -41,7 +41,6 @@ Layout/ClassStructure:
 Style/FrozenStringLiteralComment:
   Enabled: False
 
-
 Lint/AmbiguousBlockAssociation:
   Exclude:
     - 'spec/**/*.rb'
@@ -66,8 +65,11 @@ Lint/UselessAccessModifier:
 Lint/BooleanSymbol:
   Enabled: false
 
+Metrics/AbcSize:
+  Max: 30
+
 Metrics/MethodLength:
-  Max: 25
+  Max: 50
 
 Metrics/BlockLength:
   Exclude:
@@ -76,7 +78,11 @@ Metrics/BlockLength:
     - 'spec/**/*.rb'
     - '**/*.gemspec'
 
-Metrics/ModuleLength:
+Metrics/ClassLength:
+  Max: 200
+
+  Metrics/ModuleLength:
+  Max: 200
   Exclude:
     - 'spec/**/*.rb'
 

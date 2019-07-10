@@ -19,6 +19,9 @@ const {
   CREATE_REQUEST,
   CREATE_SUCCESS,
   CREATE_FAILURE,
+  DELETE_REQUEST,
+  DELETE_SUCCESS,
+  DELETE_FAILURE,
 } = actionRefs
 
 const initialState = {
@@ -95,6 +98,21 @@ export const patentReducer = createReducer(initialState, {
     columns: action.payload.data,
   }),
   [SIDELOAD_FAILURE]: (state, action) => ({
+    ...state,
+    loading: false,
+    apiError: true,
+    error: action.payload.data,
+  }),
+  [DELETE_REQUEST]: (state, action) => ({ ...state, loading: true }),
+  [DELETE_SUCCESS]: (state, action) => {
+    console.log(action)
+    return {
+      ...state,
+      loading: false,
+      patents: [...state.patents.filter(p => p.id !== action.payload.data.id)],
+    }
+  },
+  [DELETE_FAILURE]: (state, action) => ({
     ...state,
     loading: false,
     apiError: true,

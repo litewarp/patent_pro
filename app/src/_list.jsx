@@ -5,13 +5,19 @@ import * as React from "react"
 import { connect } from "react-redux"
 import { bindActionCreators } from "redux"
 import { Box, Heading, Anchor } from "grommet"
-import { fetchPatents, loadPatentAndColumns } from "./_redux/patentActions"
+import { FormTrash } from "grommet-icons"
+import {
+  deletePatent,
+  fetchPatents,
+  loadPatentAndColumns,
+} from "./_redux/patentActions"
 import { BrowserRouter as Link } from "react-router-dom"
 import { toCommas } from "./_root/_helpers"
 
 const PatentList = ({
   activePatent,
   patents,
+  deletePatent,
   fetchPatents,
   loadPatentAndColumns,
 }: {
@@ -19,6 +25,7 @@ const PatentList = ({
     id: number,
   },
   patents: Array<Object>,
+  deletePatent: number => void,
   fetchPatents: () => void,
   loadPatentAndColumns: number => void,
 }) => {
@@ -35,18 +42,21 @@ const PatentList = ({
   }, [patents[0]])
 
   return (
-    <>
+    <Box basis="3/4">
       <Heading level={3}>Parsed Patents</Heading>
       {patents &&
         patents.map((p, i) => (
-          <Anchor
-            key={`${i}_patent_${i}`}
-            size="large"
-            onClick={() => loadPatentAndColumns(p.attributes.number)}
-            label={toCommas(p.attributes.number)}
-          />
+          <Box gap="small" direction="row">
+            <FormTrash onClick={() => deletePatent(p.id)} />
+            <Anchor
+              key={`${i}_patent_${i}`}
+              size="large"
+              onClick={() => loadPatentAndColumns(p.attributes.number)}
+              label={toCommas(p.attributes.number)}
+            />
+          </Box>
         ))}
-    </>
+    </Box>
   )
 }
 
@@ -56,6 +66,7 @@ const mapState = ({ patent }) => ({
 })
 
 const mapDispatch = dispatch => ({
+  deletePatent: bindActionCreators(deletePatent, dispatch),
   loadPatentAndColumns: bindActionCreators(loadPatentAndColumns, dispatch),
   fetchPatents: bindActionCreators(fetchPatents, dispatch),
 })
