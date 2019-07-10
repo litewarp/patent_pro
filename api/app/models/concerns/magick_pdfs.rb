@@ -11,8 +11,8 @@ module MagickPdfs
       puts @range
     end
 
-    def working_path(num, name)
-      dir = "tmp/mm/#{num.to_s}"
+    def working_path(name)
+      dir = "tmp/mm/#{@active_patent.number.to_s}"
       FileUtils.mkdir_p dir
       [dir, name].join('/')
     end
@@ -25,7 +25,7 @@ module MagickPdfs
           counter += 1
           column = @active_patent.columns.create(number: counter)
           column.master_image.attach(
-            io: File.open(working_path(num, "page_#{num}_col_#{col}.tiff")),
+            io: File.open(working_path("page_#{num}_col_#{col}.tiff")),
             filename: "col-#{counter}-master.tiff"
           )
           ColumnWorker.perform_async(column.id)
@@ -69,7 +69,7 @@ module MagickPdfs
         MiniMagick::Tool::Convert.new do |convert|
           convert << "#{@tiff_path}_#{num}.tiff"
           convert.merge! options
-          convert << working_path(num, "page_#{num}_col_%d.tiff")
+          convert << working_path("page_#{num}_col_%d.tiff")
         end
       end
     end
@@ -79,12 +79,12 @@ module MagickPdfs
         MiniMagick::Tool::Convert.new do |convert|
           convert << "#{@tiff_path}_#{num}.tiff"
           convert.merge! ['-trim', '+repage', '-crop', '100%x8%+0+0', '+repage']
-          convert << "tmp/mm/#{num}_top.tiff"
+          convert << working_path("#{num}_top.tiff")
         end
         Docsplit.extract_text(
           ["tmp/mm/#{num}_top.tiff"],
           ocr: true,
-          output: 'tmp/mm/'
+          output: working_path('')
         )
         File.read("tmp/mm/#{num}_top.txt").split("\n").slice(1, 2)
       end
@@ -96,18 +96,9 @@ module MagickPdfs
         [@file.path],
         density: '300',
         format: 'tiff',
-        output: 'tmp/mm/'
+        output: working_path('')
       )
-      @tiff_path = "tmp/mm/#{@basename}"
-    end
-
-    def pdf_pages_to_png
-      Docsplit.extract_images(
-        [@file.path],
-        format: 'png',
-        output: 'tmp/mm/'
-      )
-      @png_path = "tmp/mm/#{@basename}"
+      @tiff_path = working_path(@basename)
     end
   end
 end

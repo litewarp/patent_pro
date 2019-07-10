@@ -18,47 +18,39 @@ class Column < ApplicationRecord
     URI.open(uri)
   end
 
-  def line_range
-    number.to_i.even? ? (1..67) : (0..66)
-  end
-
-  def save_number(line)
-    number.to_i.even? ? line : line + 1
-  end
-
-  def create_line(number)
-    lines.create(number: number.to_s)
-  end
-
-  def text_path(num, name)
-    Rails.root.join('tmp', 'storage', num.to_s, name)
-  end
-
-  def png_line(num)
-    "col_#{number}_line_#{num}.png"
+  def text_path(name)
+    dir = ['tmp', 'storage', patent.number.to_s].join('/')
+    FileUtils.mkdir_p dir
+    [dir, name].join('/')
   end
 
   def to_lines
-    extract_lines
-    line_range.each do |num|
-      lines.create(
-        number: save_number(num),
-        image: {
-          io: File.open(text_path(num, png_line(num))),
-          filename: png_line(num)
-        }
-      )
-      FileUtils.remove_dir text_path(num, '')
+    @image = local_file_for_image('master')
+    magick_lines
+    @line_range = number.to_i.even? ? (1..67) : (0..66)
+    split_lines
+  end
+
+  def magick_lines
+    MiniMagick.with_cli(:imagemagick) do
+      MiniMagick::Tool::Convert.new do |convert|
+        convert << @image.path
+        convert.merge! ['-crop', '0x67@', '+repage', '+adjoin']
+        convert << text_path("col_#{number}_line_%d.png")
+      end
     end
   end
 
-  def extract_lines
-    MiniMagick.with_cli(:imagemagick) do
-      MiniMagick::Tool::Convert.new do |convert|
-        convert << local_file_for_image('master').path
-        convert.merge! ['-crop', '0x67@', '+repage', '+adjoin']
-        convert << text_path(number, "col_#{number}_line_%d.png")
-      end
+  def split_lines
+    @line_range.call.each do |num|
+      save_number = number.to_i.even? ? num : num + 1
+      lines.create(
+        number: save_number.call(num),
+        image: {
+          io: File.open(text_path("col_#{number}_line_#{num}.png")),
+          filename: "col_#{number}_line_#{num}.png"
+        }
+      )
     end
   end
 
