@@ -2,11 +2,18 @@
 // @flow
 
 import React from "react"
+import { connect } from "react-redux"
+import { bindActionCreators } from "redux"
 import { Formik, ErrorMessage } from "formik"
-import { Box, Form, FormField, Heading, TextInput, Button } from "grommet"
-import AsyncCreatableSelect from "react-select/async-creatable"
+import { Box, Heading, Select } from "grommet"
 import * as Yup from "yup"
 import { Search, Send } from "grommet-icons"
+import {
+  createPatent,
+  fetchPatentNumbers,
+  loadPatentAndColumns,
+} from "./_redux/patentActions"
+import { toast } from "react-toastify"
 
 type FormikBag = {
   values: {},
@@ -29,8 +36,6 @@ const numberSchema = Yup.object().shape({
 })
 
 const PatentForm = ({
-  // redux
-  options,
   createPatent,
   fetchPatentNumbers,
   loadPatentAndColumns,
@@ -40,63 +45,66 @@ const PatentForm = ({
   createPatent: number => void,
   fetchPatentNumbers: (?string) => void,
   loadPatentAndColumns: number => void,
-}) => (
-  <Formik
-    validateOnChange={false}
-    initialValues={{ patentNumber: "" }}
-    onSubmit={(values, { resetForm }) => {
-      createPatent(values.patentNumber)
-      resetForm()
-    }}
-    validationSchema={numberSchema}
-    render={({
-      values,
-      touched,
-      dirty,
-      errors,
-      handleChange,
-      handleBlur,
-      handleSubmit,
-      handleReset,
-      setFieldValue,
-      setFieldTouched,
-      isSubmitting,
-    }: FormikBag) => {
-      return (
-        <Form onSubmit={handleSubmit}>
-          <Box
-            align="center"
-            gap="small"
-            pad={{ left: "small", right: "small" }}
-          >
-            <Heading level={4}>Enter a US Patent Number</Heading>
-            <AsyncCreatableSelect
-              isClearable
-              onInputChange={val => {
-                fetchPatentNumbers(val)
-                setFieldValue("patentNumber", val)
-              }}
-              placeholder="e.g., 7629705"
-              loadOptions={() => fetchPatentNumbers()}
-              onCreateOption={val => {
-                setFieldValue("patentNumber", val)
-                handleSubmit()
-              }}
-              onBlur={() => setFieldTouched("patentNumber", true)}
-              onChange={val => loadPatentAndColumns(val)}
-              inputValue={values.patentNumber}
-              name="patentNumber"
-              options={patentNumbers.map(p => ({
-                label: p.attributes.number,
-                value: p.attributes.number,
-              }))}
-            />
-            <ErrorMessage name="patentNumber" component="div" />
-            <Button icon={<Send />} type="submit" gap="medium" label="Submit" />
-          </Box>
-        </Form>
-      )
-    }}
-  />
-)
-export default PatentForm
+}) => {
+  const [isOpen, setIsOpen] = React.useState(false)
+  const options = patentNumbers.map(pN => pN.attributes.number)
+
+  const loadOptions = (inputValue, callback) => {
+    fetchPatentNumbers(inputValue)
+    callback(options)
+  }
+  return (
+    <Formik
+      initialValues={{ patentNumber: "" }}
+      onSubmit={(values, { resetForm }) => {
+        createPatent(values.patentNumber)
+      }}
+      validationSchema={numberSchema}
+      render={({
+        values,
+        touched,
+        dirty,
+        errors,
+        handleChange,
+        handleBlur,
+        handleSubmit,
+        handleReset,
+        setFieldValue,
+        setFieldTouched,
+        isSubmitting,
+      }: FormikBag) => (
+        <>
+          <Select
+            name="patentNumber"
+            placeholder="e.g., 7629705"
+            onSearch={val => fetchPatentNumbers(val)}
+            options={options}
+            open={isOpen}
+            value={values.patentNumber}
+            onChange={val => {
+              setFieldValue("patentNumber", val)
+              loadPatentAndColumns(val)
+            }}
+          />
+          <ErrorMessage name="patentNumber" component="div" />
+        </>
+      )}
+    />
+  )
+}
+
+const mapState = ({ patent }) => ({
+  activePatent: patent.activePatent,
+  patentNumbers: patent.patentNumbers,
+})
+
+const mapDispatch = dispatch => ({
+  loadPatentAndColumns: bindActionCreators(loadPatentAndColumns, dispatch),
+  createPatent: bindActionCreators(createPatent, dispatch),
+  fetchPatentNumbers: bindActionCreators(fetchPatentNumbers, dispatch),
+})
+
+export default connect(
+  mapState,
+  mapDispatch,
+)(PatentForm)

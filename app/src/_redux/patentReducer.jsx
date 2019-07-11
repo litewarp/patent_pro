@@ -59,14 +59,11 @@ export const patentReducer = createReducer(initialState, {
     error: action.payload.data,
   }),
   [CREATE_REQUEST]: (state, action) => ({ ...state, loading: true }),
-  [CREATE_SUCCESS]: (state, action) => {
-    console.log(state, action)
-    return {
-      ...state,
-      loading: false,
-      patents: [...state.patents, action.payload.data],
-    }
-  },
+  [CREATE_SUCCESS]: (state, action) => ({
+    ...state,
+    loading: false,
+    patents: [...state.patents, action.payload.data],
+  }),
   [CREATE_FAILURE]: (state, action) => ({
     ...state,
     loading: false,
@@ -106,7 +103,6 @@ export const patentReducer = createReducer(initialState, {
   [DELETE_REQUEST]: (state, action) => ({ ...state, loading: true }),
   [DELETE_SUCCESS]: (state, action) => {
     const { id } = action.payload.data
-
     return {
       ...state,
       loading: false,

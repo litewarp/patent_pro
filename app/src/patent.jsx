@@ -90,13 +90,6 @@ const ActivePatent = ({
           onClick={() => setActiveColumn(upColumn(activeColumn))}
         />
       </Box>
-      <Box direction="row" gridArea="main">
-        <ColumnTable
-          lines={lines}
-          columnId={activeColumn}
-          fetchLines={fetchLines}
-        />
-      </Box>
     </>
   )
 }

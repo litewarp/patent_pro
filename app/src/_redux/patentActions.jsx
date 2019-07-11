@@ -164,7 +164,9 @@ export const fetchPatentNumbers = (searchQuery: string) => ({
       LOAD_NUMBERS_SUCCESS,
       LOAD_NUMBERS_FAILURE,
     ],
-    params: { filter: { number: searchQuery.replace(",", "") } },
+    params: searchQuery
+      ? { filter: { number: searchQuery.replace(",", "") } }
+      : {},
   },
 })
 
