@@ -9,13 +9,13 @@ import * as Yup from "yup"
 import AsyncCreatableSelect from "react-select/async-creatable"
 import { AddCircle, Search, Send } from "grommet-icons"
 import { toast } from "react-toastify"
-import { toCommas } from "./_root/_helpers"
+import { toCommas } from "../_root/_helpers"
 import {
   createPatent,
   setActivePatent,
   fetchPatentNumbers,
   loadPatentAndColumns,
-} from "./_redux/patentActions"
+} from "../_redux/patentActions"
 import { customStyles, DropdownIndicator, AddPatentAnchor } from "./_styles"
 
 const PatentForm = ({

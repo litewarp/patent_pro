@@ -6,12 +6,12 @@ import { connect } from "react-redux"
 import { bindActionCreators } from "redux"
 import { LinkNext, LinkPrevious } from "grommet-icons"
 import { Box, Heading, Button, Anchor } from "grommet"
-import { fetchLines, setActiveColumn } from "./_redux/columnActions"
-import { loadPatentAndColumns } from "./_redux/patentActions"
-import ColumnTable from "./table"
-import { toCommas } from "./_root/_helpers"
+import { fetchLines, setActiveColumn } from "../_redux/columnActions"
+import { loadPatentAndColumns } from "../_redux/patentActions"
+import { toCommas } from "../_root/_helpers"
 import styled from "styled-components"
-const ActivePatent = ({
+
+const Patent = ({
   activePatent,
   activeColumn,
   columns,
@@ -112,4 +112,4 @@ const mapDispatch = dispatch => ({
 export default connect(
   mapState,
   mapDispatch,
-)(ActivePatent)
+)(Patent)

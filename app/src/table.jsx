@@ -34,7 +34,7 @@ const NoLineHeightRow = styled(TableRow)`
   line-height: 0em;
 `
 
-const ColumnTable = ({
+const ColumnAsLines = ({
   lines,
   columnId,
   fetchLines,
@@ -76,4 +76,4 @@ const ColumnTable = ({
   )
 }
 
-export default ColumnTable
+export default ColumnAsLines

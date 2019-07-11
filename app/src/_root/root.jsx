@@ -13,7 +13,7 @@ import "react-toastify/dist/ReactToastify.min.css"
 import Header from "./header/header"
 import Footer from "./components/footer"
 import Home from "../home"
-import ActivePatent from "../patent"
+import Patent from "../patent/patent"
 
 const StylishToast = styled(ToastContainer)`
   margin-top: 100px;
@@ -26,7 +26,7 @@ const Root = () => (
         <Box fill>
           <StylishToast />
           <Route exact path="/" component={Home} />
-          <Route path="/patents/:id" component={ActivePatent} />
+          <Route path="/patents/:id" component={Patent} />
         </Box>
         <Footer />
       </Box>
