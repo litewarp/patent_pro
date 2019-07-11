@@ -6,16 +6,37 @@ import { connect } from "react-redux"
 import { bindActionCreators } from "redux"
 import { Box, Heading, Select, Anchor } from "grommet"
 import * as Yup from "yup"
+import AsyncCreatableSelect from "react-select/async-creatable"
 import { Search, Send } from "grommet-icons"
+import { toast } from "react-toastify"
 import {
   createPatent,
   setActivePatent,
   fetchPatentNumbers,
   loadPatentAndColumns,
 } from "./_redux/patentActions"
-import { toast } from "react-toastify"
-import AsyncCreatableSelect from "react-select/async-creatable"
-import StyledPatentSelect from "./_styledForm.jsx"
+
+const customStyles = {
+  clearIndicator: (provided, state) => ({}),
+  container: (provided, state) => ({ ...provided }),
+  control: (provided, state) => ({}),
+  dropdownIndicator: (provided, state) => ({}),
+  group: (provided, state) => ({}),
+  groupHeading: (provided, state) => ({}),
+  indicatorsContainer: (provided, state) => ({ ...provided }),
+  indicatorSeparator: (provided, state) => ({}),
+  input: (provided, state) => ({}),
+  loadingIndicator: (provided, state) => ({}),
+  loadingMessage: (provided, state) => ({}),
+  menu: (provided, state) => ({}),
+  menuList: (provided, state) => ({}),
+  menuPortal: (provided, state) => ({}),
+  noOptionsMessage: (provided, state) => ({}),
+  option: (provided, state) => ({}),
+  placeholder: (provided, state) => ({}),
+  singleValue: (provided, state) => ({}),
+  valueContainer: (provided, state) => ({}),
+}
 const PatentForm = ({
   createPatent,
   fetchPatentNumbers,
@@ -55,6 +76,7 @@ const PatentForm = ({
       name="patentNumber"
       placeholder="e.g., 7629705"
       defaultOptions
+      styles={customStyles}
       loadOptions={(inputValue, callback) => fetchOptions(inputValue, callback)}
       onChange={option => {
         setValue(option)
