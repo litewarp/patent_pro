@@ -4,8 +4,8 @@
 import React from "react"
 import { connect } from "react-redux"
 import { bindActionCreators } from "redux"
-import { Formik, ErrorMessage } from "formik"
-import { Box, Heading, Select } from "grommet"
+import { withFormik, ErrorMessage } from "formik"
+import { Box, Heading, Select, Anchor } from "grommet"
 import * as Yup from "yup"
 import { Search, Send } from "grommet-icons"
 import {
@@ -35,61 +35,72 @@ const numberSchema = Yup.object().shape({
     .required("A Valid Patent Number is Required"),
 })
 
-const PatentForm = ({
+const BaseForm = ({
   createPatent,
   fetchPatentNumbers,
   loadPatentAndColumns,
   patentNumbers,
+  ...props
 }: {
   patentNumbers: Array<{}>,
   createPatent: number => void,
   fetchPatentNumbers: (?string) => void,
   loadPatentAndColumns: number => void,
+  props: FormikBag,
 }) => {
-  const [isOpen, setIsOpen] = React.useState(false)
-  const options = patentNumbers.map(pN => pN.attributes.number)
-
-  const loadOptions = (inputValue, callback) => {
-    fetchPatentNumbers(inputValue)
-    callback(options)
+  const {
+    values,
+    touched,
+    handleSubmit,
+    handleReset,
+    setFieldValue,
+    setFieldTouched,
+    isSubmitting,
+  } = props
+  const options = () => {
+    if (patentNumbers.length == 0) {
+      return { label: "Create New", value: inputValue }
+    } else {
+      return patentNumbers.map(p => ({
+        label: p.attributes.number,
+        value: p.attributes.number,
+      }))
+    }
   }
+
+  React.useEffect(() => {
+    fetchPatentNumbers("")
+  }, [fetchPatentNumbers])
+
+  const [inputValue, setInputValue] = React.useState("")
+
+  const handleSearch = val => {
+    setInputValue(val)
+    setFieldValue("patentNumber", val)
+    fetchPatentNumbers(val)
+  }
+
+  console.log(options)
   return (
-    <Formik
-      initialValues={{ patentNumber: "" }}
-      onSubmit={(values, { resetForm }) => {
-        createPatent(values.patentNumber)
-      }}
-      validationSchema={numberSchema}
-      render={({
-        values,
-        touched,
-        dirty,
-        errors,
-        handleChange,
-        handleBlur,
-        handleSubmit,
-        handleReset,
-        setFieldValue,
-        setFieldTouched,
-        isSubmitting,
-      }: FormikBag) => (
-        <>
-          <Select
-            name="patentNumber"
-            placeholder="e.g., 7629705"
-            onSearch={val => fetchPatentNumbers(val)}
-            options={options}
-            open={isOpen}
-            value={values.patentNumber}
-            onChange={val => {
-              setFieldValue("patentNumber", val)
-              loadPatentAndColumns(val)
-            }}
-          />
-          <ErrorMessage name="patentNumber" component="div" />
-        </>
-      )}
-    />
+    <>
+      <Select
+        plain
+        focusIndicator={true}
+        icon={<Search />}
+        size="large"
+        name="patentNumber"
+        searchPlaceholder="e.g., 7629705"
+        onSearch={val => handleSearch(val)}
+        labelKey="label"
+        valueKey="value"
+        options={options()}
+        value={values.patentNumber}
+        onChange={val => {
+          setFieldValue("patentNumber", val)
+        }}
+      />
+      <ErrorMessage name="patentNumber" component="div" />
+    </>
   )
 }
 
@@ -103,6 +114,21 @@ const mapDispatch = dispatch => ({
   createPatent: bindActionCreators(createPatent, dispatch),
   fetchPatentNumbers: bindActionCreators(fetchPatentNumbers, dispatch),
 })
+
+const PatentForm = withFormik({
+  displayName: "Patent Form",
+  enableReinitialize: true,
+  mapPropsToValues: props => ({
+    patentNumber: props.patentNumbers[0]
+      ? props.patentNumbers[0].attributes.number
+      : "",
+  }),
+  validateOnSchema: numberSchema,
+  handleSubmit: (values, { setSubmitting }) => {
+    createPatent(values.patentNumber)
+    setSubmitting(false)
+  },
+})(BaseForm)
 
 export default connect(
   mapState,
