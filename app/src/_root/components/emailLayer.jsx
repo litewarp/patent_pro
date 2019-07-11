@@ -12,6 +12,8 @@ const SubmitButton = styled(Button)`
 `
 const FormikField = ({
   name,
+  errors,
+  touched,
   label,
   setFieldValue,
   setFieldTouched,
@@ -22,12 +24,10 @@ const FormikField = ({
       {...props}
       name={name}
       label={label}
-      onFocus={ev => setFieldTouched(name, true)}
+      onBlur={ev => setFieldTouched(name, true)}
       onChange={ev => setFieldValue(name, ev.target.value)}
-    >
-      {props.children}
-    </FormField>
-    <ErrorMessage name={name} />
+      error={errors[`${name}`] && touched[`${name}`] ? errors[`${name}`] : null}
+    />
   </>
 )
 
@@ -39,21 +39,19 @@ const EmailLayer = ({ showModal, handleSubmit, ...props }) => (
     modal
     onClickOutside={() => showModal(false)}
   >
-    <Form onSubmit={handleSubmit}>
-      <Box pad="medium">
+    <Box pad="medium">
+      <Form onSubmit={handleSubmit}>
         <FormikField name="name" label="Full Name" {...props} />
         <FormikField name="email" label="Email Address" {...props} />
         <FormikField
           name="message"
           label="Your Message"
-          htmlFor="text-area"
+          component={TextArea}
           {...props}
-        >
-          <TextArea id="text-area" placeholder="some text!" />{" "}
-        </FormikField>
+        />
         <SubmitButton type="submit" primary icon={<Send />} label="Submit" />
-      </Box>
-    </Form>
+      </Form>
+    </Box>
   </Layer>
 )
 
@@ -64,14 +62,13 @@ const EmailModal = withFormik({
     message: "",
   }),
 
-  validationSchema: () =>
-    Yup.object.shape({
-      name: Yup.string().required("Name Required"),
-      email: Yup.string()
-        .email("Invalid Email")
-        .required("Valid Email Required"),
-      message: Yup.string().required("Message Required"),
-    }),
+  validationSchema: Yup.object().shape({
+    name: Yup.string().required("Name Required"),
+    email: Yup.string()
+      .email("Invalid Email")
+      .required("Valid Email Required"),
+    message: Yup.string().required("Message Required"),
+  }),
 
   handleSubmit: (values, { setSubmitting }) => {
     setTimeout(() => {

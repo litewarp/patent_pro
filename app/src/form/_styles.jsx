@@ -8,7 +8,10 @@ import { Search } from "grommet-icons"
 
 export const customStyles = {
   clearIndicator: (provided, state) => ({}),
-  container: (provided, state) => ({ ...provided, width: "100%" }),
+  container: (provided, state) => ({
+    ...provided,
+    width: "100%",
+  }),
   control: (provided, state) => ({
     ...provided,
     display: "flex",
@@ -42,6 +45,7 @@ export const customStyles = {
   placeholder: (provided, state) => ({
     ...provided,
     color: "white",
+    opacity: "0.6",
     fontFamily: "gibbs",
     fontSize: "1.25rem",
   }),

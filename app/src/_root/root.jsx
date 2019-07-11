@@ -12,7 +12,7 @@ import "react-toastify/dist/ReactToastify.min.css"
 // Components
 import Header from "./header/header"
 import Footer from "./components/footer"
-import Home from "../home"
+import LandingPage from "../home"
 import Patent from "../patent/patent"
 
 const StylishToast = styled(ToastContainer)`
@@ -20,17 +20,21 @@ const StylishToast = styled(ToastContainer)`
 `
 const Root = () => (
   <Grommet theme={theme} full>
-    <Router>
-      <Box fill alignContent="center">
-        <Header />
-        <Box fill>
-          <StylishToast />
-          <Route exact path="/" component={Home} />
-          <Route path="/patents/:id" component={Patent} />
-        </Box>
-        <Footer />
-      </Box>
-    </Router>
+    <ResponsiveContext.Consumer>
+      {({ size }) => (
+        <Router>
+          <Box fill alignContent="center">
+            <Header size={size} />
+            <Box fill>
+              <StylishToast />
+              <Route exact path="/" component={LandingPage} />
+              <Route path="/patents/:id" component={Patent} />
+            </Box>
+            <Footer />
+          </Box>
+        </Router>
+      )}
+    </ResponsiveContext.Consumer>
   </Grommet>
 )
 

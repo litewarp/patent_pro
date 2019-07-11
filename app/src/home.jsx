@@ -5,6 +5,7 @@ import { Anchor, Box, Button, Form, FormField, Heading, Layer } from "grommet"
 import { Send, Github, MailOption, Twitter } from "grommet-icons"
 import styled from "styled-components"
 import EmailModal from "./_root/components/emailLayer"
+
 const StyledAnchor = styled(Anchor)`
   svg {
     padding: 0.5em;
@@ -13,6 +14,7 @@ const StyledAnchor = styled(Anchor)`
     box-shadow: 0 0 1px 1px #777777;
   }
 `
+
 const LandingPage = () => {
   const [modal, showModal] = React.useState(false)
   return (
