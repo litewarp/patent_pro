@@ -7,36 +7,17 @@ import { bindActionCreators } from "redux"
 import { Box, Heading, Select, Anchor } from "grommet"
 import * as Yup from "yup"
 import AsyncCreatableSelect from "react-select/async-creatable"
-import { Search, Send } from "grommet-icons"
+import { AddCircle, Search, Send } from "grommet-icons"
 import { toast } from "react-toastify"
+import { toCommas } from "./_root/_helpers"
 import {
   createPatent,
   setActivePatent,
   fetchPatentNumbers,
   loadPatentAndColumns,
 } from "./_redux/patentActions"
+import { customStyles, DropdownIndicator, AddPatentAnchor } from "./_styles"
 
-const customStyles = {
-  clearIndicator: (provided, state) => ({}),
-  container: (provided, state) => ({ ...provided }),
-  control: (provided, state) => ({}),
-  dropdownIndicator: (provided, state) => ({}),
-  group: (provided, state) => ({}),
-  groupHeading: (provided, state) => ({}),
-  indicatorsContainer: (provided, state) => ({ ...provided }),
-  indicatorSeparator: (provided, state) => ({}),
-  input: (provided, state) => ({}),
-  loadingIndicator: (provided, state) => ({}),
-  loadingMessage: (provided, state) => ({}),
-  menu: (provided, state) => ({}),
-  menuList: (provided, state) => ({}),
-  menuPortal: (provided, state) => ({}),
-  noOptionsMessage: (provided, state) => ({}),
-  option: (provided, state) => ({}),
-  placeholder: (provided, state) => ({}),
-  singleValue: (provided, state) => ({}),
-  valueContainer: (provided, state) => ({}),
-}
 const PatentForm = ({
   createPatent,
   fetchPatentNumbers,
@@ -54,7 +35,7 @@ const PatentForm = ({
 }) => {
   const formatOptions = () =>
     patentNumbers.map(p => ({
-      label: p.attributes.number,
+      label: toCommas(p.attributes.number),
       value: p.attributes.number,
     }))
 
@@ -74,8 +55,13 @@ const PatentForm = ({
   return (
     <AsyncCreatableSelect
       name="patentNumber"
-      placeholder="e.g., 7629705"
+      components={{ DropdownIndicator }}
+      placeholder={"Enter Patent Number"}
       defaultOptions
+      isValidNewOption={option => /^[0-9RE]{5,10}$/.test(option)}
+      formatCreateLabel={() => (
+        <AddPatentAnchor label="Add a Patent" icon={<AddCircle />} />
+      )}
       styles={customStyles}
       loadOptions={(inputValue, callback) => fetchOptions(inputValue, callback)}
       onChange={option => {

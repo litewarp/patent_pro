@@ -25,7 +25,7 @@ const Header = ({ size }: { size: string }) => {
       gap="medium"
     >
       <Brand DISPLAY_SMALL={DISPLAY_SMALL} />
-      <Box direction="row" basis="1/4">
+      <Box direction="row" basis={DISPLAY_SMALL ? "1/2" : "1/4"} align="center">
         <PatentForm />
       </Box>
     </Box>
