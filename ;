@@ -12,8 +12,9 @@ import { toCommas } from "../_root/_helpers"
 import { actions as patentActions } from "../_redux/patentActions"
 import { customStyles, DropdownIndicator, AddPatentAnchor } from "./_styles"
 
-const PatentForm = () => {
+const PatentForm = ({}) => {
   //localstate
+  const [value, setValue] = React.useState({})
   const [inputValue, setInputValue] = React.useState("")
   //redux
   const dispatch = useDispatch()
@@ -21,14 +22,8 @@ const PatentForm = () => {
     ({ patent }) => patent.patentNumbers,
     shallowEqual,
   )
-  const activePatent = useSelector(({ patent }) => patent.activePatent)
-  const { searchPatents, loadColumns, createPatent } = patentActions
+  const { fetchPatentNumbers, loadColumns, createPatent } = patentActions
   //component actions
-  const value = activePatent &&
-    activePatent.attributes && {
-      label: activePatent.attributes.number,
-      value: activePatent.attributes.number,
-    }
 
   const formatOptions = () =>
     patentNumbers.map(p => ({
@@ -37,13 +32,13 @@ const PatentForm = () => {
     }))
 
   const fetchOptions = (inputValue, callback) => {
-    searchPatents(inputValue || "")
+    fetchPatentNumbers(inputValue || "")
     callback(formatOptions())
   }
 
   const handleInputChange = (val: string) => {
     setInputValue(val)
-    searchPatents(val)
+    fetchPatentNumbers(val)
   }
 
   return (
@@ -59,6 +54,7 @@ const PatentForm = () => {
       styles={customStyles}
       loadOptions={(inputValue, callback) => fetchOptions(inputValue, callback)}
       onChange={option => {
+        setValue(option)
         loadColumns(option)
       }}
       onInputChange={option => handleInputChange(option)}

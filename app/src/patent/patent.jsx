@@ -2,43 +2,36 @@
 // @flow
 
 import React, { useState, useEffect } from "react"
-import { connect } from "react-redux"
+import { useSelector, useDispatch, shallowEqual } from "react-redux"
 import { bindActionCreators } from "redux"
 import { LinkNext, LinkPrevious } from "grommet-icons"
 import { Box, Heading, Button, Anchor } from "grommet"
 import { fetchLines, setActiveColumn } from "../_redux/columnActions"
-import { loadPatentAndColumns } from "../_redux/patentActions"
+import { actions as patentActions } from "../_redux/patentActions"
+import { actions as columnActions } from "../_redux/columnActions"
 import { toCommas } from "../_root/_helpers"
 import styled from "styled-components"
 
 const Patent = ({
-  activePatent,
-  activeColumn,
-  columns,
-  loading,
-  lines,
   match,
-  loadPatentAndColumns,
-  fetchLines,
-  patents,
-  setActiveColumn,
 }: {
-  activePatent: { id: number },
-  activeColumn: number,
-  columns: Array<Object>,
-  lines: Array<Object>,
   match: {
     params: {
       id: string,
     },
   },
-  loadPatentAndColumns: number => void,
-  loading: boolean,
-  patents: Array<{}>,
-  fetchLines: number => void,
-  fetchPatents: () => void,
-  setActiveColumn: number => void,
 }) => {
+  const { loadColumns, loadPatents } = patentActions
+
+  const { fetchLines, setActiveColumn } = columnActions
+  const dispatch = useDispatch()
+  const loading = useSelector(({ patent }) => patent.loading)
+  const patents = useSelector(({ patent }) => patent.patents)
+  const activePatent = useSelector(({ patent }) => patent.activePatent)
+  const activeColumn = useSelector(({ column }) => column.activeColumn)
+  const columns = useSelector(({ column }) => column.columns, shallowEqual)
+  const lines = useSelector(({ column }) => column.lines, shallowEqual)
+
   const downColumn = col => (col == 1 ? 1 : col - 1)
   const upColumn = col => (col == columns.length ? columns.length : col + 1)
 
@@ -54,7 +47,7 @@ const Patent = ({
     : null
 
   React.useEffect(() => {
-    patentNumberToLoad && loadPatentAndColumns(patentNumberToLoad)
+    patentNumberToLoad && loadColumns(patentNumberToLoad)
   }, [patents[0]])
 
   const commaNumber = activePatent && toCommas(activePatent.attributes.number)
@@ -94,22 +87,4 @@ const Patent = ({
   )
 }
 
-const mapState = ({ column, patent }) => ({
-  activePatent: patent.activePatent,
-  columns: patent.columns,
-  patents: patent.patents,
-  lines: column.lines,
-  activeColumn: column.activeColumn,
-  loading: column.loading,
-})
-
-const mapDispatch = dispatch => ({
-  loadPatentAndColumns: bindActionCreators(loadPatentAndColumns, dispatch),
-  fetchLines: bindActionCreators(fetchLines, dispatch),
-  setActiveColumn: bindActionCreators(setActiveColumn, dispatch),
-})
-
-export default connect(
-  mapState,
-  mapDispatch,
-)(Patent)
+export default Patent

@@ -22,10 +22,15 @@ const {
   DELETE_REQUEST,
   DELETE_SUCCESS,
   DELETE_FAILURE,
+  MODEL_PATENT_REQUEST,
+  MODEL_PATENT_SUCCESS,
+  MODEL_PATENT_FAILURE,
 } = actionRefs
 
 const initialState = {
   error: [],
+  activePatent: {},
+  modelPatent: {},
   patents: [],
   columns: [],
   patentNumbers: [],
@@ -111,6 +116,21 @@ export const patentReducer = createReducer(initialState, {
     }
   },
   [DELETE_FAILURE]: (state, action) => ({
+    ...state,
+    loading: false,
+    apiError: true,
+    error: action.payload.data,
+  }),
+  [MODEL_PATENT_REQUEST]: (state, action) => ({
+    ...state,
+    loading: true,
+  }),
+  [MODEL_PATENT_SUCCESS]: (state, action) => ({
+    ...state,
+    loading: false,
+    modelPatent: action.payload.data,
+  }),
+  [MODEL_PATENT_FAILURE]: (state, action) => ({
     ...state,
     loading: false,
     apiError: true,

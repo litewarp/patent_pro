@@ -8,20 +8,28 @@ import MessageModal from "./_messages"
 import ContactDetails from "./_contacts"
 import BulletPoints from "./_bullets"
 import ImageMockups from "./_images"
-import { loadPatentAndColumns as fetchModelPatent } from "../_redux/patentActions"
+import { actions as patentActions } from "../_redux/patentActions"
 
 const Title = styled(Heading)`
   font-family: brandon-grotesque, sans-serif;
   font-weight: 900;
 `
 const LandingPage = () => {
-  //lifecycle
-  React.useEffect(() => dispatch(fetchModelPatent("7629705")), [])
-  //layout state
-  const [modal, showModal] = React.useState(false)
+  const modelPatent = useSelector(
+    ({ patent }) => patent.modelPatent,
+    shallowEqual,
+  )
+  const columns = useSelector(({ patent }) => patent.columns)
   //redux
   const dispatch = useDispatch()
-  const column = useSelector(({ patent }) => patent.columns[2])
+  React.useEffect(() => {
+    const fetchModelPatent = x => dispatch(patentActions.loadModelPatent(x))
+    fetchModelPatent("7629705")
+  }, [])
+
+  const column = columns && columns[1]
+  //layout state
+  const [modal, showModal] = React.useState(false)
   //render
   return (
     <Grid
