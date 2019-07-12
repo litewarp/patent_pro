@@ -56,9 +56,9 @@ const PatentForm = ({
     <AsyncCreatableSelect
       name="patentNumber"
       components={{ DropdownIndicator }}
-      placeholder={"Enter Patent Number"}
+      placeholder={"Enter a US Patent to Start"}
       defaultOptions
-      isValidNewOption={option => /^[0-9RE]{5,10}$/.test(option)}
+      isValidNewOption={option => /^[0-9RE]{6,10}$/.test(option)}
       formatCreateLabel={() => (
         <AddPatentAnchor label="Add a Patent" icon={<AddCircle />} />
       )}

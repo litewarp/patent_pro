@@ -23,14 +23,17 @@ const ContactDetails = ({ showModal }: { showModal: boolean => void }) => (
     margin={{ top: "auto", bottom: "medium" }}
   >
     <StyledAnchor
+      color="accent-1"
       icon={<Github size="large" />}
       href="https://github.com/litewarp/patent_pro"
     />
     <StyledAnchor
+      color="accent-1"
       icon={<Twitter size="large" />}
       href="https://twitter.com/litewarp"
     />
     <StyledAnchor
+      color="accent-1"
       icon={<MailOption size="large" />}
       onClick={() => showModal(true)}
     />

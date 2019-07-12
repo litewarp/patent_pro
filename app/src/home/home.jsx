@@ -23,28 +23,27 @@ const LandingPage = () => {
   const dispatch = useDispatch()
   const column = useSelector(({ patent }) => patent.columns[2])
   //render
-  console.log(column)
   return (
     <Grid
-      pad="large"
       fill
       justify="center"
-      rows={["small", "small", "small", "small", "small", "small"]}
+      rows={["xsmall", "3/4", "xxsmall"]}
       columns={["1/2", "1/2"]}
       areas={[
-        { name: "title", start: [0, 0], end: [1, 0] },
-        { name: "subtitle", start: [0, 1], end: [1, 1] },
-        { name: "bullets", start: [0, 2], end: [0, 4] },
-        { name: "images", start: [1, 2], end: [1, 4] },
-        { name: "contacts", start: [0, 5], end: [1, 5] },
+        { name: "marquee", start: [0, 0], end: [1, 0] },
+        { name: "bullets", start: [0, 1], end: [0, 1] },
+        { name: "images", start: [1, 1], end: [1, 1] },
+        { name: "contacts", start: [0, 2], end: [1, 2] },
       ]}
     >
-      <Title gridArea="title" level={1}>
-        PATENT PRO
-      </Title>
-      <Heading gridArea="subtitle" level={3}>
-        Automatically generate snippets from US Patents
-      </Heading>
+      <Box gridArea="marquee" align="center" gap="small" margin="small">
+        <Title margin="none" level={1}>
+          PATENT PRO
+        </Title>
+        <Heading level={3} margin="none">
+          Automatically generate snippets from US Patents
+        </Heading>
+      </Box>
       <BulletPoints />
       <ImageMockups patentProps={column && column.attributes} />
       <ContactDetails />

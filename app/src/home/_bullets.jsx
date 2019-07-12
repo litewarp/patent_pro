@@ -25,17 +25,24 @@ const BulletPoint = ({
   text: string,
   passing?: boolean,
 }) => (
-  <Box direction="row" align="end" justify="between" gap="large">
-    <Text size="medium" margin={{ right: "auto" }}>
+  <Box
+    direction="row"
+    align="end"
+    justify="between"
+    gap="large"
+    pad={{ vertical: "medium" }}
+    margin={{ right: "small" }}
+  >
+    {icon}
+    <Text size="large" margin={{ right: "auto" }}>
       {text}
     </Text>
-    {icon}
     {passing ? <StatusGood color="green" /> : <StatusCritical color="red" />}
   </Box>
 )
 const BulletPoints = () => (
-  <Box gap="small" gridArea="bullets">
-    <BulletPointTitle margin="none" color="neutral-3" level={3}>
+  <Box pad="medium" gap="small" gridArea="bullets">
+    <BulletPointTitle margin="none" color="neutral-3" pad="large" level={3}>
       Feature List
     </BulletPointTitle>
     <BulletPoint
