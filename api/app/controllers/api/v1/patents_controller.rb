@@ -17,7 +17,6 @@ module Api
       def create
         match = Patent.find_by_number(params[:number])
         resource = PatentResource.build(params)
-        byebug
         if resource.save
           render jsonapi: resource, status: 201
           PatentWorker.perform_async(resource.data.id)

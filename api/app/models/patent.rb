@@ -7,14 +7,17 @@ class Patent < ApplicationRecord
 
   # validations
   validates :number, presence: true
+  validates_each :number do |record, attr, value|
+    record.errors.add(attr, "does not exist in our database") if !record.pdf_url(value)
+  end
   validates_uniqueness_of :number
 
   def dispatch_importer
     PatentWorker.perform_async(id)
   end
 
-  def pdf_url
-    pat_url = "http://pat2pdf.org/pat2pdf/foo.pl?number=#{number}"
+  def pdf_url(num)
+    pat_url = "http://pat2pdf.org/pat2pdf/foo.pl?number=#{num}"
     doc = Nokogiri::HTML(URI.open(pat_url))
     path = doc.css('div#content').at('li>a').attributes['href'].value
     "http://pat2pdf.org#{path}"

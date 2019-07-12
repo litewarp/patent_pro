@@ -42,8 +42,6 @@ module MagickPixels
       save_lined_image
     end
 
-    private
-
     ## determine coordinates for the line to draw
     ## and prepares output for imagemagick
     def red_line(row, width)
