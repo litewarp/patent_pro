@@ -35,7 +35,7 @@ module MagickPixels
       lines = segmentize
       MiniMagick::Tool::Convert.new do |convert|
         convert << @master_file.path
-        lines.each { |num| convert.merge! red_line(num, @col_count) }
+        lines.each { |num| convert.merge! red_line(num, @image.width) }
         convert << working_path("#{@column.number}_lined.png")
       end
       save_lined_image
@@ -48,14 +48,11 @@ module MagickPixels
       ['-stroke', 'red', '-strokewidth', '2', '-draw', coordinates]
     end
 
-    ## extracts pixelmap to txt file and then minifies it
-    ## could use improvement
-    ## full tiff as txt is 80 and min is ~41mb
-    ## query whether minifying is really more efficent
-    ## than parsing and gsubbing map once
     def extract_pixelmap
       MiniMagick::Tool::Convert.new do |convert|
         convert << @master_file.path
+        gravity = @column.number.to_i.even? ? "West" : "East"
+        convert << "-gravity" << gravity << "-chop" << "35x0" << "+repage"
         convert.colorspace('Gray').depth(8)
         convert << working_path("#{@column.number}_pixelmap.txt")
       end
@@ -65,20 +62,20 @@ module MagickPixels
       ## slightly less than Alabama
       ## 98 percent is sufficient for purity
       is_you_white = lambda do |row|
-        ## slice out the 35px column with line_numbers
+        ## slice out 25px column with line_numbers
         ## for even column, line on left, odd, line on right
-        line = @column.number.to_i.even? ? row.slice(35..-1) : row.slice(0..-35)
-        white_cols = line.select { |col| col.match?(/\#FFFFFF/) }
+
+        white_cols = row.select {|col| col.match?(/\#FFFFFF/)}
         whiteness = white_cols.count / row.count.to_f
-        whiteness > 0.98
+        whiteness > 0.9999
       end
       lines = File.read(working_path("#{@column.number}_pixelmap.txt"))
                   .split("\n")
+      @col_count = lines.last.gsub(/\:.*$/, '').split(',').first.to_i + 1
+      result = lines.each_slice(@col_count).collect { |r| is_you_white.call(r) }
+
       File.delete(working_path("#{@column.number}_pixelmap.txt"))
-      # offset width by 35px to account for chopped line numbers
-      width = @image.width - 35
-      byebug
-      lines.each_slice(width).collect { |r| is_you_white.call(r) }
+      result
     end
 
     def extract_segments
@@ -93,7 +90,7 @@ module MagickPixels
       rows.collect.with_index do |row, index|
         next unless row
 
-        line_type.call(rows[index - 1], next_line[index + 1])
+        line_type.call(rows[index - 1], rows[index + 1])
       end
     end
 
