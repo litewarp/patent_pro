@@ -3,7 +3,7 @@ module MagickPdfs
   class DocumentHandler
     def initialize(patent_num)
       @active_patent = Patent.find_by_number(patent_num)
-      @file = URI.open(@active_patent.pdf_url)
+      @file = URI.open(@active_patent.pdf_url(@active_patent.number))
       @basename = File.basename(@file.path)
       @pdf_length = Docsplit.extract_length([@file.path])
       @range = find_range
@@ -80,7 +80,7 @@ module MagickPdfs
           output: working_path('')
         )
         txt = File.read(working_path("#{num}_top.txt")).split("\n").slice(1, 2)
-        File.delete(working_path("#{num}_top.txt"))
+        File.delete(working_path("#{num}_top.*"))
         txt
       end
     end
