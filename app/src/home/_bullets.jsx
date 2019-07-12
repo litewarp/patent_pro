@@ -2,24 +2,50 @@
 
 // @flow
 import * as React from "react"
-import { Box, Text } from "grommet"
-import { Columns, BlockQuote, Bookmark } from "grommet-icons"
+import { Box, Text, Heading } from "grommet"
+import {
+  DocumentDownload,
+  BlockQuote,
+  Bookmark,
+  StatusCritical,
+  StatusGood,
+} from "grommet-icons"
+import styled from "styled-components"
 
-const BulletPoint = ({ icon, text }) => (
-  <Box direction="row" align="center" justify="start" gap="large">
+const BulletPointTitle = styled(Heading)`
+  text-decoration: underline;
+`
+
+const BulletPoint = ({
+  icon,
+  text,
+  passing,
+}: {
+  icon: React.Element<{}>,
+  text: string,
+  passing?: boolean,
+}) => (
+  <Box direction="row" align="end" justify="between" gap="large">
+    <Text size="medium" margin={{ right: "auto" }}>
+      {text}
+    </Text>
     {icon}
-    <Text>{text}</Text>
+    {passing ? <StatusGood color="green" /> : <StatusCritical color="red" />}
   </Box>
 )
 const BulletPoints = () => (
   <Box gap="small" gridArea="bullets">
+    <BulletPointTitle margin="none" color="neutral-3" level={3}>
+      Feature List
+    </BulletPointTitle>
     <BulletPoint
-      icon={<Columns />}
+      icon={<DocumentDownload />}
       text="Split patents into columns and extract the text"
+      passing={true}
     />
     <BulletPoint
       icon={<BlockQuote />}
-      text="Copy quotations with proper column and line numbers"
+      text="One-click snippets with column and line numbers"
     />
     <BulletPoint
       icon={<Bookmark />}

@@ -15,28 +15,27 @@ const Title = styled(Heading)`
   font-weight: 900;
 `
 const LandingPage = () => {
-  //lifecycle
-  React.useEffect(() => dispatch(fetchModelPatent("7629705")), [])
   //layout state
   const [modal, showModal] = React.useState(false)
   //redux
   const dispatch = useDispatch()
-  const column = useSelector(({ patent }) => patent.columns[2])
+  const modelPatent = useSelector(({ patent }) => patent.activePatent)
+  //lifecycle
+  React.useEffect(() => dispatch(fetchModelPatent("7629705")), [])
   //render
-  console.log(column)
   return (
     <Grid
       pad="large"
       fill
       justify="center"
-      rows={["small", "small", "small", "small", "small", "small"]}
+      rows={["small", "small", "medium", "medium"]}
       columns={["1/2", "1/2"]}
       areas={[
-        { name: "title", start: [0, 0], end: [1, 0] },
-        { name: "subtitle", start: [0, 1], end: [1, 1] },
-        { name: "bullets", start: [0, 2], end: [0, 4] },
-        { name: "images", start: [1, 2], end: [1, 4] },
-        { name: "contacts", start: [0, 5], end: [1, 5] },
+        { name: "title",    start:  [0, 0], end: [1, 0] },
+        { name: "subtitle", start:  [0, 1], end: [1, 1] },
+        { name: "bullets",  start:  [0, 2], end: [0, 2] },
+        { name: "images",   start:  [1, 2], end: [1, 2] },
+        { name: "contacts", start:  [0, 3], end: [1, 3] },
       ]}
     >
       <Title gridArea="title" level={1}>
@@ -46,7 +45,7 @@ const LandingPage = () => {
         Automatically generate snippets from US Patents
       </Heading>
       <BulletPoints />
-      <ImageMockups patentProps={column && column.attributes} />
+      <ImageMockups patentProps={modelPatent.attributes}/>
       <ContactDetails />
       {modal && <MessageModal showModal={showModal} modal={modal} />}
     </Grid>

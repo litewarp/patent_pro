@@ -4,12 +4,24 @@ import * as React from "react"
 
 import { Box, Heading, Image } from "grommet"
 
-const ImageMockups = () => (
-  <Box gridArea="images">
-    <Image
-      fit="cover"
-      src="/rails/active_storage/blobs/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBbjBFIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--f78c4a63c4b6ebd5296299c5f68b731d22ddbcd1/col_10_lined.png"
-    />
+const columnOptions = [
+  "Original with OCR",
+  "Split_Line",
+  "Split_Index",
+  "Each_Line with OCR",
+]
+
+const ImageMockups = ({
+  patentProps,
+}: {
+  patentProps: {
+    masterImgUrl: string,
+    linedImgUrl: string,
+    splitImgUrl: string,
+  },
+}) => (
+  <Box gridArea="images" fill pad="medium">
+    <Image fit="cover" src={patentProps && patentProps.masterImgUrl} />
   </Box>
 )
 
