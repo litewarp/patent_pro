@@ -76,7 +76,13 @@ const BrandHeading = styled(Heading)`
   line-height: 18px;
 `
 
-export const Brand = ({ DISPLAY_SMALL }: { DISPLAY_SMALL: boolean }) => (
+export const Brand = ({
+  isDisplaySmall,
+  text,
+}: {
+  isDisplaySmall: boolean,
+  text: string,
+}) => (
   <BrandLink to="/">
     <BrandHeading
       margin={{ horizontal: "small" }}
@@ -84,7 +90,7 @@ export const Brand = ({ DISPLAY_SMALL }: { DISPLAY_SMALL: boolean }) => (
       level={2}
       color="light-3"
     >
-      PATENT PRO
+      {text}
     </BrandHeading>
   </BrandLink>
 )

@@ -9,24 +9,34 @@ import { Box } from "grommet"
 import { toCommas } from "../_helpers"
 import { Brand, NavLinks, PatentNav } from "./navs"
 import PatentForm from "../../form/form"
+import styled from "styled-components"
 
-const Header = ({ size }: { size: string }) => {
+const FixedBox = styled(Box)`
+  max-width: 1280px;
+`
+
+const Header = ({ size, pathname }: { size: string, pathname: string }) => {
   //responsive helpers
-  const DISPLAY_SMALL = size === "small"
-  const DISPLAY_LARGE = size === "large"
+  const isDisplaySmall = size === "small"
+  const brandText = pathname === "/" ? "SETHI P.C." : "PATENT PRO"
 
   return (
     <Box
       direction="row"
       pad={{ horizontal: "medium" }}
       background="brand"
-      justify="end"
-      gap="medium"
+      justify="center"
     >
-      <Brand DISPLAY_SMALL={DISPLAY_SMALL} />
-      <Box direction="row" basis={DISPLAY_SMALL ? "1/2" : "1/4"} align="center">
-        <PatentForm />
-      </Box>
+      <FixedBox fill direction="row" justify="between">
+        <Brand isDisplaySmall text={brandText} />
+        <Box
+          direction="row"
+          basis={isDisplaySmall ? "1/2" : "1/4"}
+          align="center"
+        >
+          <PatentForm />
+        </Box>
+      </FixedBox>
     </Box>
   )
 }

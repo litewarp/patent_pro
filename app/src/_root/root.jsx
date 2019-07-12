@@ -1,7 +1,7 @@
 /** @format */
 // @flow
 import * as React from "react"
-import { BrowserRouter as Router, Route } from "react-router-dom"
+import { BrowserRouter as Router, Route, withRouter } from "react-router-dom"
 import { Box, Grommet, ResponsiveContext } from "grommet"
 import theme from "./theme"
 
@@ -18,23 +18,40 @@ import Patent from "../patent/patent"
 const StylishToast = styled(ToastContainer)`
   margin-top: 100px;
 `
+
+const Content = ({
+  children,
+  location,
+}: {
+  children: Array<{}>,
+  location: {
+    pathname: string,
+  },
+}) => (
+  <ResponsiveContext.Consumer>
+    {({ size }) => (
+      <>
+        <Header size={size} pathname={location.pathname} />
+        <StylishToast />
+        <Box fill>{children}</Box>
+        <Footer />
+      </>
+    )}
+  </ResponsiveContext.Consumer>
+)
+
+const MainContent = withRouter(Content)
+
 const Root = () => (
   <Grommet theme={theme} full>
-    <ResponsiveContext.Consumer>
-      {({ size }) => (
-        <Router>
-          <Box fill alignContent="center">
-            <Header size={size} />
-            <Box fill>
-              <StylishToast />
-              <Route exact path="/" component={LandingPage} />
-              <Route path="/patents/:id" component={Patent} />
-            </Box>
-            <Footer />
-          </Box>
-        </Router>
-      )}
-    </ResponsiveContext.Consumer>
+    <Router>
+      <Box fill alignContent="center">
+        <MainContent>
+          <Route exact path="/" component={LandingPage} />
+          <Route path="/patents/:id" component={Patent} />
+        </MainContent>
+      </Box>
+    </Router>
   </Grommet>
 )
 

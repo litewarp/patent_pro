@@ -1,8 +1,26 @@
 /** @format */
 
 import * as React from "react"
-import { Anchor, Box, Button, Form, FormField, Heading, Layer } from "grommet"
-import { Send, Github, MailOption, Twitter } from "grommet-icons"
+import {
+  Anchor,
+  Box,
+  Button,
+  Form,
+  FormField,
+  Heading,
+  Layer,
+  Text,
+} from "grommet"
+import {
+  BlockQuote,
+  Bookmark,
+  Columns,
+  DocumentPdf,
+  Send,
+  Github,
+  MailOption,
+  Twitter,
+} from "grommet-icons"
 import styled from "styled-components"
 import EmailModal from "./_root/components/emailLayer"
 
@@ -14,13 +32,38 @@ const StyledAnchor = styled(Anchor)`
     box-shadow: 0 0 1px 1px #777777;
   }
 `
+const Title = styled(Heading)`
+  font-family: brandon-grotesque, sans-serif;
+  font-weight: 900;
+`
+
+const BulletPoint = ({ icon, text }) => (
+  <Box direction="row" align="center" justify="start" gap="large">
+    {icon}
+    <Text>{text}</Text>
+  </Box>
+)
 
 const LandingPage = () => {
   const [modal, showModal] = React.useState(false)
   return (
     <Box fill align="center">
-      <Heading level={1}>Welcome to Patent Pro</Heading>
-      <Heading level={3}>Enter a US Patent Number to Start</Heading>
+      <Title level={1}>PATENT PRO</Title>
+      <Heading level={3}>A US Patent Parser</Heading>
+      <Box gap="small">
+        <BulletPoint
+          icon={<Columns />}
+          text="Split patents into columns and extract the text"
+        />
+        <BulletPoint
+          icon={<BlockQuote />}
+          text="Copy quotations with proper column and line numbers"
+        />
+        <BulletPoint
+          icon={<Bookmark />}
+          text="Add annotations and share them with colleagues"
+        />
+      </Box>
       <Box
         gap="medium"
         pad="medium"

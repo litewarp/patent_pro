@@ -29,7 +29,6 @@ export const customStyles = {
   input: (provided, state) => ({
     ...provided,
     color: "white",
-    fontFamily: "gibbs",
   }),
   loadingIndicator: (provided, state) => ({ ...provided }),
   loadingMessage: (provided, state) => ({ ...provided }),
@@ -40,13 +39,11 @@ export const customStyles = {
   option: (provided, state) => ({
     ...provided,
     color: state.isFocused ? "black" : "white",
-    fontFamily: "gibbs",
   }),
   placeholder: (provided, state) => ({
     ...provided,
     color: "white",
     opacity: "0.6",
-    fontFamily: "gibbs",
     fontSize: "1.25rem",
   }),
   singleValue: (provided, state) => ({ ...provided, fontSize: "1em" }),
@@ -62,7 +59,6 @@ export const DropdownIndicator = props => (
 )
 
 export const AddPatentAnchor = styled(Anchor)`
-  font-family: gibbs, sans-serif;
   font-size: 1.25em;
   font-variant: all-small-caps;
 `
