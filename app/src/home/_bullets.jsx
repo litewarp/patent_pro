@@ -5,10 +5,12 @@ import * as React from "react"
 import { Box, Text, Heading } from "grommet"
 import {
   DocumentDownload,
+  OrderedList,
   BlockQuote,
   Bookmark,
   StatusCritical,
   StatusGood,
+  StatusWarning,
 } from "grommet-icons"
 import styled from "styled-components"
 
@@ -23,23 +25,33 @@ const BulletPoint = ({
 }: {
   icon: React.Element<{}>,
   text: string,
-  passing?: boolean,
-}) => (
-  <Box
-    direction="row"
-    align="end"
-    justify="between"
-    gap="large"
-    pad={{ vertical: "medium" }}
-    margin={{ right: "small" }}
-  >
-    {icon}
-    <Text size="large" margin={{ right: "auto" }}>
-      {text}
-    </Text>
-    {passing ? <StatusGood color="green" /> : <StatusCritical color="red" />}
-  </Box>
-)
+  passing?: string,
+}) => {
+  const StatusIcon =
+    passing === "good" ? (
+      <StatusGood color="green" />
+    ) : passing === "warning" ? (
+      <StatusWarning color="orange" />
+    ) : (
+      <StatusCritical color="red" />
+    )
+  return (
+    <Box
+      direction="row"
+      align="end"
+      justify="between"
+      gap="large"
+      pad={{ vertical: "medium" }}
+      margin={{ right: "small" }}
+    >
+      {icon}
+      <Text size="large" margin={{ right: "auto" }}>
+        {text}
+      </Text>
+      {StatusIcon}
+    </Box>
+  )
+}
 const BulletPoints = () => (
   <Box pad="medium" gap="small" gridArea="bullets">
     <BulletPointTitle margin="none" color="neutral-3" pad="large" level={3}>
@@ -47,12 +59,18 @@ const BulletPoints = () => (
     </BulletPointTitle>
     <BulletPoint
       icon={<DocumentDownload />}
-      text="Split patents into columns and extract the text"
-      passing={true}
+      text="Download and extract column text by number"
+      passing={"good"}
+    />
+    <BulletPoint
+      icon={<OrderedList />}
+      text="Assign line numbers to extracted text"
+      passing={"warning"}
     />
     <BulletPoint
       icon={<BlockQuote />}
       text="One-click snippets with column and line numbers"
+      passing={"error"}
     />
     <BulletPoint
       icon={<Bookmark />}
