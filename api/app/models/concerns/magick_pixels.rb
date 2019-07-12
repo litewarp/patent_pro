@@ -4,11 +4,11 @@ module MagickPixels
     attr_reader :pixels
 
     def initialize(col_id)
-      @path = SecureRandom.uuid
       @column = Column.find(col_id)
       @master_file = @column.image_path('master')
       @folder = "tmp/mm/#{@column.patent.number}"
       FileUtils.mkdir_p @folder
+      @image = MiniMagick::Image.open(@master_file.path)
     end
 
     def working_path(name)
@@ -18,13 +18,12 @@ module MagickPixels
     ## segement column into 67 equal lines
     ## attach file to model as split_image
     def draw_split
-      img = MiniMagick::Image.open(@master_file.path)
-      lh = (img.height / 67).ceil
-      row = ->(y) { (y * lh) > img.height ? img.height : (y * lh) }
+      lh = (@image.height / 67).ceil
+      row = ->(y) { (y * lh) > @image.height ? @image.height : (y * lh) }
       MiniMagick::Tool::Convert.new do |convert|
         convert << @master_file.path
-        (1..67).each { |i| convert.merge! red_line(row.call(i), img.height) }
-        convert << working_path("#{@path}_split.png")
+        (1..67).each { |i| convert.merge! red_line(row.call(i), @image.height) }
+        convert << working_path("#{@column.number}_split.png")
       end
       save_split_image
     end
@@ -37,7 +36,7 @@ module MagickPixels
       MiniMagick::Tool::Convert.new do |convert|
         convert << @master_file.path
         lines.each { |num| convert.merge! red_line(num, @col_count) }
-        convert << working_path("#{@path}_lined.png")
+        convert << working_path("#{@column.number}_lined.png")
       end
       save_lined_image
     end
@@ -55,17 +54,11 @@ module MagickPixels
     ## query whether minifying is really more efficent
     ## than parsing and gsubbing map once
     def extract_pixelmap
-      no_parens = ->(x) { x.gsub(/\s\([0-9\,\s]+\)\s/, '') }
       MiniMagick::Tool::Convert.new do |convert|
         convert << @master_file.path
         convert.colorspace('Gray').depth(8)
-        convert << working_path("#{@path}.txt")
+        convert << working_path("#{@column.number}_pixelmap.txt")
       end
-      File.open(working_path("#{@path}_min.txt"), 'a') do |new_file|
-        map = File.read(working_path("#{@path}.txt"))
-        map.each_line { |line| new_file << no_parens.call(line) }
-      end
-      File.delete(working_path("#{@path}.txt"))
     end
 
     def parse_bitmap
@@ -75,18 +68,17 @@ module MagickPixels
         ## slice out the 35px column with line_numbers
         ## for even column, line on left, odd, line on right
         line = @column.number.to_i.even? ? row.slice(35..-1) : row.slice(0..-35)
-        white_cols = line.select { |col| col.split(/\:/).second == '#FFFFFF' }
-        whiteness = white_cols.count / row.count
+        white_cols = line.select { |col| col.match?(/\#FFFFFF/) }
+        whiteness = white_cols.count / row.count.to_f
         whiteness > 0.98
       end
-
-      lines = File.read(working_path("#{@path}_min.txt")).split("\n")
-      @col_count, @row_count = lines.last
-                                    .gsub(/\:.*$/, '')
-                                    .split(',')
-                                    .collect { |x| x.to_i + 1 }
-      File.delete(working_path("#{@path}_min.txt"))
-      lines.each_slice(@col_count).collect { |row| is_you_white.call(row) }
+      lines = File.read(working_path("#{@column.number}_pixelmap.txt"))
+                  .split("\n")
+      File.delete(working_path("#{@column.number}_pixelmap.txt"))
+      # offset width by 35px to account for chopped line numbers
+      width = @image.width - 35
+      byebug
+      lines.each_slice(width).collect { |r| is_you_white.call(r) }
     end
 
     def extract_segments
@@ -107,14 +99,14 @@ module MagickPixels
 
     def save_split_image
       @column.split_image.attach(
-        io: File.open(working_path("#{@path}_split.png")),
+        io: File.open(working_path("#{@column.number}_split.png")),
         filename: "col_#{@column.number}_split.png"
       )
     end
 
     def save_lined_image
       @column.lined_image.attach(
-        io: File.open(working_path("#{@path}_lined.png")),
+        io: File.open(working_path("#{@column.number}_lined.png")),
         filename: "col_#{@column.number}_lined.png"
       )
     end
