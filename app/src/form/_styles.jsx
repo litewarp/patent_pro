@@ -18,7 +18,7 @@ export const customStyles = {
     flexStart: "end",
     flexBasis: "fill",
     backgroundColor: "transparent",
-    border: state.isFocused ? "1px solid" : "1px solid rgba(255,255,255,0.7)",
+    border: state.isFocused ? "1px solid" : "1px solid rgba(255,255,255,0.4)",
     borderRadius: "4px",
     borderColor: state.isFocused ? "#FFF8F0" : "none",
     boxShadow: state.isFocused ? "0 0 2px 2px #FFF8F0" : "none",
