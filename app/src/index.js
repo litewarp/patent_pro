@@ -17,6 +17,7 @@ const App = () => (
     </ConnectedRouter>
   </Provider>
 )
+
 ReactDOM.render(<App />, root)
 
 if (module.hot) {
