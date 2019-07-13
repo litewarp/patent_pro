@@ -10,6 +10,7 @@ import { actions as columnActions } from "../_redux/columnActions"
 import { toCommas } from "../_root/_helpers"
 import styled from "styled-components"
 import Columns from "./columns"
+
 const Patent = ({ match }: { match: { params: { id: string } } }) => {
   const { loadColumns, loadPatents } = patentActions
   const { fetchLines } = columnActions
