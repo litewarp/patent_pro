@@ -7,9 +7,9 @@ const {
   SIDELOAD_REQUEST,
   SIDELOAD_SUCCESS,
   SIDELOAD_FAILURE,
-  LOAD_NUMBERS_REQUEST,
-  LOAD_NUMBERS_SUCCESS,
-  LOAD_NUMBERS_FAILURE,
+  SEARCH_NUMBERS_REQUEST,
+  SEARCH_NUMBERS_SUCCESS,
+  SEARCH_NUMBERS_FAILURE,
   LOAD_ALL_REQUEST,
   LOAD_ALL_SUCCESS,
   LOAD_ALL_FAILURE,
@@ -75,16 +75,16 @@ export const patentReducer = createReducer(initialState, {
     apiError: true,
     error: action.payload.data,
   }),
-  [LOAD_NUMBERS_REQUEST]: (state, action) => ({
+  [SEARCH_NUMBERS_REQUEST]: (state, action) => ({
     ...state,
     loading: true,
   }),
-  [LOAD_NUMBERS_SUCCESS]: (state, action) => ({
+  [SEARCH_NUMBERS_SUCCESS]: (state, action) => ({
     ...state,
     loading: false,
     patentNumbers: action.payload.data,
   }),
-  [LOAD_NUMBERS_FAILURE]: (state, action) => ({
+  [SEARCH_NUMBERS_FAILURE]: (state, action) => ({
     ...state,
     loading: false,
     apiError: true,

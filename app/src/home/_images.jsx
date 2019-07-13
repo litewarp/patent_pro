@@ -20,7 +20,7 @@ const ImageMockups = ({
     splitImgUrl: string,
   },
 }) => (
-  <Box gridArea="images" fill pad="large">
+  <Box gridArea="images" fill pad="large" wrap pad="medium">
     <Image fit="contain" src={patentProps && patentProps.masterImgUrl} />
   </Box>
 )

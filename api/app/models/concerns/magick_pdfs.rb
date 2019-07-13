@@ -7,7 +7,6 @@ module MagickPdfs
       @basename = File.basename(@file.path)
       @pdf_length = Docsplit.extract_length([@file.path])
       @range = find_range
-      puts @range
     end
 
     def working_path(name)
@@ -80,7 +79,7 @@ module MagickPdfs
           output: working_path('')
         )
         txt = File.read(working_path("#{num}_top.txt")).split("\n").slice(1, 2)
-        File.delete(working_path("#{num}_top.*"))
+        FileUtils.rm_rf(Dir[working_path("#{num}_top.*")])
         txt
       end
     end

@@ -8,7 +8,7 @@ class Patent < ApplicationRecord
   # validations
   validates :number, presence: true
   validates_each :number do |record, attr, value|
-    record.errors.add(attr, "does not exist in our database") if !record.pdf_url(value)
+    record.errors.add(attr, "#{value} not found") unless record.pdf_url(value)
   end
   validates_uniqueness_of :number
 

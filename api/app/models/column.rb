@@ -13,10 +13,11 @@ class Column < ApplicationRecord
   # validations
   validates :number, uniqueness: { scope: :patent_id }
 
-  def save_split_line_images
+  def save_all_images
     img = ImageHandler.new(id)
     img.draw_lines
     img.draw_split
+    img.save_lines
   end
 
   def save_lined_image
@@ -27,6 +28,11 @@ class Column < ApplicationRecord
   def save_split_image
     img = ImageHandler.new(id)
     img.draw_split
+  end
+
+  def save_line_images
+    img = ImageHandler.new(id)
+    img.save_lines
   end
 
   def image_path(img_name)
@@ -43,16 +49,13 @@ class Column < ApplicationRecord
     URI.open(uri.call)
   end
 
-  private
-
-  def magick_lines
-    MiniMagick.with_cli(:imagemagick) do
-      MiniMagick::Tool::Convert.new do |convert|
-        convert << @image.path
-        convert.merge! ['-crop', '0x67@', '+repage', '+adjoin']
-        convert << working_path("col_#{number}_line_%d.png")
-      end
-    end
+  def extract_text
+    file = URI.open(master_image.attachment.service_url)
+    Docsplit.extract_text([file.path], ocr: true, output: working_path(""))
+    output = working_path("#{File.basename(file)}.txt")
+    text = File.read(output)
+    self.update!(text: text)
+    File.delete(output)
   end
 
   def working_path(name)
