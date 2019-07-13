@@ -2,7 +2,6 @@
 
 import { getJSON, RSAA } from "redux-api-middleware"
 import { toast } from "react-toastify"
-import { history } from "../_root/store"
 
 const LOAD_REQUEST = "@patent/LOAD_REQUEST"
 const LOAD_SUCCESS = "@patent/LOAD_SUCCESS"
@@ -143,7 +142,6 @@ const createPatent = (number: number) => {
           type: CREATE_SUCCESS,
           payload: (action, state, res) => {
             toast.success("Patent Created!")
-            history.push(`/patents/${number}`)
             return res.json()
           },
         },
