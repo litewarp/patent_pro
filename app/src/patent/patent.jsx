@@ -1,46 +1,48 @@
 /** @format */
 // @flow
 
-import React, { useState, useEffect } from "react"
+import * as React from "react"
 import { useSelector, useDispatch, shallowEqual } from "react-redux"
 import { LinkNext, LinkPrevious } from "grommet-icons"
-import { Box, Heading, Button, Anchor, Image, Select } from "grommet"
+import { Box, Heading, Anchor, Select } from "grommet"
 import { actions as patentActions } from "../_redux/patentActions"
 import { actions as columnActions } from "../_redux/columnActions"
-import { toCommas } from "../_root/_helpers"
 import styled from "styled-components"
 import Columns from "./columns"
-const Patent = ({ match }: { match: { params: { id: string } } }) => {
-  const { loadColumns, loadPatents } = patentActions
-  const { fetchLines } = columnActions
 
-  const dispatch = useDispatch()
-
-  const loading = useSelector(({ patent }) => patent.loading, shallowEqual)
-  const patents = useSelector(({ patent }) => patent.patents, shallowEqual)
-  const activePatent = useSelector(
-    ({ patent }) => patent.activePatent,
-    shallowEqual,
-  )
-  const columns = useSelector(({ patent }) => patent.columns, shallowEqual)
-  const lines = useSelector(({ column }) => column.lines, shallowEqual)
-
+const Patent = () => {
+  // localState and loadColumns
   const [activeColumn, setActiveColumn] = React.useState(1)
 
-  const downColumn = col => (col == 1 ? 1 : col - 1)
-  const upColumn = col => (col == columns.length ? columns.length : col + 1)
+  const pathname = useSelector(({ router }) => router, shallowEqual)
+  console.log(pathname)
+  const dispatch = useDispatch()
 
-  const imgSource = columns && columns[2] && columns[2].attributes.linedImgUrl
+  //  React.useEffect(() => {
+  //  const getPatent = x => dispatch(patentActions.loadColumns(x))
+  //  getPatent(id)
+  // }, [id])
+  // fetch props from redux
+  const patent = useSelector(({ patent }) => patent, shallowEqual)
+  // destructure
+  const {
+    loading,
+    patents,
+    activePatent,
+    apiError,
+    errorMessage,
+    columns,
+  } = patent
+  // helpers
+  const downColumn = col => (col === 1 ? 1 : col - 1)
+  const upColumn = col => (col === columns.length ? columns.length : col + 1)
+  //local state && lifecycle
 
-  const patentNumberToLoad = match && match.params.id
-
-  React.useEffect(() => {
-    patentNumberToLoad && dispatch(loadColumns(patentNumberToLoad))
-  }, [patentNumberToLoad])
-
+  //styles
   const StyledAnchor = styled(Anchor)`
     height: 24px;
   `
+  //render
   return (
     <>
       <Box

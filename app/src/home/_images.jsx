@@ -2,7 +2,7 @@
 
 import * as React from "react"
 
-import { Box, Heading, Image } from "grommet"
+import { Box, Image } from "grommet"
 
 const columnOptions = [
   "Original with OCR",

@@ -12,13 +12,7 @@ const ColumnImage = ({ img, label }: { img: string, label: string }) => (
     width="medium"
     margin={{ left: "small" }}
   >
-    <Heading
-      color="neutral-4"
-      level={3}
-      margin="none"
-      pad="small"
-      margin={{ bottom: "small" }}
-    >
+    <Heading color="neutral-4" level={3} margin="none" pad="small">
       {label}
     </Heading>
     <Image fit="contain" src={img} />
@@ -34,7 +28,7 @@ const Columns = ({
   columns: Array<{}>,
 }) => {
   const getColumn = number => {
-    const results = columns.filter(col => col.attributes.number == number)
+    const results = columns.filter(col => col.attributes.number === number)
     return results && results[0]
   }
   const column = getColumn(activeColumn)

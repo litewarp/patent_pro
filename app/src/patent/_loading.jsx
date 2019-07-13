@@ -8,6 +8,7 @@ import { System } from "grommet-icons"
 
 const Loading = () => {
   const [circleFill, setCircleFill] = React.useState(10)
+
   React.useEffect(() => {
     const interval = setInterval(() => {
       setCircleFill(circleFill < 100 ? circleFill + 8 : 10)

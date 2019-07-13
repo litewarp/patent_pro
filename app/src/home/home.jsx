@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { shallowEqual, useSelector, useDispatch } from "react-redux"
-import { Box, Button, Grid, Heading } from "grommet"
+import { Box, Grid, Heading } from "grommet"
 import styled from "styled-components"
 import MessageModal from "./_messages"
 import ContactDetails from "./_contacts"

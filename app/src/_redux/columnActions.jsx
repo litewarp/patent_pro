@@ -2,12 +2,10 @@
 // @flow
 
 import { RSAA } from "redux-api-middleware"
-import { loadPatent } from "./patentActions.jsx"
 const LOAD_LINES_REQUEST = "@column/LOAD_LINES_REQUEST"
 const LOAD_LINES_SUCCESS = "@column/LOAD_LINES_SUCCESS"
 const LOAD_LINES_FAILURE = "@column/LOAD_LINES_FAILURE"
 
-const NEW_ERROR = "@column/NEW_ERROR"
 const SET_ACTIVE_COLUMN = "@column/SET_ACTIVE_COLUMN"
 
 // API VARIABLES
@@ -39,7 +37,7 @@ export const fetchLines = (columnId: number) => ({
 
 export const actions = {
   setActiveColumn,
-  fetchLines
+  fetchLines,
 }
 
 export const actionRefs = {

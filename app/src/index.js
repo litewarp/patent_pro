@@ -1,14 +1,24 @@
 /** @format */
-
+// @flow
 import React from "react"
 import ReactDOM from "react-dom"
 import Root from "./_root/root"
+import { ConnectedRouter } from "connected-react-router"
 import { Provider } from "react-redux"
-import store from "./_root/store"
+import configureStore from "./_root/store"
 
-ReactDOM.render(
+const { store, history } = configureStore()
+const root = document.getElementById("root")
+
+const App = () => (
   <Provider store={store}>
-    <Root />
-  </Provider>,
-  document.getElementById("root"),
+    <ConnectedRouter history={history}>
+      <Root />
+    </ConnectedRouter>
+  </Provider>
 )
+ReactDOM.render(<App />, root)
+
+if (module.hot) {
+  module.hot.accept()
+}

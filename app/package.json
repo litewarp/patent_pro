@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@tshio/redux-api-params-middleware": "^1.2.2",
+    "connected-react-router": "^6.5.2",
     "formik": "^1.5.8",
     "grommet": "^2.7.1",
     "grommet-icons": "^4.2.0",

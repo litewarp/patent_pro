@@ -3,41 +3,42 @@
 // @flow
 
 import * as React from "react"
-import { connect } from "react-redux"
-import { bindActionCreators } from "redux"
-import { Box } from "grommet"
-import { toCommas } from "../_helpers"
-import { Brand, NavLinks, PatentNav } from "./navs"
+import { Box, ResponsiveContext } from "grommet"
+import { useSelector } from "react-redux"
+import { Brand } from "./navs"
 import PatentForm from "../../form/form"
 import styled from "styled-components"
 
 const FixedBox = styled(Box)`
   max-width: 1280px;
 `
-
-const Header = ({ size, pathname }: { size: string, pathname: string }) => {
+const Header = () => {
+  const pathname = useSelector(({ router }) => router.pathname)
   //responsive helpers
-  const isDisplaySmall = size === "small"
   const brandText = pathname === "/" ? "SETHI P.C." : "PATENT PRO"
 
   return (
-    <Box
-      direction="row"
-      pad={{ horizontal: "medium" }}
-      background="brand"
-      justify="center"
-    >
-      <FixedBox fill direction="row" justify="between">
-        <Brand isDisplaySmall text={brandText} />
+    <ResponsiveContext.Consumer>
+      {({ size }) => (
         <Box
           direction="row"
-          basis={isDisplaySmall ? "1/2" : "1/4"}
-          align="center"
+          pad={{ horizontal: "medium" }}
+          background="brand"
+          justify="center"
         >
-          <PatentForm />
+          <FixedBox fill direction="row" justify="between">
+            <Brand isDisplaySmall={size === "small"} text={brandText} />
+            <Box
+              direction="row"
+              basis={size === "small" ? "1/2" : "1/4"}
+              align="center"
+            >
+              <PatentForm />
+            </Box>
+          </FixedBox>
         </Box>
-      </FixedBox>
-    </Box>
+      )}
+    </ResponsiveContext.Consumer>
   )
 }
 export default Header
