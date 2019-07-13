@@ -3,8 +3,7 @@
 // @flow
 
 import * as React from "react"
-import { connect } from "react-redux"
-import { bindActionCreators } from "redux"
+import { withRouter } from "react-router-dom"
 import { Box } from "grommet"
 import { toCommas } from "../_helpers"
 import { Brand, NavLinks, PatentNav } from "./navs"
@@ -15,10 +14,16 @@ const FixedBox = styled(Box)`
   max-width: 1280px;
 `
 
-const Header = ({ size, pathname }: { size: string, pathname: string }) => {
+const Header = ({
+  size,
+  location,
+}: {
+  size: string,
+  location: { pathname: string },
+}) => {
   //responsive helpers
   const isDisplaySmall = size === "small"
-  const brandText = pathname === "/" ? "SETHI P.C." : "PATENT PRO"
+  const brandText = location.pathname === "/" ? "SETHI P.C." : "PATENT PRO"
 
   return (
     <Box
@@ -40,4 +45,4 @@ const Header = ({ size, pathname }: { size: string, pathname: string }) => {
     </Box>
   )
 }
-export default Header
+export default withRouter(Header)

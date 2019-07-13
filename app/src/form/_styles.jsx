@@ -46,7 +46,11 @@ export const customStyles = {
     opacity: "0.6",
     fontSize: "1.25rem",
   }),
-  singleValue: (provided, state) => ({ ...provided, fontSize: "1em" }),
+  singleValue: (provided, state) => ({
+    ...provided,
+    color: "white",
+    fontSize: "1.25em",
+  }),
   valueContainer: (provided, state) => ({
     ...provided,
   }),

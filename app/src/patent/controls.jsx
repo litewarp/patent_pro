@@ -1,115 +1,89 @@
 /** @format */
 // @flow
 
-import React, { useState, useEffect } from "react"
-import { connect } from "react-redux"
-import { bindActionCreators } from "redux"
-import { LinkNext, LinkPrevious } from "grommet-icons"
-import { Box, Heading, Button, Anchor } from "grommet"
-import { fetchLines, setActiveColumn } from "../_redux/columnActions"
-import { loadPatentAndColumns } from "../_redux/patentActions"
+import * as React from "react"
+import {
+  LinkNext,
+  LinkPrevious,
+  Rewind,
+  FastForward,
+  DocumentImage,
+  DocumentText,
+  OrderedList,
+  Grid,
+} from "grommet-icons"
+import { Box, Heading, Anchor, Select } from "grommet"
 import { toCommas } from "../_root/_helpers"
 import styled from "styled-components"
 
-const ActivePatent = ({
-  activePatent,
-  activeColumn,
-  columns,
-  loading,
-  lines,
-  match,
-  loadPatentAndColumns,
-  fetchLines,
-  patents,
-  setActiveColumn,
-}: {
-  activePatent: { id: number },
-  activeColumn: number,
-  columns: Array<Object>,
-  lines: Array<Object>,
-  match: {
-    params: {
-      id: string,
-    },
-  },
-  loadPatentAndColumns: number => void,
-  loading: boolean,
-  patents: Array<{}>,
-  fetchLines: number => void,
-  fetchPatents: () => void,
-  setActiveColumn: number => void,
-}) => {
-  const downColumn = col => (col == 1 ? 1 : col - 1)
-  const upColumn = col => (col == columns.length ? columns.length : col + 1)
-
-  const columnIdFor = number => {
-    const results = columns.filter(col => col.attributes.number == number)
-    return results && results[0] && results[0].id
+const StyledAnchor = styled(Anchor)`
+  height: 24px;
+`
+const FixedBox = styled(Box)`
+  max-width: 1280px;
+`
+const ColumnSelect = styled(Select)`
+  input {
+    font-size: 1em;
+    padding: 0;
   }
+`
 
-  const patentNumberToLoad = match
-    ? match.params.id
-    : !activePatent
-    ? patents[0] && patents[0].attributes && patents[0].attributes.number
-    : null
+const Icons = [Rewind, DocumentImage, DocumentText, OrderedList, Grid]
 
-  React.useEffect(() => {
-    patentNumberToLoad && loadPatentAndColumns(patentNumberToLoad)
-  }, [patents[0]])
-
-  const commaNumber = activePatent && toCommas(activePatent.attributes.number)
-
-  const StyledAnchor = styled(Anchor)`
-    height: 24px;
-  `
-
+const Controls = ({
+  increment,
+  decrement,
+  setActiveColumn,
+  columnsLength,
+  activeColumn,
+}: {
+  increment: () => void,
+  decrement: () => void,
+  setActiveColumn: mixed => void,
+  columnsLength: number,
+  activeColumn: number,
+}) => {
+  const array = [...Array(columnsLength).keys()]
+  const options = array.map(col => `Column ${col}`)
   return (
-    <>
-      <Box
-        pad="medium"
-        gridArea="head"
-        background="dark-3"
+    <Box
+      gridArea="header"
+      background="dark-3"
+      alignContent="center"
+      align="center"
+      justify="center"
+    >
+      <FixedBox
+        fill="horizontal"
         direction="row"
         align="center"
         justify="between"
       >
         <StyledAnchor
+          size="large"
           color="dark-6"
-          label="Previous Column"
-          icon={<LinkPrevious />}
-          onClick={() => setActiveColumn(downColumn(activeColumn))}
+          icon={<Rewind />}
+          onClick={() => decrement()}
         />
-        <Heading level={3} size="small" margin="none" pad="none">
-          {`Column ${activeColumn}`}
-        </Heading>
+        <StyledAnchor size="large" color="dark-6" icon={<DocumentImage />} />
+        <StyledAnchor size="large" color="dark-6" icon={<DocumentText />} />
+        <ColumnSelect
+          options={options}
+          value={`Column ${activeColumn}`}
+          onChange={({ option }) => setActiveColumn(option)}
+        />
+        <StyledAnchor size="large" color="dark-6" icon={<OrderedList />} />
+        <StyledAnchor size="large" color="dark-6" icon={<Grid />} />
         <StyledAnchor
+          size="large"
           color="dark-6"
-          label="Next Column"
-          icon={<LinkNext />}
-          reverse={true}
-          onClick={() => setActiveColumn(upColumn(activeColumn))}
+          icon={<FastForward />}
+          onClick={() => increment()}
         />
-      </Box>
-    </>
+      </FixedBox>
+    </Box>
   )
 }
 
-const mapState = ({ column, patent }) => ({
-  activePatent: patent.activePatent,
-  columns: patent.columns,
-  patents: patent.patents,
-  lines: column.lines,
-  activeColumn: column.activeColumn,
-  loading: column.loading,
-})
-
-const mapDispatch = dispatch => ({
-  loadPatentAndColumns: bindActionCreators(loadPatentAndColumns, dispatch),
-  fetchLines: bindActionCreators(fetchLines, dispatch),
-  setActiveColumn: bindActionCreators(setActiveColumn, dispatch),
-})
-
-export default connect(
-  mapState,
-  mapDispatch,
-)(ActivePatent)
+export default Controls

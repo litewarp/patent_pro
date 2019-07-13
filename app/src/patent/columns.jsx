@@ -39,7 +39,15 @@ const Columns = ({
   }
   const column = getColumn(activeColumn)
   return (
-    <Box direction="row" pad="medium" wrap gap="medium" justify="center">
+    <Box
+      fill
+      gridArea="body"
+      direction="row"
+      pad="medium"
+      wrap
+      gap="medium"
+      justify="center"
+    >
       {!(column && column.attributes && column.attributes.masterImgUrl) ? (
         <Loading />
       ) : (

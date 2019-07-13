@@ -4,77 +4,59 @@
 import React, { useState, useEffect } from "react"
 import { useSelector, useDispatch, shallowEqual } from "react-redux"
 import { LinkNext, LinkPrevious } from "grommet-icons"
-import { Box, Heading, Button, Anchor, Image, Select } from "grommet"
+import { Box, Grid } from "grommet"
 import { actions as patentActions } from "../_redux/patentActions"
 import { actions as columnActions } from "../_redux/columnActions"
 import { toCommas } from "../_root/_helpers"
-import styled from "styled-components"
+
 import Columns from "./columns"
+import Controls from "./controls"
+
 const Patent = ({ match }: { match: { params: { id: string } } }) => {
   const { loadColumns, loadPatents } = patentActions
   const { fetchLines } = columnActions
 
   const dispatch = useDispatch()
-
+  const lines = useSelector(({ column }) => column.lines, shallowEqual)
   const loading = useSelector(({ patent }) => patent.loading, shallowEqual)
   const patents = useSelector(({ patent }) => patent.patents, shallowEqual)
-  const activePatent = useSelector(
-    ({ patent }) => patent.activePatent,
-    shallowEqual,
-  )
   const columns = useSelector(({ patent }) => patent.columns, shallowEqual)
-  const lines = useSelector(({ column }) => column.lines, shallowEqual)
 
   const [activeColumn, setActiveColumn] = React.useState(1)
 
-  const downColumn = col => (col == 1 ? 1 : col - 1)
-  const upColumn = col => (col == columns.length ? columns.length : col + 1)
+  const increment = () =>
+    setActiveColumn(
+      activeColumn == columns.length ? columns.length : activeColumn + 1,
+    )
+  const decrement = () =>
+    setActiveColumn(activeColumn == 1 ? 1 : activeColumn - 1)
 
-  const imgSource = columns && columns[2] && columns[2].attributes.linedImgUrl
-
-  const patentNumberToLoad = match && match.params.id
+  const { id } = match.params
 
   React.useEffect(() => {
-    patentNumberToLoad && dispatch(loadColumns(patentNumberToLoad))
-  }, [patentNumberToLoad])
+    const fetchPatent = (id: string) => dispatch(loadColumns(id))
+    fetchPatent(id)
+  }, [id])
 
-  const StyledAnchor = styled(Anchor)`
-    height: 24px;
-  `
   return (
-    <>
-      <Box
-        pad="medium"
-        gridArea="head"
-        background="dark-3"
-        direction="row"
-        align="center"
-        justify="between"
-      >
-        <StyledAnchor
-          color="dark-6"
-          label="Previous Column"
-          icon={<LinkPrevious />}
-          onClick={() => setActiveColumn(downColumn(activeColumn))}
-        />
-        <Heading level={3} size="small" margin="none" pad="none">
-          {`Column ${activeColumn}`}
-        </Heading>
-        <Select
-          options={[...Array(columns.length).keys()]}
-          value={activeColumn}
-          onChange={({ option }) => setActiveColumn(option)}
-        />
-        <StyledAnchor
-          color="dark-6"
-          label="Next Column"
-          icon={<LinkNext />}
-          reverse={true}
-          onClick={() => setActiveColumn(upColumn(activeColumn))}
-        />
-      </Box>
+    <Grid
+      fill
+      rows={["xsmall", "3/4"]}
+      columns={["1/2", "1/2"]}
+      areas={[
+        { name: "header", start: [0, 0], end: [1, 0] },
+        { name: "body", start: [0, 1], end: [1, 1] },
+      ]}
+    >
+      <Controls
+        activeColumn={activeColumn}
+        setActiveColumn={setActiveColumn}
+        increment={increment}
+        decrement={decrement}
+        columnsLength={columns.length || 0}
+      />
       <Columns activeColumn={activeColumn} columns={columns} />
-    </>
+    </Grid>
   )
 }
 
