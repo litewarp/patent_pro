@@ -34,6 +34,7 @@ module MagickPixels
     def draw_lines
       extract_pixelmap
       lines = segmentize
+      puts lines.count
       MiniMagick::Tool::Convert.new do |convert|
         convert << @master_file.path
         lines.each { |num| convert.merge! red_line(num, @image.width) }

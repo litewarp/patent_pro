@@ -4,22 +4,13 @@
 import React, { useState, useEffect } from "react"
 import { useSelector, useDispatch, shallowEqual } from "react-redux"
 import { LinkNext, LinkPrevious } from "grommet-icons"
-import { Box, Heading, Button, Anchor, Image } from "grommet"
+import { Box, Heading, Button, Anchor, Image, Select } from "grommet"
 import { actions as patentActions } from "../_redux/patentActions"
 import { actions as columnActions } from "../_redux/columnActions"
 import { toCommas } from "../_root/_helpers"
 import styled from "styled-components"
 import Columns from "./columns"
-
-const Patent = ({
-  match,
-}: {
-  match: {
-    params: {
-      id: string,
-    },
-  },
-}) => {
+const Patent = ({ match }: { match: { params: { id: string } } }) => {
   const { loadColumns, loadPatents } = patentActions
   const { fetchLines } = columnActions
 
@@ -45,7 +36,7 @@ const Patent = ({
 
   React.useEffect(() => {
     patentNumberToLoad && dispatch(loadColumns(patentNumberToLoad))
-  }, [])
+  }, [patentNumberToLoad])
 
   const StyledAnchor = styled(Anchor)`
     height: 24px;
@@ -69,6 +60,11 @@ const Patent = ({
         <Heading level={3} size="small" margin="none" pad="none">
           {`Column ${activeColumn}`}
         </Heading>
+        <Select
+          options={[...Array(columns.length).keys()]}
+          value={activeColumn}
+          onChange={({ option }) => setActiveColumn(option)}
+        />
         <StyledAnchor
           color="dark-6"
           label="Next Column"

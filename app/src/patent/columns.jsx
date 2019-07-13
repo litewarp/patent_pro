@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { Box, Heading, Image } from "grommet"
+import Loading from "./_loading"
 
 const ColumnImage = ({ img, label }: { img: string, label: string }) => (
   <Box
@@ -39,18 +40,24 @@ const Columns = ({
   const column = getColumn(activeColumn)
   return (
     <Box direction="row" pad="medium" wrap gap="medium" justify="center">
-      <ColumnImage
-        img={column && column.attributes.masterImgUrl}
-        label="Raw Image"
-      />
-      <ColumnImage
-        img={column && column.attributes.linedImgUrl}
-        label="Algorithmic Split"
-      />
-      <ColumnImage
-        img={column && column.attributes.splitImgUrl}
-        label="Line Count Split"
-      />
+      {!(column && column.attributes && column.attributes.masterImgUrl) ? (
+        <Loading />
+      ) : (
+        <>
+          <ColumnImage
+            img={column && column.attributes.masterImgUrl}
+            label="Raw Image"
+          />
+          <ColumnImage
+            img={column && column.attributes.linedImgUrl}
+            label="Algorithmic Split"
+          />
+          <ColumnImage
+            img={column && column.attributes.splitImgUrl}
+            label="Line Count Split"
+          />
+        </>
+      )}
     </Box>
   )
 }
