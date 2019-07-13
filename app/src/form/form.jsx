@@ -1,7 +1,7 @@
 /** @format */
 // @flow
 
-import React from "react"
+import * as React from "react"
 import { shallowEqual, useSelector, useDispatch } from "react-redux"
 import { withRouter } from "react-router-dom"
 import { Box, Heading, Select, Anchor } from "grommet"
@@ -18,12 +18,25 @@ const PatentForm = ({ history }: { history: {} }) => {
   const [inputValue, setInputValue] = React.useState("")
   //redux
   const dispatch = useDispatch()
+  const loading = useSelector(({ patent }) => patent.loading)
+  const patents = useSelector(({ patent }) => patent.patents)
   const patentNumbers = useSelector(
     ({ patent }) => patent.patentNumbers,
     shallowEqual,
   )
   const activePatent = useSelector(({ patent }) => patent.activePatent)
-  const { searchPatents, loadColumns, createPatent } = patentActions
+  const {
+    searchPatents,
+    loadColumns,
+    createPatent,
+    loadPatents,
+  } = patentActions
+
+  React.useEffect(() => {
+    const initialLoad = () => dispatch(loadPatents())
+    initialLoad()
+  }, [])
+
   //component actions
   const value = activePatent &&
     activePatent.attributes && {
@@ -31,15 +44,17 @@ const PatentForm = ({ history }: { history: {} }) => {
       value: activePatent.attributes.number,
     }
 
-  const formatOptions = () =>
-    patentNumbers.map(p => ({
+  const formatOptions = (
+    array: Array<{ id: number, attributes: { number: string } }>,
+  ) =>
+    array.map(p => ({
       label: toCommas(p.attributes.number),
       value: p.attributes.number,
     }))
 
   const fetchOptions = (inputValue, callback) => {
     dispatch(searchPatents(inputValue || ""))
-    callback(formatOptions())
+    callback(formatOptions(patentNumbers))
   }
 
   const handleInputChange = (val: string) => {
@@ -52,7 +67,7 @@ const PatentForm = ({ history }: { history: {} }) => {
       name="patentNumber"
       components={{ DropdownIndicator }}
       placeholder={"Enter a US Patent to Start"}
-      defaultOptions
+      defaultOptions={formatOptions(patents)}
       isValidNewOption={option => /^[0-9RE]{6,10}$/.test(option)}
       formatCreateLabel={() => (
         <AddPatentAnchor label="Add a Patent" icon={<AddCircle />} />

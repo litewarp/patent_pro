@@ -1,29 +1,9 @@
 /** @format */
 
 import * as React from "react"
-import { Box, Heading, Image } from "grommet"
+import { Box, Heading, Image, Table } from "grommet"
 import Loading from "./_loading"
-
-const ColumnImage = ({ img, label }: { img: string, label: string }) => (
-  <Box
-    align="center"
-    gap="small"
-    fill="vertical"
-    width="medium"
-    margin={{ left: "small" }}
-  >
-    <Heading
-      color="neutral-4"
-      level={3}
-      margin="none"
-      pad="small"
-      margin={{ bottom: "small" }}
-    >
-      {label}
-    </Heading>
-    <Image fit="contain" src={img} />
-  </Box>
-)
+import ColumnImage from "./columnImage"
 
 const Columns = ({
   activeColumn,
@@ -38,6 +18,8 @@ const Columns = ({
     return results && results[0]
   }
   const column = getColumn(activeColumn)
+  const { masterImgUrl, lineImgUrl, splitImgUrl } = column && column.attributes
+
   return (
     <Box
       fill
@@ -48,21 +30,38 @@ const Columns = ({
       gap="medium"
       justify="center"
     >
-      {!(column && column.attributes && column.attributes.masterImgUrl) ? (
+      {!masterImgUrl ? (
         <Loading />
       ) : (
         <>
           <ColumnImage
+            name="rawImg"
             img={column && column.attributes.masterImgUrl}
             label="Raw Image"
           />
           <ColumnImage
+            name="linedImg"
             img={column && column.attributes.linedImgUrl}
             label="Algorithmic Split"
           />
           <ColumnImage
+            name="splitImg"
             img={column && column.attributes.splitImgUrl}
             label="Line Count Split"
+          />
+          <ColumnImage
+            name="singleLineTable"
+            label="Column as 67 split lines (for OCR)"
+          >
+            <Table />
+          </ColumnImage>
+          <ColumnImage
+            name="singleLineTableText"
+            label="OCR extracted text from 67 split line PDFs"
+          />
+          <ColumnImage
+            name="columnText"
+            label="OCR extracted text from raw column pdf"
           />
         </>
       )}
