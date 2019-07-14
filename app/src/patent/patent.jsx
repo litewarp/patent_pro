@@ -23,7 +23,10 @@ const Patent = ({ match }: { match: { params: { id: string } } }) => {
   const columns = useSelector(({ patent }) => patent.columns, shallowEqual)
 
   const [activeColumn, setActiveColumn] = React.useState(1)
-
+  const [visibleItems, setVisibleItems] = React.useState([
+    "rawImg",
+    "columnText",
+  ])
   const increment = () =>
     setActiveColumn(
       activeColumn == columns.length ? columns.length : activeColumn + 1,
@@ -54,8 +57,16 @@ const Patent = ({ match }: { match: { params: { id: string } } }) => {
         increment={increment}
         decrement={decrement}
         columnsLength={columns.length || 0}
+        visibleItems={visibleItems}
+        setVisibleItems={setVisibleItems}
       />
-      <Columns activeColumn={activeColumn} columns={columns} />
+      <Columns
+        activeColumn={activeColumn}
+        columns={columns}
+        setActiveColumn={setActiveColumn}
+        visibleItems={visibleItems}
+        setVisibleItems={setVisibleItems}
+      />
     </Grid>
   )
 }

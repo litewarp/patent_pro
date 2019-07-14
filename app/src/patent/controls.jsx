@@ -11,14 +11,12 @@ import {
   DocumentText,
   OrderedList,
   Grid,
+  TextAlignFull,
 } from "grommet-icons"
 import { Box, Heading, Anchor, Select } from "grommet"
 import { toCommas } from "../_root/_helpers"
 import styled from "styled-components"
 
-const StyledAnchor = styled(Anchor)`
-  height: 24px;
-`
 const FixedBox = styled(Box)`
   max-width: 1280px;
 `
@@ -28,8 +26,13 @@ const ColumnSelect = styled(Select)`
     padding: 0;
   }
 `
-
-const Icons = [Rewind, DocumentImage, DocumentText, OrderedList, Grid]
+const controlIcon = ({
+  component,
+  isVisible,
+}: {
+  component: React.AbstractComponent<{}>,
+  isVisible: boolean,
+}) => <icon color={isVisible ? "selected" : "dark-3"} />
 
 const Controls = ({
   increment,
@@ -37,15 +40,52 @@ const Controls = ({
   setActiveColumn,
   columnsLength,
   activeColumn,
+  visibleItems,
+  setVisibleItems,
 }: {
   increment: () => void,
   decrement: () => void,
-  setActiveColumn: mixed => void,
+  setActiveColumn: number => void,
   columnsLength: number,
   activeColumn: number,
+  visibleItems: [number],
+  setVisibleItems: (Array<string>) => void,
 }) => {
   const array = [...Array(columnsLength).keys()]
   const options = array.map(col => `Column ${col}`)
+
+  const toggleItem = val => {
+    const newArray = visibleItems.includes(val)
+      ? visibleItems.filter(i => i.toString() != val)
+      : [val, ...visibleItems]
+    setVisibleItems(newArray)
+  }
+
+  const isVisible = val => visibleItems.includes(val)
+
+  const getIcon = (name: string) => {
+    switch (name) {
+      case "rawImg":
+        return (
+          <DocumentImage
+            color={isVisible(name) ? "status-warning" : "dark-6"}
+          />
+        )
+      case "linedImg":
+        return (
+          <OrderedList color={isVisible(name) ? "status-warning" : "dark-6"} />
+        )
+      case "lineText":
+        return (
+          <TextAlignFull
+            color={isVisible(name) ? "status-warning" : "dark-6"}
+          />
+        )
+      case "columnText":
+        return <Grid color={isVisible(name) ? "status-warning" : "dark-6"} />
+    }
+  }
+
   return (
     <Box
       gridArea="header"
@@ -60,22 +100,42 @@ const Controls = ({
         align="center"
         justify="between"
       >
-        <StyledAnchor
+        <Anchor
           size="large"
           color="dark-6"
           icon={<Rewind />}
           onClick={() => decrement()}
         />
-        <StyledAnchor size="large" color="dark-6" icon={<DocumentImage />} />
-        <StyledAnchor size="large" color="dark-6" icon={<DocumentText />} />
+        <Anchor
+          size="large"
+          color="dark-6"
+          icon={getIcon("rawImg")}
+          onClick={() => toggleItem("rawImg")}
+        />
+        <Anchor
+          size="large"
+          color="dark-6"
+          icon={getIcon("columnText")}
+          onClick={() => toggleItem("columnText")}
+        />
         <ColumnSelect
           options={options}
           value={`Column ${activeColumn}`}
           onChange={({ option }) => setActiveColumn(option)}
         />
-        <StyledAnchor size="large" color="dark-6" icon={<OrderedList />} />
-        <StyledAnchor size="large" color="dark-6" icon={<Grid />} />
-        <StyledAnchor
+        <Anchor
+          size="large"
+          color="dark-6"
+          icon={getIcon("linedImg")}
+          onClick={() => toggleItem("linedImg")}
+        />
+        <Anchor
+          size="large"
+          color="dark-6"
+          icon={getIcon("lineText")}
+          onClick={() => toggleItem("lineText")}
+        />
+        <Anchor
           size="large"
           color="dark-6"
           icon={<FastForward />}

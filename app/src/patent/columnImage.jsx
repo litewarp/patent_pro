@@ -13,29 +13,34 @@ const ColumnImage = ({
   img,
   label,
   children,
+  isVisible,
 }: {
   img: string,
   label: string,
   children: React.Node,
-}) => (
-  <VisibilityToggleBox
-    align="center"
-    gap="small"
-    fill="vertical"
-    width="medium"
-    margin={{ left: "small" }}
-  >
-    <Heading
-      color="neutral-4"
-      level={3}
-      margin="none"
-      pad="small"
-      margin={{ bottom: "small" }}
+  isVisible: boolean,
+}) => {
+  return (
+    <VisibilityToggleBox
+      isVisible={isVisible}
+      align="center"
+      gap="small"
+      fill="vertical"
+      width="medium"
+      margin={{ left: "small" }}
     >
-      {label}
-    </Heading>
-    <Image fit="contain" src={img} />
-  </VisibilityToggleBox>
-)
+      <Heading
+        color="neutral-4"
+        level={3}
+        margin="none"
+        pad="small"
+        margin={{ bottom: "small" }}
+      >
+        {label}
+      </Heading>
+      <Image fit="contain" src={img} />
+    </VisibilityToggleBox>
+  )
+}
 
 export default ColumnImage

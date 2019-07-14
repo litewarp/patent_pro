@@ -48,7 +48,7 @@ module MagickPixels
       adj_line_range = @column.number.to_i.even? ? (1..67) : (0..66)
       path = magick_lines
       adj_line_range.collect do |line|
-        Line.create(
+        li = Line.create(
           column_id: @column.id,
           number: adj_num.call(line),
           image: {
@@ -56,6 +56,7 @@ module MagickPixels
             filename: "#{path}_#{adj_num.call(line)}.png"
           }
         )
+        LineWorker.perform_async(li.id) if li
       end
     end
 
