@@ -2,38 +2,17 @@
 // @flow
 
 import * as React from "react"
-import {
-  LinkNext,
-  LinkPrevious,
-  Rewind,
-  FastForward,
-  DocumentImage,
-  DocumentText,
-  OrderedList,
-  Grid,
-  TextAlignFull,
-} from "grommet-icons"
-import { Box, Heading, Anchor, Select } from "grommet"
+import { Box, Heading, Anchor } from "grommet"
+import Select from "react-select"
 import { toCommas } from "../_root/_helpers"
 import styled from "styled-components"
-
-const FixedBox = styled(Box)`
-  max-width: 1280px;
-`
-const ColumnSelect = styled(Select)`
-  input {
-    font-size: 1em;
-    padding: 0;
-  }
-`
-const controlIcon = ({
-  component,
-  isVisible,
-}: {
-  component: React.AbstractComponent<{}>,
-  isVisible: boolean,
-}) => <icon color={isVisible ? "selected" : "dark-3"} />
-
+import {
+  columnSelectIcon,
+  FixedBox,
+  ColumnSelect,
+  columnNumberSelectStyles,
+} from "./_styles"
+import { Rewind, FastForward } from "grommet-icons"
 const Controls = ({
   increment,
   decrement,
@@ -51,8 +30,13 @@ const Controls = ({
   visibleItems: [number],
   setVisibleItems: (Array<string>) => void,
 }) => {
+  //range starts at 0 in js (miss you ruby)
   const array = [...Array(columnsLength).keys()]
-  const options = array.map(col => `Column ${col}`)
+  // increment the number of columns by 1
+  const options = array.map(col => ({
+    value: `Column ${col + 1}`,
+    label: `Column ${col + 1}`,
+  }))
 
   const toggleItem = val => {
     const newArray = visibleItems.includes(val)
@@ -62,29 +46,7 @@ const Controls = ({
   }
 
   const isVisible = val => visibleItems.includes(val)
-
-  const getIcon = (name: string) => {
-    switch (name) {
-      case "rawImg":
-        return (
-          <DocumentImage
-            color={isVisible(name) ? "status-warning" : "dark-6"}
-          />
-        )
-      case "linedImg":
-        return (
-          <OrderedList color={isVisible(name) ? "status-warning" : "dark-6"} />
-        )
-      case "lineText":
-        return (
-          <TextAlignFull
-            color={isVisible(name) ? "status-warning" : "dark-6"}
-          />
-        )
-      case "columnText":
-        return <Grid color={isVisible(name) ? "status-warning" : "dark-6"} />
-    }
-  }
+  const selectValue = options[activeColumn - 1]
 
   return (
     <Box
@@ -109,30 +71,34 @@ const Controls = ({
         <Anchor
           size="large"
           color="dark-6"
-          icon={getIcon("rawImg")}
+          icon={columnSelectIcon("rawImg")}
+          isVisible={isVisible("rawImg")}
           onClick={() => toggleItem("rawImg")}
         />
         <Anchor
           size="large"
           color="dark-6"
-          icon={getIcon("columnText")}
+          icon={columnSelectIcon("columnText")}
+          isVisible={isVisible("columnText")}
           onClick={() => toggleItem("columnText")}
         />
         <ColumnSelect
           options={options}
-          value={activeColumn}
+          value={options[activeColumn - 1]}
           onChange={({ option }) => setActiveColumn(option)}
         />
         <Anchor
           size="large"
           color="dark-6"
-          icon={getIcon("linedImg")}
+          icon={columnSelectIcon("linedImg")}
+          isVisible={isVisible("linedImg")}
           onClick={() => toggleItem("linedImg")}
         />
         <Anchor
           size="large"
           color="dark-6"
-          icon={getIcon("lineText")}
+          icon={columnSelectIcon("lineText")}
+          isVisible={isVisible("lineText")}
           onClick={() => toggleItem("lineText")}
         />
         <Anchor
