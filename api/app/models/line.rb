@@ -17,7 +17,7 @@ class Line < ApplicationRecord
 
   def extract_text
     file = URI.open(image.attachment.service_url)
-    Docsplit.extract_text([file], ocr: true, output: working_path(""))
+    Docsplit.extract_text([file.path], ocr: true, output: working_path(""))
     output = working_path("#{File.basename(file)}.txt")
     text = File.read(output)
     self.update!(text: text)

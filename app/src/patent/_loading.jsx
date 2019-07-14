@@ -16,7 +16,7 @@ const Loading = () => {
   }, [])
 
   return (
-    <Box fill>
+    <Box fill align="center">
       <Heading level={2}>Hold Tight!</Heading>
       <Heading level={4}>The computer is doing its computer thingy</Heading>
       <Text>Give it like 5-10 minutes. It had a rough night.</Text>

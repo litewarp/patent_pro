@@ -120,7 +120,7 @@ const Controls = ({
         />
         <ColumnSelect
           options={options}
-          value={`Column ${activeColumn}`}
+          value={activeColumn}
           onChange={({ option }) => setActiveColumn(option)}
         />
         <Anchor

@@ -1,7 +1,7 @@
 /** @format */
 
 import * as React from "react"
-import { Box, Heading, Image, Table } from "grommet"
+import { Box, Heading, Image, Table, Paragraph } from "grommet"
 import Loading from "./_loading"
 import ColumnImage from "./columnImage"
 
@@ -68,7 +68,9 @@ const Columns = ({
         <ColumnImage
           isVisible={isVisible("columnText")}
           label="OCR extracted text from raw column pdf"
-        />
+        >
+          <Paragraph>{column.attributes.text}</Paragraph>
+        </ColumnImage>
       </Box>
     )
   }

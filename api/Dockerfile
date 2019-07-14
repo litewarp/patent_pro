@@ -2,7 +2,7 @@ FROM ruby:2.6.3-stretch
 
 RUN apt-get update -qq && apt-get install -y \
 postgresql-client graphicsmagick pdftk ghostscript \
-poppler-utils poppler-data tesseract-ocr
+poppler-utils poppler-data tesseract-ocr libreoffice
 
 RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - \
 && apt-get install -y nodejs
@@ -10,7 +10,7 @@ RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - \
 RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
   && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
 
-RUN apt-get update -qq && apt-get install yarn
+RUN apt-get update -qq && apt-get install yarn && apt-get upgrade
 
 RUN mkdir /dock_api
 RUN mkdir /dock_api/client
