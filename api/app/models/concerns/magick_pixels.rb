@@ -153,8 +153,8 @@ module MagickPixels
       MiniMagick.with_cli(:imagemagick) do
         MiniMagick::Tool::Convert.new do |convert|
           convert << @master_file.path
-          convert.merge! ['-crop', '0x67@', '+repage', '+adjoin']
-          convert << working_path("col_#{@column.number}_line_%d.png")
+          convert.merge! ['-crop', '0x67@', '+repage', '+adjoin', '-scene', '01']
+          convert << working_path("col_#{@column.number}_line_%02d.png")
         end
       end
       "col_#{@column.number}_line"

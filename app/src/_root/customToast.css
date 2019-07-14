@@ -1,0 +1,31 @@
+.burnt-toast-container {
+  width: 100%
+}
+.burnt-toast {
+
+  .default {
+    background: blue;
+    color: white;
+  }
+
+  .error {
+    background: red;
+    color: white;
+
+  }
+
+  .success {
+    background: green;
+    color: white;
+  }
+
+  .info {
+    background: orange;
+    color: white;
+
+  }
+  .warning {
+    background: yellow;
+    color: white;
+  }
+}

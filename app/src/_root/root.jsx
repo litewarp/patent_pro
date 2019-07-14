@@ -8,16 +8,12 @@ import theme from "./theme"
 import styled from "styled-components"
 import { ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.min.css"
-
+import "./customToast.css"
 // Components
 import Header from "./header/header"
 import Footer from "./components/footer"
 import LandingPage from "../home/home"
 import Patent from "../patent/patent"
-
-const StylishToast = styled(ToastContainer)`
-  margin-top: 100px;
-`
 
 const Content = ({
   children,
@@ -30,12 +26,20 @@ const Content = ({
 }) => (
   <ResponsiveContext.Consumer>
     {({ size }) => (
-      <>
+      <Box alignContent="center">
         <Header size={size} pathname={location.pathname} />
-        <StylishToast />
+        <ToastContainer
+          toastClassName="burnt-toast"
+          style={{
+            left: "0",
+            width: "100%",
+            margin: "0",
+          }}
+          position="bottom-center"
+        />
         <Box fill>{children}</Box>
         <Footer />
-      </>
+      </Box>
     )}
   </ResponsiveContext.Consumer>
 )

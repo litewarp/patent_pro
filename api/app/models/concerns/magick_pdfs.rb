@@ -16,9 +16,12 @@ module MagickPdfs
     end
 
     def extract_columns
+      ## use counter for column count ##
       counter = 0
       @range.each do |num|
         split_pages(num)
+        ## imagemagick outputs it as col_0 and col_1 per page
+        ## iterate on top of the page range to account for split
         (0..1).each do |col|
           counter += 1
           column = @active_patent.columns.create(number: counter)
@@ -26,6 +29,7 @@ module MagickPdfs
             io: File.open(working_path("page_#{num}_col_#{col}.png")),
             filename: "col-#{counter}-master.png"
           )
+          ## dispatch the image and text workers
           ColumnWorker.perform_async(column.id)
           File.delete(working_path("page_#{num}_col_#{col}.png"))
         end
