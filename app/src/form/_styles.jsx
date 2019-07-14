@@ -6,7 +6,7 @@ import styled from "styled-components"
 import { components } from "react-select"
 import { Search } from "grommet-icons"
 
-export const customStyles = {
+export const customStyles = (isDisplaySmall: boolean) => ({
   clearIndicator: (provided, state) => ({}),
   container: (provided, state) => ({
     ...provided,
@@ -44,17 +44,17 @@ export const customStyles = {
     ...provided,
     color: "white",
     opacity: "0.6",
-    fontSize: "1.25rem",
+    fontSize: isDisplaySmall ? ".75em" : "1.25rem",
   }),
   singleValue: (provided, state) => ({
     ...provided,
     color: "white",
-    fontSize: "1.25em",
+    fontSize: isDisplaySmall ? ".75em" : "1.25em",
   }),
   valueContainer: (provided, state) => ({
     ...provided,
   }),
-}
+})
 
 export const DropdownIndicator = props => (
   <components.DropdownIndicator {...props}>

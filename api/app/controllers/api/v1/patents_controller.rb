@@ -15,7 +15,6 @@ module Api
       end
 
       def create
-        match = Patent.find_by_number(params[:number])
         resource = PatentResource.build(params)
         if resource.save
           render jsonapi: resource, status: 201

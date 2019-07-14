@@ -39,7 +39,7 @@ const Header = ({
           basis={isDisplaySmall ? "1/2" : "1/4"}
           align="center"
         >
-          <PatentForm />
+          <PatentForm isDisplaySmall />
         </Box>
       </FixedBox>
     </Box>

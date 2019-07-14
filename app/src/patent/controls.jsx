@@ -34,10 +34,9 @@ const Controls = ({
   const array = [...Array(columnsLength).keys()]
   // increment the number of columns by 1
   const options = array.map(col => ({
-    value: `Column ${col + 1}`,
+    value: col + 1,
     label: `Column ${col + 1}`,
   }))
-
   const toggleItem = val => {
     const newArray = visibleItems.includes(val)
       ? visibleItems.filter(i => i.toString() != val)
@@ -47,6 +46,8 @@ const Controls = ({
 
   const isVisible = val => visibleItems.includes(val)
   const selectValue = options[activeColumn - 1]
+  const fetchIcon = (name: string) =>
+    columnSelectIcon({ name: name, isVisible: isVisible(name) })
 
   return (
     <Box
@@ -71,33 +72,36 @@ const Controls = ({
         <Anchor
           size="large"
           color="dark-6"
-          icon={columnSelectIcon("rawImg")}
+          icon={fetchIcon("rawImg")}
           isVisible={isVisible("rawImg")}
           onClick={() => toggleItem("rawImg")}
         />
         <Anchor
           size="large"
           color="dark-6"
-          icon={columnSelectIcon("columnText")}
+          icon={fetchIcon("columnText")}
           isVisible={isVisible("columnText")}
           onClick={() => toggleItem("columnText")}
         />
         <ColumnSelect
           options={options}
           value={options[activeColumn - 1]}
-          onChange={({ option }) => setActiveColumn(option)}
+          onChange={({ value }) => {
+            console.log(value)
+            setActiveColumn(value)
+          }}
         />
         <Anchor
           size="large"
           color="dark-6"
-          icon={columnSelectIcon("linedImg")}
+          icon={fetchIcon("linedImg")}
           isVisible={isVisible("linedImg")}
           onClick={() => toggleItem("linedImg")}
         />
         <Anchor
           size="large"
           color="dark-6"
-          icon={columnSelectIcon("lineText")}
+          icon={fetchIcon("lineText")}
           isVisible={isVisible("lineText")}
           onClick={() => toggleItem("lineText")}
         />

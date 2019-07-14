@@ -50,10 +50,17 @@ class Column < ApplicationRecord
   end
 
   def extract_text
-    file = URI.open(master_image.attachment.service_url)
+    MiniMagick::Tool::Convert.new do |convert|
+      convert << URI.open(master_image.attachment.service_url).path
+      gravity = number.to_i.even? ? "West" : "East"
+      convert.merge! ["-gravity", gravity, "-chop", "35x0", "+repage"]
+      convert << working_path("col-#{number}-chopped.png")
+    end
+    file = File.open(working_path("col-#{number}-chopped.png"))
     Docsplit.extract_text([file.path], ocr: true, output: working_path(""))
-    output = working_path("#{File.basename(file)}.txt")
+    output = working_path("col-#{number}-chopped.txt")
     text = File.read(output)
+    byebug
     self.update!(text: text)
     File.delete(output)
   end

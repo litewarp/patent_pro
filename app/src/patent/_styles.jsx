@@ -1,7 +1,8 @@
 /** @format */
 // @flow
 import * as React from "react"
-import { Box, Select } from "grommet"
+import { Box } from "grommet"
+import Select from "react-select"
 import styled from "styled-components"
 import {
   Rewind,
@@ -44,7 +45,6 @@ export const ColumnSelect = styled(Select)`
 `
 
 export const columnNumberSelectStyles = {
-  clearIndicator: (provided, state) => ({}),
   container: (provided, state) => ({
     ...provided,
     width: "100%",
@@ -58,19 +58,11 @@ export const columnNumberSelectStyles = {
     borderColor: state.isFocused ? "#FFF8F0" : "none",
     boxShadow: state.isFocused ? "0 0 2px 2px #FFF8F0" : "none",
   }),
-  dropdownIndicator: (provided, state) => ({ ...provided }),
-  indicatorsContainer: (provided, state) => ({ ...provided }),
-  indicatorSeparator: (provided, state) => ({}),
   input: (provided, state) => ({
     ...provided,
     color: "white",
   }),
-  loadingIndicator: (provided, state) => ({ ...provided }),
-  loadingMessage: (provided, state) => ({ ...provided }),
   menu: (provided, state) => ({ ...provided, backgroundColor: "#353535" }),
-  menuList: (provided, state) => ({ ...provided }),
-  menuPortal: (provided, state) => ({ ...provided }),
-  noOptionsMessage: (provided, state) => ({ ...provided }),
   option: (provided, state) => ({
     ...provided,
     color: state.isFocused ? "black" : "white",

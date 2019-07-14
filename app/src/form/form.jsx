@@ -13,7 +13,13 @@ import { toCommas } from "../_root/_helpers"
 import { actions as patentActions } from "../_redux/patentActions"
 import { customStyles, DropdownIndicator, AddPatentAnchor } from "./_styles"
 
-const PatentForm = ({ history }: { history: {} }) => {
+const PatentForm = ({
+  history,
+  isDisplaySmall,
+}: {
+  history: {},
+  isDisplaySmall: boolean,
+}) => {
   //localstate
   const [inputValue, setInputValue] = React.useState("")
   //redux
@@ -72,7 +78,7 @@ const PatentForm = ({ history }: { history: {} }) => {
       formatCreateLabel={() => (
         <AddPatentAnchor label="Add a Patent" icon={<AddCircle />} />
       )}
-      styles={customStyles}
+      styles={customStyles(isDisplaySmall)}
       loadOptions={(inputValue, callback) => fetchOptions(inputValue, callback)}
       onChange={option => {
         history.push(`/patents/${option.value}`)

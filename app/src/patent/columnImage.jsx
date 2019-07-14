@@ -10,12 +10,10 @@ const VisibilityToggleBox = styled(Box)`
 `
 
 const ColumnImage = ({
-  img,
   label,
   children,
   isVisible,
 }: {
-  img: string,
   label: string,
   children: React.Node,
   isVisible: boolean,
@@ -26,7 +24,7 @@ const ColumnImage = ({
       align="center"
       gap="small"
       fill="vertical"
-      width="medium"
+      width="auto"
       margin={{ left: "small" }}
     >
       <Heading
@@ -38,7 +36,7 @@ const ColumnImage = ({
       >
         {label}
       </Heading>
-      <Image fit="contain" src={img} />
+      {children}
     </VisibilityToggleBox>
   )
 }
