@@ -49,6 +49,22 @@ GEM
       awesome_print
       pry-rails
       railties
+    aws-eventstream (1.0.3)
+    aws-partitions (1.186.0)
+    aws-sdk-core (3.59.0)
+      aws-eventstream (~> 1.0, >= 1.0.2)
+      aws-partitions (~> 1.0)
+      aws-sigv4 (~> 1.1)
+      jmespath (~> 1.0)
+    aws-sdk-kms (1.23.0)
+      aws-sdk-core (~> 3, >= 3.58.0)
+      aws-sigv4 (~> 1.1)
+    aws-sdk-s3 (1.43.0)
+      aws-sdk-core (~> 3, >= 3.56.0)
+      aws-sdk-kms (~> 1)
+      aws-sigv4 (~> 1.1)
+    aws-sigv4 (1.1.0)
+      aws-eventstream (~> 1.0, >= 1.0.2)
     bootsnap (1.4.4)
       msgpack (~> 1.0)
     builder (3.2.3)
@@ -120,6 +136,7 @@ GEM
     i18n (1.6.0)
       concurrent-ruby (~> 1.0)
     jaro_winkler (1.5.3)
+    jmespath (1.4.0)
     jsonapi-renderer (0.2.0)
     jsonapi-serializable (0.3.1)
       jsonapi-renderer (~> 0.2.0)
@@ -293,6 +310,7 @@ PLATFORMS
 
 DEPENDENCIES
   awesome_rails_console
+  aws-sdk-s3
   bootsnap (>= 1.1.0)
   byebug
   docsplit

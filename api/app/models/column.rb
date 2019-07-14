@@ -8,58 +8,16 @@ class Column < ApplicationRecord
   has_many :lines, dependent: :destroy
   has_one_attached :master_image
   has_one_attached :lined_image
+  has_one_attached :split_image
 
-  def blob_path(img_name)
-    blob_key = case img_name
-               when 'master'
-                 master_image.key
-               when 'lined'
-                 lined_image.key
-               end
-    ActiveStorage::Blob.service.send(:path_for, blob_key)
-  end
+  # validations
+  validates :number, uniqueness: { scope: :patent_id }
 
-  def line_range
-    number.to_i.even? ? (1..67) : (0..66)
-  end
-
-  def save_number(line)
-    number.to_i.even? ? line : line + 1
-  end
-
-  def create_line(number)
-    lines.create(number: number.to_s)
-  end
-
-  def text_path(num, name)
-    Rails.root.join('tmp', 'storage', num.to_s, name)
-  end
-
-  def png_line(num)
-    "col_#{number}_line_#{num}.png"
-  end
-
-  def to_lines
-    extract_lines
-    line_range.each do |num|
-      lines.create(
-        number: save_number(num),
-        image: {
-          io: File.open(text_path(num, png_line(num))),
-          filename: png_line(num)
-        }
-      )
-    end
-  end
-
-  def extract_lines
-    MiniMagick.with_cli(:imagemagick) do
-      MiniMagick::Tool::Convert.new do |convert|
-        convert << blob_path('master')
-        convert.merge! ['-crop', '0x67@', '+repage', '+adjoin']
-        convert << text_path("col_#{number}_line_%d.png")
-      end
-    end
+  def save_all_images
+    img = ImageHandler.new(id)
+    img.draw_lines
+    img.draw_split
+    img.save_lines
   end
 
   def save_lined_image
@@ -67,18 +25,49 @@ class Column < ApplicationRecord
     img.draw_lines
   end
 
-  def extract_text
-    @file = File.open(blob_path)
-    basename = File.basename(@file.path)
-    if master.attached?
-      Docsplit.extract_text(
-        [@file.path],
-        ocr: true,
-        output: Rails.root.join('tmp', 'storage')
-      )
-      text = File.read(text_path("#{basename}.txt"))
-      update!(text: text)
-      File.delete(text_path("#{basename}.txt"))
+  def save_split_image
+    img = ImageHandler.new(id)
+    img.draw_split
+  end
+
+  def save_line_images
+    img = ImageHandler.new(id)
+    img.save_lines
+  end
+
+  def image_path(img_name)
+    uri = lambda do
+      case img_name
+      when 'master'
+        master_image.attachment.service_url
+      when 'lined'
+        lined_image.attachment.service_url
+      when 'split'
+        split_image.attachment.service_url
+      end
     end
+    URI.open(uri.call)
+  end
+
+  def extract_text
+    MiniMagick::Tool::Convert.new do |convert|
+      convert << URI.open(master_image.attachment.service_url).path
+      gravity = number.to_i.even? ? "West" : "East"
+      convert.merge! ["-gravity", gravity, "-chop", "35x0", "+repage"]
+      convert << working_path("col-#{number}-chopped.png")
+    end
+    file = File.open(working_path("col-#{number}-chopped.png"))
+    Docsplit.extract_text([file.path], ocr: true, output: working_path(""))
+    output = working_path("col-#{number}-chopped.txt")
+    text = File.read(output)
+    byebug
+    self.update!(text: text)
+    File.delete(output)
+  end
+
+  def working_path(name)
+    dir = ['tmp', 'storage', patent.number.to_s].join('/')
+    FileUtils.mkdir_p dir
+    [dir, name].join('/')
   end
 end

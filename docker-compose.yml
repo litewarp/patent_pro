@@ -19,11 +19,11 @@ services:
     volumes:
       - redis-data:/data
 
-  api:
-    image: litewarp/patent_pro:dev
+  api: &app_base
+    image: litewarp/patent_pro:api
     build:
       context: .
-      dockerfile: ./Dockerfile.dev
+      dockerfile: ./api/Dockerfile
     depends_on:
       - db
       - redis
@@ -31,5 +31,18 @@ services:
       - RAILS_LOG_TO_STDOUT=true
       - RAILS_ENV=development
       - REDIS_URL=redis://redis:6379/0
-    volumes:
-      - ./:/dock_api
+      - MAGICK_MEMORY_LIMIT=512MiB
+      - MAGICK_MAP_LIMIT=256MiB
+
+  sidekiq:
+    <<: *app_base
+    command: ['bundle', 'exec', 'sidekiq', '-c', '15']
+    ports: []
+
+  web:
+    image: litewarp/patent_pro:web
+    build:
+      context: .
+      dockerfile: ./web/Dockerfile
+    ports:
+      - 80:8001

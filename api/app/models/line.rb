@@ -6,42 +6,22 @@ class Line < ApplicationRecord
   belongs_to :column
   has_one_attached :image
 
-  def blob_path
-    ActiveStorage::Blob.service.send(:path_for, image.key)
-  end
+  # validations
+  validates :number, uniqueness: { scope: :column_id }
 
-  def attach_image(digit)
-    name = "col_#{column.number}_line_#{digit}.png"
-    file_path = Rails.root.join('tmp', 'storage', name)
-    image.attach(io: File.open(file_path), filename: name)
-  end
-
-  def text_path(name)
-    Rails.root.join('tmp', 'storage', name)
-  end
-
-  def add_ocr_border
-    file_path = text_path("col_#{column.number}_line_#{number}_bordered")
-    MiniMagick::Tool::Convert.new do |convert|
-      convert << @file.path
-      convert.bordercolor('white').border('2x2')
-      convert << "#{file_path}.jpg"
-    end
-    file_path
+  def working_path(name)
+    dir =['tmp', 'storage', column.patent.number.to_s].join('/')
+    FileUtils.mkdir_p dir
+    [dir, name].join('/')
   end
 
   def extract_text
-    @file = File.open(blob_path)
-    if image.attached?
-      file_path = add_ocr_border
-      Docsplit.extract_text(
-        ["#{file_path}.jpg"],
-        ocr: true,
-        output: text_path('')
-      )
-      file_name = "#{File.basename(file_path)}.txt"
-      update!(text: File.read(text_path(file_name)))
-      File.delete(text_path(file_name))
-    end
+    file = URI.open(image.attachment.service_url)
+    Docsplit.extract_text([file.path], ocr: true, output: working_path(""))
+    output = working_path("#{File.basename(file)}.txt")
+    text = File.read(output)
+    self.update!(text: text)
+    File.delete(output)
   end
+
 end

@@ -12,6 +12,7 @@ gem 'pg'
 gem 'pg_search'
 
 # files and images
+gem 'aws-sdk-s3'
 gem 'docsplit'
 gem 'mini_magick', '~> 4.8'
 

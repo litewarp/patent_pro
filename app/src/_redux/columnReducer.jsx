@@ -16,7 +16,6 @@ const {
 } = actionRefs
 
 const initialState = {
-  activePatent: {},
   activeColumn: 1,
   loading: false,
   loadingError: false,

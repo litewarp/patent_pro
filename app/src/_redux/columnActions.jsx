@@ -37,6 +37,11 @@ export const fetchLines = (columnId: number) => ({
   },
 })
 
+export const actions = {
+  setActiveColumn,
+  fetchLines
+}
+
 export const actionRefs = {
   LOAD_LINES_REQUEST,
   LOAD_LINES_SUCCESS,

@@ -27,14 +27,14 @@ const lineArray = () => {
 }
 
 const FixedImage = styled(Image)`
-  height: 15px;
+  max-height: 20px;
 `
 
 const NoLineHeightRow = styled(TableRow)`
   line-height: 0em;
 `
 
-const ColumnTable = ({
+const ColumnAsLines = ({
   lines,
   columnId,
   fetchLines,
@@ -50,7 +50,7 @@ const ColumnTable = ({
 
   return (
     <Box
-      fill
+      basis="3/4"
       align="center"
       margin="medium"
       overflow={{ vertical: "scroll", horizontal: "hidden" }}
@@ -76,4 +76,4 @@ const ColumnTable = ({
   )
 }
 
-export default ColumnTable
+export default ColumnAsLines

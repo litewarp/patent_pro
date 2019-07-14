@@ -1,35 +1,58 @@
 /** @format */
 // @flow
 import * as React from "react"
-import { BrowserRouter as Router, Route } from "react-router-dom"
+import { BrowserRouter as Router, Route, withRouter } from "react-router-dom"
 import { Box, Grommet, ResponsiveContext } from "grommet"
 import theme from "./theme"
 
 import styled from "styled-components"
 import { ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.min.css"
-
+import "./customToast.css"
 // Components
-import Header from "./components/header"
+import Header from "./header/header"
 import Footer from "./components/footer"
-import Home from "../home"
-import ActivePatent from "../patent"
+import LandingPage from "../home/home"
+import Patent from "../patent/patent"
 
-const StylishToast = styled(ToastContainer)`
-  margin-top: 100px;
-`
+const Content = ({
+  children,
+  location,
+}: {
+  children: Array<{}>,
+  location: {
+    pathname: string,
+  },
+}) => (
+  <ResponsiveContext.Consumer>
+    {({ size }) => (
+      <Box alignContent="center">
+        <Header size={size} pathname={location.pathname} />
+        <ToastContainer
+          toastClassName="burnt-toast"
+          style={{
+            left: "0",
+            width: "100%",
+            margin: "0",
+          }}
+          position="bottom-center"
+        />
+        <Box fill>{children}</Box>
+        <Footer />
+      </Box>
+    )}
+  </ResponsiveContext.Consumer>
+)
+
+const MainContent = withRouter(Content)
+
 const Root = () => (
   <Grommet theme={theme} full>
     <Router>
-      <Box fill alignContent="center">
-        <Header />
-        <Box fill>
-          <StylishToast />
-          <Route exact path="/" component={Home} />
-          <Route path="/patents/:id" component={ActivePatent} />
-        </Box>
-        <Footer />
-      </Box>
+      <MainContent>
+        <Route exact path="/" component={LandingPage} />
+        <Route path="/patents/:id" component={Patent} />
+      </MainContent>
     </Router>
   </Grommet>
 )

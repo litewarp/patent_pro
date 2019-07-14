@@ -8,6 +8,7 @@
 ],
   "plugins": [
     "react",
+    "react-hooks",
     "flowtype-errors",
     "prettier",
     "prettier/react",
@@ -31,6 +32,8 @@
     ],
     "no-unused-vars": ["error", { "vars": "all", "after-used" }],
     "flowtype/no-types-missing-file-annotation": 0,
-    "flowtype-errors/show-errors": 2
+    "flowtype-errors/show-errors": 2,
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn"
   }
 }
