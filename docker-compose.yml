@@ -31,6 +31,7 @@ services:
       - redis
     environment:
       - RAILS_LOG_TO_STDOUT=true
+      - RAILS_ENV=production
       - REDIS_URL=redis://redis:6379/0
       - MAGICK_MEMORY_LIMIT=512MiB
       - MAGICK_MAP_LIMIT=256MiB
