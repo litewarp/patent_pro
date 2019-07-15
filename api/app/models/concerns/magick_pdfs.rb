@@ -39,7 +39,7 @@ module MagickPdfs
     private
 
     def find_range
-      pdf_pages_to_tiff
+      pdf_pages_to_png
       page_tops = extract_page_tops
       le_start = page_tops.find_index do |page|
         page.find_index do |line|
@@ -62,23 +62,23 @@ module MagickPdfs
       ]
       MiniMagick.with_cli(:imagemagick) do
         MiniMagick::Tool::Convert.new do |convert|
-          convert << "#{@tiff_path}_#{num}.tiff"
+          convert << "#{@png_path}_#{num}.png"
           convert.merge! options
           convert << working_path("page_#{num}_col_%d.png")
         end
       end
-      File.delete("#{@tiff_path}_#{num}.tiff")
+      File.delete("#{@png_path}_#{num}.png")
     end
 
     def extract_page_tops
       (1..@pdf_length).collect do |num|
         MiniMagick::Tool::Convert.new do |convert|
-          convert << "#{@tiff_path}_#{num}.tiff"
+          convert << "#{@png_path}_#{num}.png"
           convert.merge! ['-trim', '+repage', '-crop', '100%x7%+0+0', '+repage']
-          convert << working_path("#{num}_top.tiff")
+          convert << working_path("#{num}_top.png")
         end
         Docsplit.extract_text(
-          [working_path("#{num}_top.tiff")],
+          [working_path("#{num}_top.png")],
           ocr: true,
           output: working_path('')
         )
@@ -88,15 +88,15 @@ module MagickPdfs
       end
     end
 
-    def pdf_pages_to_tiff
+    def pdf_pages_to_png
       puts 'Extracting Tiffs'
       Docsplit.extract_images(
         [@file.path],
         density: '300',
-        format: 'tiff',
+        format: 'png',
         output: working_path('')
       )
-      @tiff_path = working_path(@basename)
+      @png_path = working_path(@basename)
     end
   end
 end
