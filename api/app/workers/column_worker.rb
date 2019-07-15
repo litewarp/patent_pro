@@ -7,7 +7,9 @@ class ColumnWorker
 
   def perform(column_id)
     @column = Column.find(column_id)
-    @column.save_all_images
     @column.extract_text
+    @column.save_lined_image
+    @column.save_split_image
+    @column.save_line_images
   end
 end

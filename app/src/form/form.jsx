@@ -70,7 +70,10 @@ const PatentForm = ({
 
   const handleCreate = (newOption: number) => {
     dispatch(createPatent(newOption))
-      .then(res => console.log(res.JSON()))
+      .then(res => {
+        const { number } = res.payload.data.attributes
+        history.push(`/patents/${number}/`)
+      })
       .catch(err => console.log(err))
   }
 
@@ -90,7 +93,7 @@ const PatentForm = ({
         history.push(`/patents/${option.value}`)
       }}
       onInputChange={option => handleInputChange(option)}
-      onCreateOption={val => dispatch(createPatent(val))}
+      onCreateOption={val => handleCreate(val)}
     />
   )
 }

@@ -47,14 +47,7 @@ const Columns = ({
     column.attributes.text.split("\n")
 
   return (
-    <Box
-      fill
-      gridArea="body"
-      direction="row"
-      pad="medium"
-      justify="between"
-      wrap
-    >
+    <Box fill gridArea="body" direction="row" pad="medium" gap="medium" wrap>
       {!(column && column.attributes) ? (
         <Loading />
       ) : (
