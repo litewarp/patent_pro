@@ -11,7 +11,11 @@ const NEW_ERROR = "@column/NEW_ERROR"
 const SET_ACTIVE_COLUMN = "@column/SET_ACTIVE_COLUMN"
 
 // API VARIABLES
-const baseURL = "http://localhost/api/v1"
+const baseURL =
+  process.env.NODE_ENV === "production"
+    ? "http://mccoybot.com/api/v1"
+    : "http://localhost/api/v1"
+
 const patentsURL = baseURL + "/columns"
 const patentURL = id => patentsURL + "/" + id
 const jsonHeader = { "Content-Type": "application/vnd.api+json" }
@@ -39,7 +43,7 @@ export const fetchLines = (columnId: number) => ({
 
 export const actions = {
   setActiveColumn,
-  fetchLines
+  fetchLines,
 }
 
 export const actionRefs = {
