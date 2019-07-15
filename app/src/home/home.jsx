@@ -19,13 +19,13 @@ const LandingPage = () => {
     ({ patent }) => patent.modelPatent,
     shallowEqual,
   )
-  const columns = useSelector(({ patent }) => patent.columns)
   //redux
   const dispatch = useDispatch()
   React.useEffect(() => {
     const fetchModelPatent = x => dispatch(patentActions.loadModelPatent(x))
     fetchModelPatent("7629705")
   }, [])
+  const columns = useSelector(({ patent }) => patent.columns)
 
   const column = columns && columns[1]
   //layout state
