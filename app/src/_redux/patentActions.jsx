@@ -26,9 +26,10 @@ const MODEL_PATENT_SUCCESS = "@patent/MODEL_PATENT_SUCCESS"
 const MODEL_PATENT_FAILURE = "@patent/MODEL_PATENT_FAILURE"
 // API VARIABLES AND HELPERS
 
-const baseURL = process.env.NODE_ENV==="production" ?
-"http://mccoybot.com/api/v1"
-"http://localhost/api/v1"
+const baseURL =
+  process.env.NODE_ENV === "production"
+    ? "http://mccoybot.com/api/v1"
+    : "http://localhost/api/v1"
 const patentsURL = baseURL + "/patents"
 const patentURL = id => patentsURL + "/" + id
 const jsonHeader = { "Content-Type": "application/vnd.api+json" }
