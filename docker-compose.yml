@@ -16,9 +16,8 @@ services:
     ports:
       - '6379'
     sysctls:
-      - net.core.somaxconn=1024
-      - vm.overcommit_memory=1
-      -
+      net.core.somaxconn: 1024
+      vm.overcommit_memory: 1
     volumes:
       - redis-data:/data
 
