@@ -1,0 +1,4 @@
+cleanup_files:
+  cron: "*/0 * * * *"
+  class: "CleanupWorker"
+  queue: "default"

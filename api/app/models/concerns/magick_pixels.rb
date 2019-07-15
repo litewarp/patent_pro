@@ -40,7 +40,7 @@ module MagickPixels
         lines.each { |num| convert.merge! red_line(num, @image.width) }
         convert << working_path("#{@column.number}_lined.png")
       end
-      self.update!(lined_img_count: lines.count)
+      @column.update!(lined_img_count: lines.count)
       save_lined_image
     end
 
@@ -54,7 +54,7 @@ module MagickPixels
           number: adj_num.call(line),
           image: {
             io: File.open(working_path("#{path}_%02d.png" % [line])),
-            filename: "#{path}_#{adj_num.call(line)}.png"
+            filename: "#{path}_#{line}.png"
           }
         )
         LineWorker.perform_async(li.id) if li
