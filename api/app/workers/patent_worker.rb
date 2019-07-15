@@ -7,7 +7,7 @@ class PatentWorker
 
   def perform(patent_id)
     @patent = Patent.find(patent_id)
-    @patent.save_columns
     @patent.extract_pto_text
+    @patent.save_columns
   end
 end

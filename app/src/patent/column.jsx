@@ -8,7 +8,11 @@ import styled from "styled-components"
 const VisibilityToggleBox = styled(Box)`
   display: ${({ isVisible }) => (isVisible ? "flex" : "none")};
 `
-const ColumnImage = ({
+export const StyledImage = styled(Image)`
+  max-width: 500px;
+`
+
+const Column = ({
   label,
   children,
   isVisible,
@@ -40,4 +44,4 @@ const ColumnImage = ({
   )
 }
 
-export default ColumnImage
+export default Column

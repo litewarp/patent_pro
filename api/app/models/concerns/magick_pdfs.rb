@@ -34,6 +34,7 @@ module MagickPdfs
           File.delete(working_path("page_#{num}_col_#{col}.png"))
         end
       end
+      FileUtils.rm_r(Dir[working_path(
     end
 
     private
@@ -43,11 +44,11 @@ module MagickPdfs
       page_tops = extract_page_tops
       le_start = page_tops.find_index do |page|
         page.find_index do |line|
-          line.gsub("\s", '').match?(/^[^3-9a-zA-Z]{1,6}$/)
+          line.gsub("\s", '').match?(/^[^3-9a-zA-Z\f\t\n]{1,6}$/)
         end
       end
       le_end = page_tops.rindex do |page|
-        page.find_index { |line| line.match?(/^[^3-9a-zA-Z]{1,6}$/) }
+        page.find_index { |line| line.match?(/^[^3-9a-zA-Z\f\t\n]{1,6}$/) }
       end
       start = le_start + 1 || 1 # default to first page
       finish = le_end + 1 || @pdf_length + 1 # default to last
@@ -74,7 +75,7 @@ module MagickPdfs
       (1..@pdf_length).collect do |num|
         MiniMagick::Tool::Convert.new do |convert|
           convert << "#{@tiff_path}_#{num}.tiff"
-          convert.merge! ['-trim', '+repage', '-crop', '100%x8%+0+0', '+repage']
+          convert.merge! ['-trim', '+repage', '-crop', '100%x7%+0+0', '+repage']
           convert << working_path("#{num}_top.tiff")
         end
         Docsplit.extract_text(
@@ -83,7 +84,7 @@ module MagickPdfs
           output: working_path('')
         )
         txt = File.read(working_path("#{num}_top.txt")).split("\n").slice(1, 2)
-        FileUtils.rm_rf(Dir[working_path("#{num}_top.*")])
+        FileUtils.rm_r(Dir[working_path("#{num}_top.*")])
         txt
       end
     end

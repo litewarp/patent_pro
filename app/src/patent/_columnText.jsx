@@ -2,7 +2,7 @@
 
 // @flow
 import * as React from "react"
-import { Table, TableBody, TableRow, TableCell, Text } from "grommet"
+import { Heading, Table, TableBody, TableRow, TableCell, Text } from "grommet"
 
 const ColumnText = ({ textAsLines }: { textAsLines: Array<string> }) => (
   <Table>
@@ -13,7 +13,7 @@ const ColumnText = ({ textAsLines }: { textAsLines: Array<string> }) => (
             <strong>{index + 1}</strong>
           </TableCell>
           <TableCell>
-            <Text size="large">{line}</Text>
+            <Text size="medium">{line}</Text>
           </TableCell>
         </TableRow>
       ))}

@@ -1,12 +1,12 @@
 development:
   adapter: redis
-  url: <%= ENV.fetch("REDIS_URL") { "redis://redis:6379" } %>
+  url: <%= ENV.fetch("REDIS_URL") { "redis://redis:6379/0" } %>
 
 test:
   adapter: async
 
 production:
   adapter: redis
-  url: <%= ENV.fetch("REDIS_URL") { "redis://redis:6379" } %>
+  url: <%= ENV.fetch("REDIS_URL") { "redis://redis:6379/0" } %>
   adapter: async
 

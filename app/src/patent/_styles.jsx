@@ -1,7 +1,7 @@
 /** @format */
 // @flow
 import * as React from "react"
-import { Box, Button } from "grommet"
+import { Box, Button, Image } from "grommet"
 import Select from "react-select"
 import styled from "styled-components"
 import {
@@ -36,6 +36,12 @@ export const columnSelectIcon = ({
       return <DocumentText {...svgProps} />
   }
 }
+
+export const StyledImage = styled(Image)`
+  max-width: 500px;
+  flex: none;
+  display: block;
+`
 
 export const FixedBox = styled(Box)`
   max-width: 1280px;

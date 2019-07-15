@@ -53,7 +53,7 @@ module MagickPixels
           column_id: @column.id,
           number: adj_num.call(line),
           image: {
-            io: File.open(working_path("#{path}_%02d.png" % [line])),
+            io: File.open(working_path("#{path}_#{line.to_s.rjust(2, '0')}.png")),
             filename: "#{path}_#{line}.png"
           }
         )

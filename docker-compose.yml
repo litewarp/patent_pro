@@ -11,9 +11,12 @@ services:
       - pg-data:/var/lib/postgresql/data
 
   redis:
-    image: redis:latest
+    image: redis:alpine
+    command: ["redis-server", "--appendonly", "yes"]
     ports:
       - '6379'
+    sysctls:
+      net.core.somaxconn: '1024'
     volumes:
       - redis-data:/data
 
