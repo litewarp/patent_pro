@@ -41,7 +41,10 @@ const Columns = ({
   const isVisible = val => visibleItems.includes(val)
 
   const textAsLines =
-    column && column.attributes && column.attributes.text.split("\n")
+    column &&
+    column.attributes &&
+    column.attributes.text &&
+    column.attributes.text.split("\n")
 
   return (
     <Box
