@@ -45,13 +45,11 @@ module MagickPixels
     end
 
     def save_lines
-      adj_num = ->(x) { x.to_i.even? ? x : x + 1 }
-      adj_line_range = @column.number.to_i.even? ? (1..67) : (0..66)
       path = magick_lines
       (1..67).collect do |line|
         li = Line.create(
           column_id: @column.id,
-          number: adj_num.call(line),
+          number: line,
           image: {
             io: File.open(working_path("#{path}_#{line.to_s.rjust(2, '0')}.png")),
             filename: "#{path}_#{line}.png"
