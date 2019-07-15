@@ -34,7 +34,7 @@ const ColumnImage = ({
         pad="small"
         margin={{ bottom: "small" }}
       >
-        {label}
+        {label.toUpperCase()}
       </Heading>
       {children}
     </VisibilityToggleBox>

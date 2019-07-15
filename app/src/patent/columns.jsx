@@ -9,11 +9,13 @@ import {
   TableBody,
   TableRow,
   TableCell,
+  Text,
   Paragraph,
 } from "grommet"
 import Loading from "./_loading"
 import ColumnImage from "./columnImage"
-
+import ColumnText from "./_columnText"
+import LineTable from "./_lineTable"
 const Columns = ({
   columns,
   activeColumn,
@@ -25,7 +27,6 @@ const Columns = ({
   activeColumn: number,
   setActiveColumn: number => void,
   visibleItems: Array<string>,
-
   setVisibleItems: (Array<string>) => void,
 }) => {
   const getColumn = number => {
@@ -38,21 +39,14 @@ const Columns = ({
 
   const textAsLines =
     column && column.attributes && column.attributes.text.split("\n")
+
   if (!(column && column.attributes)) {
     return <Loading />
   } else {
     return (
-      <Box
-        fill
-        gridArea="body"
-        direction="row"
-        pad="medium"
-        wrap
-        gap="medium"
-        justify="between"
-      >
+      <Box fill gridArea="body" direction="row" pad="medium" justify="between">
         <ColumnImage
-          width="1/3"
+          width="1/4"
           isVisible={isVisible("rawImg")}
           img={column && column.attributes.masterImgUrl}
           label="Raw Image"
@@ -60,53 +54,37 @@ const Columns = ({
           <Image fit="contain" src={column && column.attributes.masterImgUrl} />
         </ColumnImage>
         <ColumnImage
-          width="1/3"
+          width="1/4"
           isVisible={isVisible("linedImg")}
           img={column && column.attributes.linedImgUrl}
-          label="Algorithmic Split"
+          label="Whitespace Calculated Lines"
         >
           <Image fit="contain" src={column && column.attributes.linedImgUrl} />
         </ColumnImage>
         <ColumnImage
-          width="1/3"
+          width="1/4"
           isVisible={isVisible("splitImg")}
           img={column && column.attributes.splitImgUrl}
-          label="Line Count Split"
+          label="Raw split into 67 rows"
         >
           <Image fit="contain" src={column && column.attributes.splitImgUrl} />
         </ColumnImage>
         <ColumnImage
-          width="1/3"
+          width="1/4"
           isVisible={isVisible("singleLineTable")}
-          label="Column as 67 split lines (for OCR)"
+          label="Raw split lines with OCR"
         >
-          <Table />
+          <LineTable columnId={column.id} />
         </ColumnImage>
         <ColumnImage
-          width="1/3"
-          isVisible={isVisible("singleLineTableText")}
-          label="OCR extracted text from 67 split line PDFs"
-        />
-        <ColumnImage
-          width="1/3"
+          width="1/4"
           isVisible={isVisible("columnText")}
-          label="OCR extracted text from raw column pdf"
+          label="Raw column text"
         >
           <Heading level={4}>{`${
             textAsLines.length
           } lines found: ${textAsLines.length - 67} extraneous`}</Heading>
-          <Table>
-            <TableBody>
-              {textAsLines.map((line, index) => (
-                <TableRow key={index + 22 * 3}>
-                  <TableCell scope="row">
-                    <strong>{index + 1}</strong>
-                  </TableCell>
-                  <TableCell>{line}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          <ColumnText textAsLines={textAsLines} />
         </ColumnImage>
       </Box>
     )

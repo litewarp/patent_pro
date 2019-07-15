@@ -1,7 +1,7 @@
 /** @format */
 // @flow
 import * as React from "react"
-import { Box } from "grommet"
+import { Box, Button } from "grommet"
 import Select from "react-select"
 import styled from "styled-components"
 import {
@@ -10,6 +10,7 @@ import {
   DocumentImage,
   DocumentText,
   OrderedList,
+  Cut,
   Grid,
   TextAlignFull,
 } from "grommet-icons"
@@ -27,10 +28,12 @@ export const columnSelectIcon = ({
       return <DocumentImage {...svgProps} />
     case "linedImg":
       return <OrderedList {...svgProps} />
-    case "lineText":
+    case "splitImg":
       return <TextAlignFull {...svgProps} />
+    case "singleLineTable":
+      return <Cut {...svgProps} />
     case "columnText":
-      return <Grid {...svgProps} />
+      return <DocumentText {...svgProps} />
   }
 }
 
@@ -47,7 +50,7 @@ export const ColumnSelect = styled(Select)`
 export const columnNumberSelectStyles = {
   container: (provided, state) => ({
     ...provided,
-    width: "100%",
+    width: "20%",
   }),
   control: (provided, state) => ({
     ...provided,
@@ -57,6 +60,9 @@ export const columnNumberSelectStyles = {
     borderRadius: "4px",
     borderColor: state.isFocused ? "#FFF8F0" : "none",
     boxShadow: state.isFocused ? "0 0 2px 2px #FFF8F0" : "none",
+  }),
+  dropdownIndicator: (provided, state) => ({
+    color: "#D05159",
   }),
   input: (provided, state) => ({
     ...provided,
@@ -71,14 +77,14 @@ export const columnNumberSelectStyles = {
     ...provided,
     color: "white",
     opacity: "0.6",
-    fontSize: "1.25rem",
   }),
   singleValue: (provided, state) => ({
     ...provided,
     color: "white",
-    fontSize: "1.25em",
   }),
   valueContainer: (provided, state) => ({
     ...provided,
+    flexDirection: "row",
+    justifyContent: "center",
   }),
 }

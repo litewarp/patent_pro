@@ -13,7 +13,9 @@ import {
   TableCell,
   Text,
 } from "grommet"
-import { fetchLines } from "./_redux/columnActions"
+import { useSelector, useDispatch } from "react-redux"
+
+import { fetchLines } from "../_redux/columnActions"
 import styled from "styled-components"
 
 const lineArray = () => {
@@ -29,32 +31,20 @@ const lineArray = () => {
 const FixedImage = styled(Image)`
   max-height: 20px;
 `
-
 const NoLineHeightRow = styled(TableRow)`
   line-height: 0em;
 `
-
-const ColumnAsLines = ({
-  lines,
-  columnId,
-  fetchLines,
-}: {
-  text: string,
-  lines: [],
-  columnId: number,
-  fetchLines: number => void,
-}) => {
+const LineTable = ({ columnId }: { columnId: number }) => {
+  const dispatch = useDispatch()
   React.useEffect(() => {
-    columnId && fetchLines(columnId)
+    const loadLines = id => dispatch(fetchLines(id))
+    loadLines(columnId)
   }, [columnId])
 
+  const lines = useSelector(({ column }) => column.lines)
+  console.log(lines)
   return (
-    <Box
-      basis="3/4"
-      align="center"
-      margin="medium"
-      overflow={{ vertical: "scroll", horizontal: "hidden" }}
-    >
+    <Box basis="1/2" align="center">
       <Table caption="Column Table">
         <TableBody>
           {lines.map((line, index) => (
@@ -76,4 +66,4 @@ const ColumnAsLines = ({
   )
 }
 
-export default ColumnAsLines
+export default LineTable

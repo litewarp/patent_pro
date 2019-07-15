@@ -2,7 +2,7 @@
 // @flow
 
 import * as React from "react"
-import { Box, Heading, Anchor } from "grommet"
+import { Box, Heading, Anchor, Button } from "grommet"
 import Select from "react-select"
 import { toCommas } from "../_root/_helpers"
 import styled from "styled-components"
@@ -43,7 +43,16 @@ const Controls = ({
       : [val, ...visibleItems]
     setVisibleItems(newArray)
   }
-
+  const ColumnButton = ({ name }: { name: string }) => (
+    <Button
+      hoverIndicator={true}
+      size="large"
+      color="dark-6"
+      icon={fetchIcon(name)}
+      active={isVisible(name)}
+      onClick={() => toggleItem(name)}
+    />
+  )
   const isVisible = val => visibleItems.includes(val)
   const selectValue = options[activeColumn - 1]
   const fetchIcon = (name: string) =>
@@ -63,49 +72,30 @@ const Controls = ({
         align="center"
         justify="between"
       >
-        <Anchor
+        <Button
           size="large"
           color="dark-6"
           icon={<Rewind />}
           onClick={() => decrement()}
         />
-        <Anchor
-          size="large"
-          color="dark-6"
-          icon={fetchIcon("rawImg")}
-          isVisible={isVisible("rawImg")}
-          onClick={() => toggleItem("rawImg")}
-        />
-        <Anchor
-          size="large"
-          color="dark-6"
-          icon={fetchIcon("columnText")}
-          isVisible={isVisible("columnText")}
-          onClick={() => toggleItem("columnText")}
-        />
+        <ColumnButton name="rawImg" />
+        <ColumnButton name="linedImg" />
+        <ColumnButton name="splitImg" />
+
         <ColumnSelect
           options={options}
           value={options[activeColumn - 1]}
           onChange={({ value }) => {
-            console.log(value)
             setActiveColumn(value)
           }}
+          styles={columnNumberSelectStyles}
         />
-        <Anchor
-          size="large"
-          color="dark-6"
-          icon={fetchIcon("linedImg")}
-          isVisible={isVisible("linedImg")}
-          onClick={() => toggleItem("linedImg")}
-        />
-        <Anchor
-          size="large"
-          color="dark-6"
-          icon={fetchIcon("lineText")}
-          isVisible={isVisible("lineText")}
-          onClick={() => toggleItem("lineText")}
-        />
-        <Anchor
+
+        <ColumnButton name="singleLineTable" />
+
+        <ColumnButton name="columnText" />
+
+        <Button
           size="large"
           color="dark-6"
           icon={<FastForward />}

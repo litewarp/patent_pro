@@ -36,14 +36,7 @@ const BulletPoint = ({
       <StatusCritical color="red" />
     )
   return (
-    <Box
-      direction="row"
-      align="end"
-      justify="between"
-      gap="large"
-      pad={{ vertical: "medium" }}
-      margin={{ right: "small" }}
-    >
+    <Box direction="row" justify="between" gap="medium" pad="large">
       {icon}
       <Text size="large" margin={{ right: "auto" }}>
         {text}
@@ -54,8 +47,14 @@ const BulletPoint = ({
 }
 const BulletPoints = () => (
   <Box pad="medium" gap="small" gridArea="bullets">
-    <BulletPointTitle margin="none" color="neutral-3" pad="large" level={3}>
-      Feature List
+    <BulletPointTitle
+      alignSelf="center"
+      margin="none"
+      color="neutral-3"
+      pad="large"
+      level={3}
+    >
+      Development Roadmap
     </BulletPointTitle>
     <BulletPoint
       icon={<DocumentDownload />}

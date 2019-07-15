@@ -33,10 +33,9 @@ const LandingPage = () => {
   //render
   return (
     <Grid
-      fill
-      justify="center"
-      rows={["xsmall", "3/4", "xxsmall"]}
-      columns={["1/2", "1/2"]}
+      justifyContent="center"
+      rows={["small", "1/3", "xxsmall"]}
+      columns={["auto", "auto"]}
       areas={[
         { name: "marquee", start: [0, 0], end: [1, 0] },
         { name: "bullets", start: [0, 1], end: [0, 1] },

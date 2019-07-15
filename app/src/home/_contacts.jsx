@@ -16,10 +16,10 @@ const StyledAnchor = styled(Anchor)`
 const ContactDetails = ({ showModal }: { showModal: boolean => void }) => (
   <Box
     gridArea="contacts"
-    gap="medium"
     pad="medium"
     direction="row"
     align="center"
+    justify="center"
     margin={{ top: "auto", bottom: "medium" }}
   >
     <StyledAnchor
