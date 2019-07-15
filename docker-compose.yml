@@ -18,7 +18,6 @@ services:
     sysctls:
       - net.core.somaxconn=1024
       - vm.overcommit_memory=1
-      -
     volumes:
       - redis-data:/data
 
