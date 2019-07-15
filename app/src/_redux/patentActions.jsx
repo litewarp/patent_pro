@@ -2,7 +2,6 @@
 
 import { getJSON, RSAA } from "redux-api-middleware"
 import { toast } from "react-toastify"
-
 const LOAD_REQUEST = "@patent/LOAD_REQUEST"
 const LOAD_SUCCESS = "@patent/LOAD_SUCCESS"
 const LOAD_FAILURE = "@patent/LOAD_FAILURE"

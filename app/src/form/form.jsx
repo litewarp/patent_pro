@@ -68,6 +68,12 @@ const PatentForm = ({
     dispatch(searchPatents(val))
   }
 
+  const handleCreate = (newOption: number) => {
+    dispatch(createPatent(newOption))
+      .then(res => console.log(res.JSON()))
+      .catch(err => console.log(err))
+  }
+
   return (
     <AsyncCreatableSelect
       name="patentNumber"

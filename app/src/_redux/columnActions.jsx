@@ -27,7 +27,7 @@ export const setActiveColumn = (column: number) => ({
 
 export const fetchLines = (columnId: number) => ({
   [RSAA]: {
-    endpoint: `${baseUrl}/lines?filter[column_id]=${columnId}`,
+    endpoint: `${baseURL}/lines?filter[column_id]=${columnId}`,
     method: "GET",
     headers: jsonHeader,
     types: [
