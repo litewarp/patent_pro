@@ -34,7 +34,6 @@ module MagickPdfs
           File.delete(working_path("page_#{num}_col_#{col}.png"))
         end
       end
-      FileUtils.rm_r(Dir[working_path(
     end
 
     private
