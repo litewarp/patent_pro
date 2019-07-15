@@ -7,6 +7,7 @@ class ColumnResource < ApplicationResource
   attribute :patent_id, :integer
   attribute :number, :string
   attribute :text, :string
+  attribute :lined_img_count, :string
 
   attribute :master_img_url, :string do
     @object.master_image.attachment.service_url if @object.master_image.attached?
