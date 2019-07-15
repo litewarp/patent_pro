@@ -2,6 +2,9 @@ module Api
   module V1
     class ApplicationController < ActionController::API
 
+      def faillback_index_html
+        render :file => 'public/index.html'
+      end
       def allow_graphiti_debug_json?
         true
       end
