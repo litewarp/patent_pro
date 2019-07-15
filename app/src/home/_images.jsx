@@ -13,9 +13,11 @@ const ImageMockups = ({
     linedImgUrl: string,
     splitImgUrl: string,
   },
-}) => (
+}) => {
+  const imgSource = patentProps && patentProps.linedImgUrl ? patentProps.linedImgUrl : patentProps.masterImgUrl
+  (
   <Box gridArea="images" pad="medium">
-    <Image fit="contain" src={patentProps && patentProps.linedImgUrl} />
+    <Image fit="contain" src={imgSource} />
   </Box>
 )
 

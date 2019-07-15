@@ -27,7 +27,7 @@ const LandingPage = () => {
   }, [])
   const columns = useSelector(({ patent }) => patent.columns)
 
-  const column = columns && columns[1]
+  const column = columns && columns[1] && columns[1].attributes
   //layout state
   const [modal, showModal] = React.useState(false)
   //render
@@ -53,7 +53,7 @@ const LandingPage = () => {
         </Heading>
       </Box>
       <BulletPoints />
-      <ImageMockups patentProps={column && column.attributes} />
+      <ImageMockups patentProps={column && column} />
       <ContactDetails />
       {modal && <MessageModal showModal={showModal} modal={modal} />}
     </Grid>
