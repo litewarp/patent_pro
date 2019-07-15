@@ -60,7 +60,6 @@ class Column < ApplicationRecord
     Docsplit.extract_text([file.path], ocr: true, output: working_path(""))
     output = working_path("col-#{number}-chopped.txt")
     text = File.read(output)
-    byebug
     self.update!(text: text)
     File.delete(output)
   end
