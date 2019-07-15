@@ -38,7 +38,7 @@ const formatSideloadUrl = url => {
   const splitUrl = url.split("/")
   splitUrl.shift()
   return process.env.NODE_ENV === "production"
-    ? "http://sethipc.com/" + splitUrl.join("/")
+    ? "http://mccoybot.com/" + splitUrl.join("/")
     : "http://localhost/" + splitUrl.join("/")
 }
 
