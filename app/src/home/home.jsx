@@ -33,6 +33,7 @@ const LandingPage = () => {
   //render
   return (
     <Grid
+      fill
       justifyContent="center"
       rows={["small", "1/3", "xxsmall"]}
       columns={["auto", "auto"]}
