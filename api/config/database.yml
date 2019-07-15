@@ -27,5 +27,4 @@ test:
 production:
   <<: *default
   database: patent_pro_prod
-  username: patent_pro
-  password: <%= ENV['PATENT_PRO_DATABASE_PASSWORD'] %>
+
