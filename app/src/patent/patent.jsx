@@ -20,7 +20,7 @@ const Patent = ({
 
   const dispatch = useDispatch()
   const columns = useSelector(({ patent }) => patent.columns, shallowEqual)
-
+  const activePatent = useSelector(({ patent }) => patent.activePatent)
   const [activeColumn, setActiveColumn] = React.useState(1)
   const [visibleItems, setVisibleItems] = React.useState([
     "rawImg",
@@ -28,10 +28,10 @@ const Patent = ({
   ])
   const increment = () =>
     setActiveColumn(
-      activeColumn === columns.length ? columns.length : activeColumn + 1,
+      activeColumn == columns.length ? columns.length : activeColumn + 1,
     )
   const decrement = () =>
-    setActiveColumn(activeColumn === 1 ? 1 : activeColumn - 1)
+    setActiveColumn(activeColumn == 1 ? 1 : activeColumn - 1)
 
   const { id } = match.params
 
@@ -62,6 +62,7 @@ const Patent = ({
       <Columns
         activeColumn={activeColumn}
         columns={columns}
+        activePatent={activePatent}
         setActiveColumn={setActiveColumn}
         visibleItems={visibleItems}
         setVisibleItems={setVisibleItems}
