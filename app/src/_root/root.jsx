@@ -10,7 +10,6 @@ import {
 import { Box, Grommet, ResponsiveContext } from "grommet"
 import theme from "./theme"
 
-import styled from "styled-components"
 import { ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.min.css"
 import "./customToast.css"

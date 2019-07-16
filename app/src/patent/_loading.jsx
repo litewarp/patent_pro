@@ -4,7 +4,6 @@
 
 import * as React from "react"
 import { Box, Heading, Meter, Text } from "grommet"
-import { System } from "grommet-icons"
 
 const Loading = () => {
   const [circleFill, setCircleFill] = React.useState(10)

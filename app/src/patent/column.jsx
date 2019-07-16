@@ -33,7 +33,6 @@ const Column = ({
       <Heading
         color="neutral-4"
         level={3}
-        margin="none"
         pad="small"
         margin={{ bottom: "small" }}
       >

@@ -2,7 +2,7 @@
 
 // @flow
 import * as React from "react"
-import { Heading, Table, TableBody, TableRow, TableCell, Text } from "grommet"
+import { Table, TableBody, TableRow, TableCell, Text } from "grommet"
 
 const ColumnText = ({ textAsLines }: { textAsLines: Array<string> }) => (
   <Table>

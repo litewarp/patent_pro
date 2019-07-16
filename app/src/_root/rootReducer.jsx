@@ -1,6 +1,5 @@
 /** @format */
 
-import React from "react"
 import { combineReducers } from "redux"
 
 import { columnReducer } from "../_redux/columnReducer"

@@ -1,6 +1,5 @@
 /** @format */
 
-import { RSAA } from "redux-api-middleware"
 import { toast } from "react-toastify"
 
 const CREATE_TOAST = "@layout/CREATE_TOAST"

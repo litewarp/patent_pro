@@ -4,11 +4,8 @@
 import * as React from "react"
 import { shallowEqual, useSelector, useDispatch } from "react-redux"
 import { withRouter } from "react-router-dom"
-import { Box, Heading, Select, Anchor } from "grommet"
-import * as Yup from "yup"
 import AsyncCreatableSelect from "react-select/async-creatable"
-import { AddCircle, Search, Send } from "grommet-icons"
-import { toast } from "react-toastify"
+import { AddCircle } from "grommet-icons"
 import { toCommas } from "../_root/_helpers"
 import { actions as patentActions } from "../_redux/patentActions"
 import { customStyles, DropdownIndicator, AddPatentAnchor } from "./_styles"
@@ -24,31 +21,17 @@ const PatentForm = ({
   const [inputValue, setInputValue] = React.useState("")
   //redux
   const dispatch = useDispatch()
-  const loading = useSelector(({ patent }) => patent.loading)
   const patents = useSelector(({ patent }) => patent.patents)
   const patentNumbers = useSelector(
     ({ patent }) => patent.patentNumbers,
     shallowEqual,
   )
-  const activePatent = useSelector(({ patent }) => patent.activePatent)
-  const {
-    searchPatents,
-    loadColumns,
-    createPatent,
-    loadPatents,
-  } = patentActions
+  const { searchPatents, createPatent, loadPatents } = patentActions
 
   React.useEffect(() => {
     const initialLoad = () => dispatch(loadPatents())
     initialLoad()
   }, [])
-
-  //component actions
-  const value = activePatent &&
-    activePatent.attributes && {
-      label: activePatent.attributes.number,
-      value: activePatent.attributes.number,
-    }
 
   const formatOptions = (
     array: Array<{ id: number, attributes: { number: string } }>,

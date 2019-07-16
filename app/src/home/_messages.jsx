@@ -4,7 +4,7 @@ import * as React from "react"
 import { Layer, Form, Box, Button, FormField, TextArea } from "grommet"
 import { Send } from "grommet-icons"
 import * as Yup from "yup"
-import { withFormik, ErrorMessage } from "formik"
+import { withFormik } from "formik"
 import styled from "styled-components"
 
 const SubmitButton = styled(Button)`

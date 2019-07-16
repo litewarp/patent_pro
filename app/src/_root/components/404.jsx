@@ -1,9 +1,7 @@
 /** @format */
 
 import * as React from "react"
-import { Box, Grommet, Heading, Button } from "grommet"
-import { Alert } from "grommet-icons"
-import styled from "styled-components"
+import { Box, Heading, Button } from "grommet"
 
 const NoPageFound = () => (
   <Box gap="large" pad="large" align="center" alignSelf="center">

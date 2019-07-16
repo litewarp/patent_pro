@@ -5,8 +5,7 @@
 import * as React from "react"
 import { withRouter } from "react-router-dom"
 import { Box } from "grommet"
-import { toCommas } from "../_helpers"
-import { Brand, NavLinks, PatentNav } from "./navs"
+import { Brand } from "./navs"
 import PatentForm from "../../form/form"
 import styled from "styled-components"
 

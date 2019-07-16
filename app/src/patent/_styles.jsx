@@ -1,17 +1,14 @@
 /** @format */
 // @flow
 import * as React from "react"
-import { Box, Button, Image } from "grommet"
+import { Box, Image } from "grommet"
 import Select from "react-select"
 import styled from "styled-components"
 import {
-  Rewind,
-  FastForward,
   DocumentImage,
   DocumentText,
   OrderedList,
   Cut,
-  Grid,
   TextAlignFull,
 } from "grommet-icons"
 
@@ -34,6 +31,8 @@ export const columnSelectIcon = ({
       return <Cut {...svgProps} />
     case "columnText":
       return <DocumentText {...svgProps} />
+    default:
+      return {}
   }
 }
 

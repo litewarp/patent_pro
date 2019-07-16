@@ -2,10 +2,8 @@
 // @flow
 
 import * as React from "react"
-import { Box, Heading, Anchor, Button } from "grommet"
-import Select from "react-select"
-import { toCommas } from "../_root/_helpers"
-import styled from "styled-components"
+import { Box, Button } from "grommet"
+
 import {
   columnSelectIcon,
   FixedBox,
@@ -39,7 +37,7 @@ const Controls = ({
   }))
   const toggleItem = val => {
     const newArray = visibleItems.includes(val)
-      ? visibleItems.filter(i => i.toString() != val)
+      ? visibleItems.filter(i => i.toString() !== val)
       : [val, ...visibleItems]
     setVisibleItems(newArray)
   }
@@ -54,7 +52,6 @@ const Controls = ({
     />
   )
   const isVisible = val => visibleItems.includes(val)
-  const selectValue = options[activeColumn - 1]
   const fetchIcon = (name: string) =>
     columnSelectIcon({ name: name, isVisible: isVisible(name) })
 

@@ -23,15 +23,6 @@ const initialState = {
   lines: [],
 }
 
-const replaceItemInArray = (payload, patents) => {
-  return patents.map((item, index) => {
-    if (item.id !== payload.id) {
-      return item
-    }
-    return payload
-  })
-}
-
 export const columnReducer = createReducer(initialState, {
   //getAllPatent
   [LOAD_REQUEST]: (state, action) => ({ ...state, loading: true }),

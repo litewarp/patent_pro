@@ -2,17 +2,7 @@
 // @flow
 
 import * as React from "react"
-import {
-  Box,
-  Heading,
-  Image,
-  Table,
-  TableBody,
-  TableRow,
-  TableCell,
-  Text,
-  Paragraph,
-} from "grommet"
+import { Box } from "grommet"
 import Loading from "./_loading"
 import Column from "./column"
 import ColumnText from "./_columnText"
@@ -33,7 +23,7 @@ const Columns = ({
   setVisibleItems: (Array<string>) => void,
 }) => {
   const getColumn = number => {
-    const results = columns.filter(col => col.attributes.number == number)
+    const results = columns.filter(col => col.attributes.number === number)
     return results && results[0]
   }
   const column = getColumn(activeColumn)

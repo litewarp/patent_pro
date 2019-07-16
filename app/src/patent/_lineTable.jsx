@@ -8,7 +8,6 @@ import {
   Image,
   Table,
   TableBody,
-  TableHeader,
   TableRow,
   TableCell,
   Text,
@@ -17,16 +16,6 @@ import { useSelector, useDispatch } from "react-redux"
 
 import { fetchLines } from "../_redux/columnActions"
 import styled from "styled-components"
-
-const lineArray = () => {
-  const lineText = []
-  const lineImage = []
-  lineText.map((li, index) => ({
-    itemNumber: index + 1,
-    lineText: li,
-    lineImage: lineImage(index + 1),
-  }))
-}
 
 const FixedImage = styled(Image)`
   max-height: 20px;
@@ -51,10 +40,10 @@ const LineTable = ({ columnId }: { columnId: number }) => {
           {lines.map((line, index) => (
             <NoLineHeightRow key={line.id}>
               <TableCell>
-                <Text size="small">{index + 1}</Text>
+                <FixedImage src={line.attributes.image} />
               </TableCell>
               <TableCell>
-                <FixedImage src={line.attributes.image} />
+                <Text size="small">{index + 1}</Text>
               </TableCell>
               <TableCell>
                 <Text size="small">{line.attributes.text}</Text>

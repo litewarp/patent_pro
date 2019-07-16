@@ -1,13 +1,10 @@
 /** @format */
 // @flow
 
-import React, { useState, useEffect } from "react"
+import * as React from "react"
 import { useSelector, useDispatch, shallowEqual } from "react-redux"
-import { LinkNext, LinkPrevious } from "grommet-icons"
-import { Box, Grid } from "grommet"
+import { Grid } from "grommet"
 import { actions as patentActions } from "../_redux/patentActions"
-import { actions as columnActions } from "../_redux/columnActions"
-import { toCommas } from "../_root/_helpers"
 
 import Columns from "./columns"
 import Controls from "./controls"
@@ -19,13 +16,9 @@ const Patent = ({
   match: { params: { id: string } },
   history: { push: string => void },
 }) => {
-  const { loadColumns, loadPatents } = patentActions
-  const { fetchLines } = columnActions
+  const { loadColumns } = patentActions
 
   const dispatch = useDispatch()
-  const lines = useSelector(({ column }) => column.lines, shallowEqual)
-  const loading = useSelector(({ patent }) => patent.loading, shallowEqual)
-  const patents = useSelector(({ patent }) => patent.patents, shallowEqual)
   const columns = useSelector(({ patent }) => patent.columns, shallowEqual)
 
   const [activeColumn, setActiveColumn] = React.useState(1)
@@ -35,10 +28,10 @@ const Patent = ({
   ])
   const increment = () =>
     setActiveColumn(
-      activeColumn == columns.length ? columns.length : activeColumn + 1,
+      activeColumn === columns.length ? columns.length : activeColumn + 1,
     )
   const decrement = () =>
-    setActiveColumn(activeColumn == 1 ? 1 : activeColumn - 1)
+    setActiveColumn(activeColumn === 1 ? 1 : activeColumn - 1)
 
   const { id } = match.params
 
