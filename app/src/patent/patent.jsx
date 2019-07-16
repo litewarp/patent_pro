@@ -12,7 +12,13 @@ import { toCommas } from "../_root/_helpers"
 import Columns from "./columns"
 import Controls from "./controls"
 
-const Patent = ({ match }: { match: { params: { id: string } } }) => {
+const Patent = ({
+  match,
+  history,
+}: {
+  match: { params: { id: string } },
+  history: { push: string => void },
+}) => {
   const { loadColumns, loadPatents } = patentActions
   const { fetchLines } = columnActions
 

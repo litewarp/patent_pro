@@ -47,9 +47,24 @@ const loadPatent = (number: number) => ({
     method: "GET",
     headers: jsonHeader,
     types: [
-      { type: LOAD_REQUEST, payload: req => req },
-      LOAD_SUCCESS,
-      LOAD_FAILURE,
+      {
+        type: LOAD_REQUEST,
+        payload: req => req,
+      },
+      {
+        type: LOAD_SUCCESS,
+        payload: (action, payload, res) => {
+          toast.success("Patent Found. Loading ...")
+          return getJSON(res)
+        },
+      },
+      {
+        type: LOAD_FAILURE,
+        payload: (action, payload, res) => {
+          toast.error("Error Fetching Patent")
+          return getJSON(res)
+        },
+      },
     ],
   },
 })

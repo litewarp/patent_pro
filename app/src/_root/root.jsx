@@ -55,13 +55,13 @@ const MainContent = withRouter(Content)
 const Root = () => (
   <Grommet theme={theme} full>
     <Router>
-      <Switch>
-        <MainContent>
+      <MainContent>
+        <Switch>
           <Route exact path="/" component={LandingPage} />
           <Route path="/patents/:id" component={Patent} />
           <Route component={NoPageFound} />
-        </MainContent>
-      </Switch>
+        </Switch>
+      </MainContent>
     </Router>
   </Grommet>
 )
