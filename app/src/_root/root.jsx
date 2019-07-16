@@ -1,7 +1,12 @@
 /** @format */
 // @flow
 import * as React from "react"
-import { BrowserRouter as Router, Route, withRouter } from "react-router-dom"
+import {
+  BrowserRouter as Router,
+  Route,
+  withRouter,
+  Switch,
+} from "react-router-dom"
 import { Box, Grommet, ResponsiveContext } from "grommet"
 import theme from "./theme"
 
@@ -14,6 +19,7 @@ import Header from "./header/header"
 import Footer from "./components/footer"
 import LandingPage from "../home/home"
 import Patent from "../patent/patent"
+import NoPageFound from "./components/404"
 
 const Content = ({
   children,
@@ -49,10 +55,13 @@ const MainContent = withRouter(Content)
 const Root = () => (
   <Grommet theme={theme} full>
     <Router>
-      <MainContent>
-        <Route exact path="/" component={LandingPage} />
-        <Route path="/patents/:id" component={Patent} />
-      </MainContent>
+      <Switch>
+        <MainContent>
+          <Route exact path="/" component={LandingPage} />
+          <Route path="/patents/:id" component={Patent} />
+          <Route component={NoPageFound} />
+        </MainContent>
+      </Switch>
     </Router>
   </Grommet>
 )
