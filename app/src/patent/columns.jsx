@@ -22,6 +22,7 @@ const Columns = ({
   visibleItems: Array<string>,
   setVisibleItems: (Array<string>) => void,
 }) => {
+  const [isLoading, setIsLoading] = React.useState(false)
   const getColumn = number => {
     const results = columns.filter(col => col.attributes.number === number)
     return results && results[0]
@@ -36,9 +37,13 @@ const Columns = ({
     column.attributes.text &&
     column.attributes.text.split("\n")
 
+  React.useEffect(() => {
+    column && column.attributes ? setIsLoading(false) : setIsLoading(true)
+  }, [column])
+
   return (
     <Box fill gridArea="body" direction="row" pad="medium" gap="medium" wrap>
-      {!(column && column.attributes) ? (
+      {isLoading ? (
         <Loading />
       ) : (
         <>
