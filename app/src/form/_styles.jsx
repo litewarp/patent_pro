@@ -44,12 +44,12 @@ export const customStyles = (isDisplaySmall: boolean) => ({
     ...provided,
     color: "white",
     opacity: "0.6",
-    fontSize: isDisplaySmall ? ".75em" : "1.25rem",
+    fontSize: "1em",
   }),
   singleValue: (provided, state) => ({
     ...provided,
     color: "white",
-    fontSize: isDisplaySmall ? ".75em" : "1.25em",
+    fontSize: "1em",
   }),
   valueContainer: (provided, state) => ({
     ...provided,
