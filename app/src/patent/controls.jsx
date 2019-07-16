@@ -11,6 +11,8 @@ import {
   columnNumberSelectStyles,
 } from "./_styles"
 import { Rewind, FastForward } from "grommet-icons"
+import ControlToolTips from "./_toolTips"
+
 const Controls = ({
   increment,
   decrement,
@@ -43,7 +45,10 @@ const Controls = ({
   }
   const ColumnButton = ({ name }: { name: string }) => (
     <Button
+      data-tip
+      data-for={name}
       hoverIndicator={true}
+      focusIndicator={true}
       size="large"
       color="dark-6"
       icon={fetchIcon(name)}
@@ -70,6 +75,8 @@ const Controls = ({
         justify="between"
       >
         <Button
+          data-tip
+          data-for="prevColumn"
           size="large"
           color="dark-6"
           icon={<Rewind />}
@@ -77,7 +84,7 @@ const Controls = ({
         />
         <ColumnButton name="rawImg" />
         <ColumnButton name="linedImg" />
-        <ColumnButton name="splitImg" />
+        <ColumnButton name="columnText" />
 
         <ColumnSelect
           options={options}
@@ -88,17 +95,19 @@ const Controls = ({
           styles={columnNumberSelectStyles}
         />
 
+        <ColumnButton name="splitImg" />
         <ColumnButton name="singleLineTable" />
 
-        <ColumnButton name="columnText" />
-
         <Button
+          data-tip
+          data-for="nextColumn"
           size="large"
           color="dark-6"
           icon={<FastForward />}
           onClick={() => increment()}
         />
       </FixedBox>
+      <ControlToolTips />
     </Box>
   )
 }
