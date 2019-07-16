@@ -23,6 +23,7 @@ const Header = ({
 }) => {
   //responsive helpers
   const isDisplaySmall = size === "small"
+  console.log(size === "small")
   const brandText = location.pathname === "/" ? "SETHI P.C." : "PATENT PRO"
 
   return (
