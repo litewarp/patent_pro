@@ -14,7 +14,7 @@ gem 'pg_search'
 # files and images
 gem 'aws-sdk-s3'
 gem 'docsplit'
-gem 'mini_magick', '~> 4.8'
+gem 'mini_magick', '~> 4.9'
 
 # JSON API
 gem 'graphiti-rails'
