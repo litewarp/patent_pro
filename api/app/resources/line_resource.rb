@@ -8,7 +8,7 @@ class LineResource < ApplicationResource
   attribute :number, :string
   attribute :text, :string
   attribute :image, :string do
-    rails_blob_path(@object.image.attachment) if @object.image.attached?
+    @object.image.attachment.service_url if @object.image.attached?
   end
 
   # relationships
