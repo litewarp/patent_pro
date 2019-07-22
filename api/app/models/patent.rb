@@ -28,7 +28,7 @@ class Patent < ApplicationRecord
     html = patent_page.css('coma > coma').to_html
     sections = html.split('<center>')
     search = sections.select { |x| x.start_with? '<b><i>Description' }
-    text = search.first.gsub('<br>', '') unless sections.empty?
+    text = search.first.gsub('<[a-z\s\/]>', '') unless sections.empty?
     text ? update(text: text) : nil
   end
 

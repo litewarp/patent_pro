@@ -1,6 +1,7 @@
 class Column < ApplicationRecord
   # modules
   include MagickPixels
+  include MagickHat
   include Rails.application.routes.url_helpers
 
   # relationships
@@ -52,16 +53,22 @@ class Column < ApplicationRecord
   def extract_text
     MiniMagick::Tool::Convert.new do |convert|
       convert << URI.open(master_image.attachment.service_url).path
-      gravity = number.to_i.even? ? "West" : "East"
-      convert.merge! ["-gravity", gravity, "-chop", "35x0", "+repage"]
+      gravity = number.to_i.even? ? 'West' : 'East'
+      convert.merge! ['-gravity', gravity, '-chop', '35x0', '+repage']
       convert << working_path("col-#{number}-chopped.png")
     end
     file = File.open(working_path("col-#{number}-chopped.png"))
-    Docsplit.extract_text([file.path], ocr: true, output: working_path(""))
+    Docsplit.extract_text([file.path], ocr: true, output: working_path(''))
     output = working_path("col-#{number}-chopped.txt")
     text = File.read(output)
-    self.update!(text: text)
+    update!(extracted_text: text)
     File.delete(output)
+  end
+
+  def match_handler
+    match = MatchHandler.new(id)
+    matched_text = match.fuzzy_lines
+    self.update!(matched_text: matched_text.join("\n"))
   end
 
   def working_path(name)

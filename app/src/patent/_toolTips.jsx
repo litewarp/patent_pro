@@ -23,8 +23,8 @@ const ControlToolTips = () => {
       message: "Whitespace calculated lines",
     },
     {
-      id: "splitImg",
-      message: "Raw split into 67 rows",
+      id: "fuzzyMatch",
+      message: "Fuzzy matched line text",
     },
     {
       id: "singleLineTable",

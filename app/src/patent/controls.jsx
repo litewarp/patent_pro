@@ -95,7 +95,7 @@ const Controls = ({
           styles={columnNumberSelectStyles}
         />
 
-        <ColumnButton name="splitImg" />
+        <ColumnButton name="fuzzyMatch" />
         <ColumnButton name="singleLineTable" />
 
         <Button

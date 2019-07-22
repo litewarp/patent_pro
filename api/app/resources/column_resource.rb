@@ -6,7 +6,8 @@ class ColumnResource < ApplicationResource
   # data attributes
   attribute :patent_id, :integer
   attribute :number, :string
-  attribute :text, :string
+  attribute :extracted_text, :string
+  attribute :matched_text, :string
   attribute :lined_img_count, :string
 
   attribute :master_img_url, :string do

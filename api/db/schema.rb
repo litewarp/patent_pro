@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_15_010550) do
+ActiveRecord::Schema.define(version: 2019_07_22_154757) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -41,16 +41,19 @@ ActiveRecord::Schema.define(version: 2019_07_15_010550) do
     t.integer "number"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "text"
+    t.string "extracted_text"
     t.string "lined_img_count"
+    t.string "matched_text"
+    t.string "text"
   end
 
   create_table "lines", force: :cascade do |t|
     t.integer "column_id"
     t.integer "number"
-    t.string "text"
+    t.string "extracted_text"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "text"
   end
 
   create_table "patents", force: :cascade do |t|

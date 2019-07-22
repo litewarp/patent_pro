@@ -31,11 +31,17 @@ const Columns = ({
 
   const isVisible = val => visibleItems.includes(val)
 
-  const textAsLines =
+  const rawText =
     column &&
     column.attributes &&
-    column.attributes.text &&
-    column.attributes.text.split("\n")
+    column.attributes.extractedText &&
+    column.attributes.extractedText.split("\n")
+
+  const matchedText =
+    column &&
+    column.attributes &&
+    column.attributes.matchedText &&
+    column.attributes.matchedText.split("\n")
 
   return (
     <Box fill gridArea="body" direction="row" pad="medium" gap="medium" wrap>
@@ -59,13 +65,10 @@ const Columns = ({
             />
           </Column>
           <Column
-            isVisible={isVisible("splitImg")}
-            label="Raw split into 67 rows"
+            isVisible={isVisible("fuzzyMatch")}
+            label="Fuzzy matched line text"
           >
-            <StyledImage
-              fit="contain"
-              src={column && column.attributes.splitImgUrl}
-            />
+            <ColumnText textAsLines={matchedText} />
           </Column>
           <Column
             isVisible={isVisible("singleLineTable")}
@@ -74,7 +77,7 @@ const Columns = ({
             <LineTable columnId={column && column.id} />
           </Column>
           <Column isVisible={isVisible("columnText")} label="Raw column text">
-            <ColumnText textAsLines={textAsLines} />
+            <ColumnText textAsLines={rawText} />
           </Column>
         </>
       )}

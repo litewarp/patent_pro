@@ -25,7 +25,7 @@ export const columnSelectIcon = ({
       return <DocumentImage {...svgProps} />
     case "linedImg":
       return <OrderedList {...svgProps} />
-    case "splitImg":
+    case "fuzzyMatch":
       return <TextAlignFull {...svgProps} />
     case "singleLineTable":
       return <Cut {...svgProps} />

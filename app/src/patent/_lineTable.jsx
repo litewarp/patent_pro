@@ -31,7 +31,6 @@ const LineTable = ({ columnId }: { columnId: number }) => {
   }, [columnId])
 
   const lines = useSelector(({ column }) => column.lines)
-  console.log(lines.sort((a, b) => a.attributes.number - b.attributes.number))
 
   return (
     <Box basis="1/2" align="center">
