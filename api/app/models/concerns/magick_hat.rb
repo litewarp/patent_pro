@@ -19,26 +19,5 @@ module MagickHat
         fz.find(line)
       end
     end
-
-    def sub_pto_text
-      fuzzy_lines
-      @matched_text.collect.with_index do |line, index|
-        if line.blank?
-        case index
-        when 0
-          puts @matched_text[index+1]
-        when @matched_text.count
-          puts @matched_text[index-1]
-        else
-          puts @matched_text[index-1]
-          puts ""
-          puts @matched_text[index+1]
-        end
-      end
-      end
-
-      words = @column.patent.text.gsub("<br><br>", "").split(" ")
-    end
-
    end
 end

@@ -15,12 +15,17 @@ class Line < ApplicationRecord
     [dir, name].join('/')
   end
 
-  def extract_text
-    file = URI.open(image.attachment.service_url)
-    Docsplit.extract_text([file.path], ocr: true, output: working_path(''))
-    output = working_path("#{File.basename(file)}.txt")
-    text = File.read(output)
+  def extract_text(file)
+    image = RTesseract.new(file)
+    pdf = PDF::Reader.new(image.to_pdf)
+    line = pdf.pages.first.text
+    text = if line.length < 50 && line.last === "."
+            line << "<<I>>"
+           else
+             line
+           end
     update!(extracted_text: text)
-    File.delete(output)
+    File.delete(file)
   end
+
 end

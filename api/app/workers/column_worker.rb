@@ -9,7 +9,7 @@ class ColumnWorker
     @column = Column.find(column_id)
     @column.extract_text
     @column.save_lined_image
-    @column.save_split_image
     @column.save_line_images
+    @column.match_handler
   end
 end

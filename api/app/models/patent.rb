@@ -12,6 +12,37 @@ class Patent < ApplicationRecord
   end
   validates_uniqueness_of :number
 
+  def sorted_columns
+    columns.sort { |a,b| a.number <=> b.number }
+  end
+
+  def paragraphs
+    text.split("<br><br>")[1..-1].collect(&:strip)
+  end
+
+  def parse_paragraphs
+    paragraph_starts = paragraphs.collect do |para|
+      para.split(" ")[0..5].join(" ")
+    end
+    matched_line_starts = sorted_columns.collect do |col|
+      col.matched_text.split("\n").collect.with_index do |line, line_index|
+        { index: [col.number, line_index+1], words: line.split(" ")[0..5].join(" ") }
+      end
+    end
+    formatted_lines = matched_line_starts.flatten(1)
+    fz = FuzzyMatch.new(
+      formatted_lines,
+      :read => :words,
+      :must_match_at_least_one_word  => true,
+      :threshold => 0.9
+    )
+    paragraph_starts.collect.with_index do |start, para_index|
+      array = [para_index]
+      array << fz.find(start)[:index] if fz.find(start)
+      array
+    end
+  end
+
   def dispatch_importer
     PatentWorker.perform_async(id)
   end

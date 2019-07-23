@@ -14,26 +14,31 @@ class Column < ApplicationRecord
   # validations
   validates :number, uniqueness: { scope: :patent_id }
 
-  def save_all_images
-    img = ImageHandler.new(id)
-    img.draw_lines
-    img.draw_split
-    img.save_lines
+  def sorted_lines
+    lines.sort_by { |a,b| a.number <=> b.number }
   end
 
-  def save_lined_image
-    img = ImageHandler.new(id)
-    img.draw_lines
+  def extract_text
+    MiniMagick::Tool::Convert.new do |convert|
+      convert << URI.open(master_image.attachment.service_url).path
+      gravity = number.to_i.even? ? 'West' : 'East'
+      convert.merge! ['-gravity', gravity, '-chop', '35x0', '+repage']
+      convert << working_path("col-#{number}-chopped.png")
+    end
+    file = File.open(working_path("col-#{number}-chopped.png"))
+    Docsplit.extract_text([file.path], ocr: true, output: working_path(''))
+    output = working_path("col-#{number}-chopped.txt")
+    update!(extracted_text: File.read(output).gsub("\f",""))
+    File.delete(file)
+    File.delete(output)
   end
 
-  def save_split_image
-    img = ImageHandler.new(id)
-    img.draw_split
-  end
+  def line_counts
+    blank_lines =->{ extracted_text.each_line.select(&:blank?).count }
 
-  def save_line_images
-    img = ImageHandler.new(id)
-    img.save_lines
+    puts "#{lined_img_count} Whitespace Gaps Found"
+    puts "#{extracted_text.each_line.count} Lines From OCR"
+    puts "#{blank_lines.call} Blank Lines"
   end
 
   def image_path(img_name)
@@ -50,25 +55,30 @@ class Column < ApplicationRecord
     URI.open(uri.call)
   end
 
-  def extract_text
-    MiniMagick::Tool::Convert.new do |convert|
-      convert << URI.open(master_image.attachment.service_url).path
-      gravity = number.to_i.even? ? 'West' : 'East'
-      convert.merge! ['-gravity', gravity, '-chop', '35x0', '+repage']
-      convert << working_path("col-#{number}-chopped.png")
-    end
-    file = File.open(working_path("col-#{number}-chopped.png"))
-    Docsplit.extract_text([file.path], ocr: true, output: working_path(''))
-    output = working_path("col-#{number}-chopped.txt")
-    text = File.read(output)
-    update!(extracted_text: text)
-    File.delete(output)
-  end
-
   def match_handler
     match = MatchHandler.new(id)
     matched_text = match.fuzzy_lines
     self.update!(matched_text: matched_text.join("\n"))
+  end
+
+  def save_all_images
+    img = ImageHandler.new(id)
+    img.draw_lines
+    img.save_lines
+  end
+
+  def save_lined_image
+    img = ImageHandler.new(id)
+    img.draw_lines
+  end
+
+  def save_split_image
+    img = ImageHandler.new(id)
+  end
+
+  def save_line_images
+    img = ImageHandler.new(id)
+    img.save_lines
   end
 
   def working_path(name)

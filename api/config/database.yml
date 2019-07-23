@@ -10,7 +10,7 @@ default: &default
   host: db
   username: postgres
   password:
-  pool: 5
+  pool: 25
   timeout: 5000
 
 development:
@@ -27,4 +27,5 @@ test:
 production:
   <<: *default
   database: patent_pro_prod
+  pool: 5
 

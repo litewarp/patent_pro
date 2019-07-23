@@ -24,7 +24,7 @@ const Patent = ({
   const [activeColumn, setActiveColumn] = React.useState(1)
   const [visibleItems, setVisibleItems] = React.useState([
     "rawImg",
-    "columnText",
+    "fuzzyMatch",
   ])
   const increment = () =>
     setActiveColumn(
